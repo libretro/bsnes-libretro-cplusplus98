@@ -12,7 +12,6 @@ namespace SNES {
 #include <libco/libco.h>
 
 #include <nall/algorithm.hpp>
-#include <nall/any.hpp>
 #include <nall/array.hpp>
 #include <nall/detect.hpp>
 #include <nall/dl.hpp>
