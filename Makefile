@@ -40,11 +40,11 @@ compile = \
     ) \
   )
 
-%.o: $<; $(call compile)
 
-include $(snes)/Makefile
 
 all: library;
+%.o: $<; $(call compile)
+include $(snes)/Makefile
 
 objects := $(patsubst %,obj/%.o,$(objects))
 
