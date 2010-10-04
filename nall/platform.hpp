@@ -26,7 +26,7 @@
   #define dllexport __declspec(dllexport)
 #else
   #include <unistd.h>
-  #include <pwd.h>
+//  #include <pwd.h>
   #include <sys/stat.h>
   #define dllexport
 #endif
@@ -82,6 +82,7 @@
 //file system functionality
 //=========================
 
+#if 0 // Shouldn't be needed here.
 #if defined(_WIN32)
   inline char* realpath(const char *filename, char *resolvedname) {
     wchar_t fn[_MAX_PATH] = L"";
@@ -116,6 +117,7 @@
   inline char *getcwd(char *path) {
     return getcwd(path, PATH_MAX);
   }
+#endif
 #endif
 
 #endif

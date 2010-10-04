@@ -1,6 +1,8 @@
 #include <snes.hpp>
+#include <limits>
 
 #define SPC7110_CPP
+using std::numeric_limits;
 namespace SNES {
 
 SPC7110 spc7110;
@@ -112,8 +114,8 @@ void SPC7110::update_time(int offset) {
   time_t diff
   = (current_time >= rtc_time)
   ? (current_time - rtc_time)
-  : (std::numeric_limits<time_t>::max() - rtc_time + current_time + 1);  //compensate for overflow
-  if(diff > std::numeric_limits<time_t>::max() / 2) diff = 0;            //compensate for underflow
+  : (numeric_limits<time_t>::max() - rtc_time + current_time + 1);  //compensate for overflow
+  if(diff > numeric_limits<time_t>::max() / 2) diff = 0;            //compensate for underflow
 
   bool update = true;
   if(memory::cartrtc.read(13) & 1) update = false;  //do not update if CR0 timer disable flag is set

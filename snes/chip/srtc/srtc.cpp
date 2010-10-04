@@ -1,6 +1,9 @@
 #include <snes.hpp>
+#include <limits>
+#include <time.h>
 
 #define SRTC_CPP
+using std::numeric_limits;
 namespace SNES {
 
 SRTC srtc;
@@ -42,8 +45,8 @@ void SRTC::update_time() {
   time_t diff
   = (current_time >= rtc_time)
   ? (current_time - rtc_time)
-  : (std::numeric_limits<time_t>::max() - rtc_time + current_time + 1);  //compensate for overflow
-  if(diff > std::numeric_limits<time_t>::max() / 2) diff = 0;            //compensate for underflow
+  : (numeric_limits<time_t>::max() - rtc_time + current_time + 1);  //compensate for overflow
+  if(diff > numeric_limits<time_t>::max() / 2) diff = 0;            //compensate for underflow
 
   if(diff > 0) {
     unsigned second  = memory::cartrtc.read( 0) + memory::cartrtc.read( 1) * 10;

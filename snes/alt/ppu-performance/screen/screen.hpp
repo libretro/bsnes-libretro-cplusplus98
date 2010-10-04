@@ -1,4 +1,5 @@
 class Screen {
+  friend class PPU;
   struct Regs {
     bool addsub_mode;
     bool direct_color;
@@ -41,5 +42,4 @@ class Screen {
   ~Screen();
 
   PPU &self;
-  friend class PPU;
 };

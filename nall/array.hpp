@@ -96,7 +96,7 @@ namespace nall {
       if(pool) free(pool);
       buffersize = source.buffersize;
       poolsize = source.poolsize;
-      pool = (T*)malloc(sizeof(T) * poolsize);            //allocate entire pool size,
+      pool = (T*)std::malloc(sizeof(T) * poolsize);            //allocate entire pool size,
       memcpy(pool, source.pool, sizeof(T) * buffersize);  //... but only copy used pool objects
       return *this;
     }
