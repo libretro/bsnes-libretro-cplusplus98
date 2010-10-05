@@ -31,6 +31,7 @@ else ifeq ($(profile),performance)
 endif
 
 obj/libco.o  : libco/libco_setjmp.c libco/*
+obj/libco_ex.o  : libco/libco_ex.c libco/*
 obj/libsnes.o: $(snes)/libsnes/libsnes.cpp $(snes)/libsnes/*
 
 obj/snes-system.o   : $(snes)/system/system.cpp $(call rwildcard,$(snes)/system/) $(call rwildcard,$(snes)/video/)
@@ -69,30 +70,6 @@ obj/snes-serial.o      : $(snes)/chip/serial/serial.cpp $(snes)/chip/serial/*
 
 snes_objects := $(patsubst %,obj/%.o,$(snes_objects))
 
-library: $(snes_objects) obj/libsnes.o
-ifeq ($(platform),x)
-	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o
-	$(cpp) -o out/libsnes.so -shared -Wl,-soname,libsnes.so.1 $(snes_objects) obj/libsnes.o
-else ifeq ($(platform),osx)
-	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o
-	$(cpp) -o out/libsnes.dylib -install_name @executable_path/../Libraries/libsnes.dylib -shared -dynamiclib $(snes_objects) obj/libsnes.o
-else ifeq ($(platform),win)
-	$(cpp) -o out/snes.dll -shared -Wl,--out-implib,libsnes.a $(snes_objects) obj/libsnes.o
-endif
+library: $(snes_objects) obj/libsnes.o obj/libco_ex.o
+	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o obj/libco_ex.o
 
-library-install:
-ifeq ($(platform),x)
-	install -D -m 755 out/libsnes.a $(DESTDIR)$(prefix)/lib/libsnes.a
-	install -D -m 755 out/libsnes.so $(DESTDIR)$(prefix)/lib/libsnes.so
-	ldconfig -n $(DESTDIR)$(prefix)/lib
-else ifeq ($(platform),osx)
-	cp out/libsnes.dylib /usr/local/lib/libsnes.dylib
-endif
-
-library-uninstall:
-ifeq ($(platform),x)
-	rm $(DESTDIR)$(prefix)/lib/libsnes.a
-	rm $(DESTDIR)$(prefix)/lib/libsnes.so
-else ifeq ($(platform),osx)
-	rm /usr/local/lib/libsnes.dylib
-endif
