@@ -3,9 +3,12 @@ snes := snes
 profile := performance
 
 # compiler
+
+#compiler := wine /home/maister/bin/PS3_SDK_v1.92-FuxSony/host-win32/ppu/bin/ppu-lv2-gcc.exe
+
 c       := $(compiler) -std=gnu99
 cpp     := $(subst cc,++,$(compiler))
-flags   := -O3 -fomit-frame-pointer -I. -I$(snes) -fPIC
+flags   := -O3 -fomit-frame-pointer -I. -I$(snes) -fpic
 link    :=
 objects :=
 
