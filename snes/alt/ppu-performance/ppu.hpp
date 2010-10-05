@@ -29,12 +29,19 @@ private:
   uint16 *surface;
   uint16 *output;
 
+
   #include "mmio/mmio.hpp"
   #include "window/window.hpp"
   #include "cache/cache.hpp"
   #include "background/background.hpp"
   #include "sprite/sprite.hpp"
   #include "screen/screen.hpp"
+
+  friend class PPU::Cache;
+  friend class PPU::Background;
+  friend class PPU::Sprite;
+  friend class PPU::Screen;
+  friend class Video;
 
   Cache cache;
   Background bg1;
@@ -57,11 +64,6 @@ private:
   void add_clocks(unsigned clocks);
   void render_scanline();
 
-  friend class PPU::Cache;
-  friend class PPU::Background;
-  friend class PPU::Sprite;
-  friend class PPU::Screen;
-  friend class Video;
 };
 
 #if defined(DEBUGGER)

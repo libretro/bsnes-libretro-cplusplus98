@@ -1,5 +1,4 @@
-class Cache {
-public:
+struct Cache {
   uint8 *tiledata[3];
   uint8 *tilevalid[3];
 
@@ -12,5 +11,4 @@ public:
   Cache(PPU &self);
 
   PPU &self;
-  friend class PPU;
 };

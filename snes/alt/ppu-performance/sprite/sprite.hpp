@@ -1,4 +1,4 @@
-class Sprite {
+struct Sprite {
   bool priority0_enable;
   bool priority1_enable;
   bool priority2_enable;
@@ -67,5 +67,4 @@ class Sprite {
   Sprite(PPU &self);
 
   PPU &self;
-  friend class PPU;
 };
