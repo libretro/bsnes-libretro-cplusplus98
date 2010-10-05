@@ -1,8 +1,6 @@
 #ifndef __SNES_PPU_H
 #define __SNES_PPU_H
 
-class PPU;
-
 class PPU : public Processor, public PPUcounter, public MMIO {
 public:
   enum{ Threaded = true };
