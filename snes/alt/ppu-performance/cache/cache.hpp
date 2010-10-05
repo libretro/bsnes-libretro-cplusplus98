@@ -1,4 +1,4 @@
-class Cache {
+struct Cache {
 public:
   uint8 *tiledata[3];
   uint8 *tilevalid[3];

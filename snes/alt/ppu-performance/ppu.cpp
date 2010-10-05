@@ -10,7 +10,7 @@ namespace SNES {
   PPU ppu;
 #endif
 
-#if 0
+#include "ppu.hpp"
 #include "mmio/mmio.cpp"
 #include "window/window.cpp"
 #include "cache/cache.cpp"
@@ -18,9 +18,6 @@ namespace SNES {
 #include "sprite/sprite.cpp"
 #include "screen/screen.cpp"
 #include "serialization.cpp"
-#endif
-#include "ppu.hpp"
-
 
 void PPU::step(unsigned clocks) {
   clock += clocks;

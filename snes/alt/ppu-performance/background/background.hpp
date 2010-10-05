@@ -1,4 +1,4 @@
-class Background {
+struct Background {
   struct ID { enum { BG1, BG2, BG3, BG4 }; };
   struct Mode { enum { BPP2, BPP4, BPP8, Mode7, Inactive }; };
   struct ScreenSize { enum { Size32x32, Size32x64, Size64x32, Size64x64 }; };
@@ -62,5 +62,4 @@ class Background {
   ~Background();
 
   PPU &self;
-  friend class PPU;
 };
