@@ -143,6 +143,8 @@ inline bool xml_element::parse_head(string data) {
     else throw "...";
     attribute.append(attr);
   }
+
+  return true;
 }
 
 inline bool xml_element::parse_body(const char *&data) {

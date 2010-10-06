@@ -85,7 +85,7 @@ void PPU::Sprite::render() {
 
   for(signed i = 31; i >= 0; i--) {
     if(itemlist[i] == 0xff) continue;
-    typeof(list[itemlist[0]) &s = list[itemlist[i]];
+    typeof(list[itemlist[0]]) &s = list[itemlist[i]];
     unsigned tile_width = s.width >> 3;
     signed x = s.x;
     signed y = (self.vcounter() - s.y) & 0xff;

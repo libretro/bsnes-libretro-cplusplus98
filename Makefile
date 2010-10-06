@@ -3,8 +3,10 @@ snes := snes
 profile := performance
 
 # compiler
-c       := $(compiler) -std=gnu99
-cpp     := $(subst cc,++,$(compiler))
+#c       := $(compiler) -std=gnu99
+#cpp     := $(subst cc,++,$(compiler))
+c := clang -std=gnu99
+cpp := clang++
 flags   := -O3 -fomit-frame-pointer -I. -I$(snes) -fPIC
 link    :=
 objects :=

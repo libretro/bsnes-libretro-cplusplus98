@@ -2,6 +2,7 @@
 #define NALL_ARRAY_HPP
 
 #include <cstdlib>
+#include <cstring>
 #include <nall/C++98.hpp>
 #include <nall/algorithm.hpp>
 #include <nall/bit.hpp>
@@ -97,7 +98,7 @@ namespace nall {
       buffersize = source.buffersize;
       poolsize = source.poolsize;
       pool = (T*)std::malloc(sizeof(T) * poolsize);            //allocate entire pool size,
-      memcpy(pool, source.pool, sizeof(T) * buffersize);  //... but only copy used pool objects
+      std::memcpy(pool, source.pool, sizeof(T) * buffersize);  //... but only copy used pool objects
       return *this;
     }
 

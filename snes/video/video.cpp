@@ -51,6 +51,10 @@ void Video::update() {
     case Input::Device::SuperScope: draw_cursor(0x001f, input.port[1].superscope.x, input.port[1].superscope.y); break;
     case Input::Device::Justifiers: draw_cursor(0x02e0, input.port[1].justifier.x2, input.port[1].justifier.y2); //fallthrough
     case Input::Device::Justifier:  draw_cursor(0x001f, input.port[1].justifier.x1, input.port[1].justifier.y1); break;
+    case Input::Device::None:
+    case Input::Device::Joypad:
+    case Input::Device::Mouse:
+    case Input::Device::Multitap: break;
   }
 
   uint16_t *data = (uint16_t*)ppu.output;

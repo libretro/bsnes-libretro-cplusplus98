@@ -72,7 +72,7 @@ L rd.h = op_readlong(vectorN + 1);
 }
 
 void CPUcore::op_stp() {
-  while(regs.wai = true) {
+  while((regs.wai = true)) {
 L   op_io();
   }
 }

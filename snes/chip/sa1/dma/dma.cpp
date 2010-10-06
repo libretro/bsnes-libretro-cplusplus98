@@ -32,7 +32,7 @@ void SA1::dma_normal() {
       } break;
     }
 
-    switch(mmio.dd) {
+    switch((int)mmio.dd) {
       case DMA::DestBWRAM: {
         if((dda & 0x40e000) == 0x006000 || (dda & 0xf00000) == 0x400000) {
           sa1bus.write(dda, data);

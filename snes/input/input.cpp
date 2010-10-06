@@ -215,6 +215,7 @@ uint8 Input::port_read(bool portnumber) {
         case 31: return 0;
       }
     } //case Device::Justifier(s)
+    case Device::None: break;
   } //switch(p.device)
 
   //no device connected
@@ -263,6 +264,10 @@ void Input::update() {
         latchy = (p.device.i == Device::Justifiers ? p.justifier.y2 : -1);
       }
     } break;
+    case Device::None:
+    case Device::Multitap:
+    case Device::Mouse:
+    case Device::Joypad: break;
   }
 
   if(latchy < 0 || latchy >= (ppu.overscan() ? 240 : 225) || latchx < 0 || latchx >= 256) {

@@ -6,7 +6,7 @@ namespace nall {
 //strlcpy, strlcat based on OpenBSD implementation by Todd C. Miller
 
 //return = strlen(src)
-unsigned strlcpy(char *dest, const char *src, unsigned length) {
+static inline unsigned strlcpy(char *dest, const char *src, unsigned length) {
   char *d = dest;
   const char *s = src;
   unsigned n = length;
@@ -24,7 +24,7 @@ unsigned strlcpy(char *dest, const char *src, unsigned length) {
 }
 
 //return = strlen(src) + min(length, strlen(dest))
-unsigned strlcat(char *dest, const char *src, unsigned length) {
+static inline unsigned strlcat(char *dest, const char *src, unsigned length) {
   char *d = dest;
   const char *s = src;
   unsigned n = length;

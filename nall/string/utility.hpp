@@ -3,17 +3,17 @@
 
 namespace nall {
 
-unsigned strlcpy(string &dest, const char *src, unsigned length) {
+static inline unsigned strlcpy(string &dest, const char *src, unsigned length) {
   dest.reserve(length);
   return strlcpy(dest(), src, length);
 }
 
-unsigned strlcat(string &dest, const char *src, unsigned length) {
+static inline unsigned strlcat(string &dest, const char *src, unsigned length) {
   dest.reserve(length);
   return strlcat(dest(), src, length);
 }
 
-string substr(const char *src, unsigned start, unsigned length) {
+static inline string substr(const char *src, unsigned start, unsigned length) {
   string dest;
   if(length == 0) {
     //copy entire string
@@ -27,9 +27,9 @@ string substr(const char *src, unsigned start, unsigned length) {
 
 /* arithmetic <> string */
 
-template<unsigned length, char padding> string strhex(uintmax_t value) {
+template<unsigned length, char padding> static inline string strhex(uintmax_t value) {
   string output;
-  unsigned offset = 0;
+  int offset = 0;
 
   //render string backwards, as we do not know its length yet
   do {
@@ -51,9 +51,9 @@ template<unsigned length, char padding> string strhex(uintmax_t value) {
   return output;
 }
 
-template<unsigned length, char padding> string strsigned(intmax_t value) {
+template<unsigned length, char padding> static inline string strsigned(intmax_t value) {
   string output;
-  unsigned offset = 0;
+  int offset = 0;
 
   bool negative = value < 0;
   if(negative) value = abs(value);
@@ -77,9 +77,9 @@ template<unsigned length, char padding> string strsigned(intmax_t value) {
   return output;
 }
 
-template<unsigned length, char padding> string strunsigned(uintmax_t value) {
+template<unsigned length, char padding> static inline string strunsigned(uintmax_t value) {
   string output;
-  unsigned offset = 0;
+  int offset = 0;
 
   do {
     unsigned n = value % 10;
@@ -99,9 +99,9 @@ template<unsigned length, char padding> string strunsigned(uintmax_t value) {
   return output;
 }
 
-template<unsigned length, char padding> string strbin(uintmax_t value) {
+template<unsigned length, char padding> static inline string strbin(uintmax_t value) {
   string output;
-  unsigned offset = 0;
+  int offset = 0;
 
   do {
     unsigned n = value & 1;
@@ -124,7 +124,7 @@ template<unsigned length, char padding> string strbin(uintmax_t value) {
 //using sprintf is certainly not the most ideal method to convert
 //a double to a string ... but attempting to parse a double by
 //hand, digit-by-digit, results in subtle rounding errors.
-unsigned strdouble(char *str, double value) {
+static inline unsigned strdouble(char *str, double value) {
   char buffer[256];
   sprintf(buffer, "%f", value);
 
@@ -145,7 +145,7 @@ unsigned strdouble(char *str, double value) {
   return length + 1;
 }
 
-string strdouble(double value) {
+static inline string strdouble(double value) {
   string temp;
   temp.reserve(strdouble(0, value));
   strdouble(temp(), value);

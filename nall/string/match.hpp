@@ -3,7 +3,7 @@
 
 namespace nall {
 
-bool match(const char *p, const char *s) {
+static inline bool match(const char *p, const char *s) {
   const char *p_ = 0, *s_ = 0;
 
   for(;;) {
@@ -56,7 +56,7 @@ bool match(const char *p, const char *s) {
 
     //literal match
     if(*p == *s) {
-      p++, *s++;
+      p++; s++;
       continue;
     }
 
