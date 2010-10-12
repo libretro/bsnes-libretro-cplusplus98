@@ -144,14 +144,22 @@ void System::power() {
   if(cartridge.has_serial()) serial.enable();
 
    SNES_DBG("#4\n");
+   SNES_DBG("#4.0\n");
   cpu.power();
+   SNES_DBG("#4.1\n");
   smp.power();
+   SNES_DBG("#4.2\n");
   dsp.power();
+   SNES_DBG("#4.3\n");
   ppu.power();
+   SNES_DBG("#4.4\n");
 
   if(expansion.i == ExpansionPortDevice::BSX) bsxbase.power();
+   SNES_DBG("#4.5\n");
   if(memory::bsxflash.data()) bsxflash.power();
+   SNES_DBG("#4.6\n");
   if(cartridge.mode.i == Cartridge::Mode::Bsx) bsxcart.power();
+   SNES_DBG("#4.7\n");
   if(cartridge.mode.i == Cartridge::Mode::SuperGameBoy) supergameboy.power();
 
    SNES_DBG("#5\n");
