@@ -2,52 +2,65 @@
 #include <pthread.h>
 #include <string.h>
 #include <malloc.h>
+#include <stdio.h>
 
 typedef struct 
 {
    pthread_t thread;
    pthread_cond_t cond;
    pthread_mutex_t cond_lock;
-   int active;
+   volatile int active;
+   volatile int can_sleep;
    void (*entry)(void);
 } cothread_data_t;
 
-static cothread_data_t g_current;
+static cothread_data_t *g_main_data;
+static cothread_data_t *g_current;
 static int g_first = 1;
 
 static void allocate_first(void)
 {
-   pthread_mutex_init(&g_current.cond_lock, NULL);
-   pthread_cond_init(&g_current.cond, NULL);
-   g_current.active = 1;
-   g_current.entry = NULL;
+   fprintf(stderr, "main thread is %zu\n", (size_t)pthread_self());
+   g_current = calloc(1, sizeof(cothread_data_t));
+   pthread_mutex_init(&g_current->cond_lock, NULL);
+   pthread_cond_init(&g_current->cond, NULL);
+   g_current->active = 1;
+   g_current->can_sleep = 1;
+   g_current->entry = NULL;
+   g_current->thread = pthread_self();
    g_first = 0;
+   g_main_data = g_current;
 }
 
 
 void co_switch(cothread_t t)
 {
-   if (g_first)
-      allocate_first();
+   fprintf(stderr, "co_switch() in thread %zu\n", (size_t)pthread_self());
 
-   cothread_data_t cur = g_current;
-   memcpy(&g_current, t, sizeof g_current);
+   cothread_data_t *cur = g_current;
+   g_current = t;
 
-   pthread_cond_signal(&g_current.cond);
+   pthread_cond_signal(&g_current->cond);
+   pthread_mutex_lock(&cur->cond_lock);
 
-   pthread_mutex_lock(&cur.cond_lock);
-   pthread_cond_wait(&cur.cond, &cur.cond_lock);
-   pthread_mutex_unlock(&cur.cond_lock);
-   if (!cur.active)
+   //pthread_mutex_lock(&g_current->cond_lock);
+   //g_current->can_sleep = 0;
+   //pthread_mutex_unlock(&g_current->cond_lock);
+
+   //if (cur->can_sleep)
+   //{
+      pthread_cond_wait(&cur->cond, &cur->cond_lock);
+      pthread_mutex_unlock(&cur->cond_lock);
+   //}
+   //pthread_mutex_unlock(&cur->cond_lock);
+   //cur->can_sleep = 1;
+   if (!cur->active)
       pthread_exit(NULL);
 }
 
 void co_delete(cothread_t t)
 {
-   if (g_first)
-      allocate_first();
-
-   cothread_data_t *data = (cothread_data_t*)t;
+   cothread_data_t *data = t;
    data->active = 0;
    pthread_cond_signal(&data->cond);
    pthread_join(data->thread, NULL);
@@ -61,7 +74,7 @@ cothread_t co_active(void)
    if (g_first)
       allocate_first();
 
-   return (cothread_t)&g_current;
+   return g_current;
 }
 
 static void* co_entry(void* in_data)
@@ -88,9 +101,8 @@ cothread_t co_create(unsigned int heapsize, void (*entry)(void))
    pthread_mutex_init(&data->cond_lock, NULL);
    data->entry = entry;
    data->active = 1;
-   pthread_t id;
-   pthread_create(&id, NULL, co_entry, data);
-   data->thread = id;
+   data->can_sleep = 1;
+   pthread_create(&data->thread, NULL, co_entry, data);
    return data;
 }
 
