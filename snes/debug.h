@@ -14,7 +14,7 @@ void dprintf(float x, float y, float scale, const char *fmt, ...);
 
 #define SNES_DBG(fmt, args...) do {\
    dprintf(0.1f, 0.1f, 1.0f, "libSNES: " fmt, ##args);\
-   sys_timer_usleep(2000000);\
+   sys_timer_usleep(3000000);\
    } while(0)
 
 
