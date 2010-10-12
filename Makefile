@@ -9,7 +9,7 @@ compiler := wine /home/maister/bin/PS3_SDK_v1.92-FuxSony/host-win32/ppu/bin/ppu-
 
 c       := $(compiler) -std=gnu99
 cpp     := $(subst cc,++,$(compiler))
-flags   := -O3 -fomit-frame-pointer -I. -I$(snes)
+flags   := -O3 -fomit-frame-pointer -I. -I$(snes) -DLIBSNES_DEBUG
 #flags   := -g -I. -I$(snes) -fpic
 link    :=
 objects :=

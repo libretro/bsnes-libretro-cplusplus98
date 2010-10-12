@@ -1,5 +1,6 @@
 #include "libsnes.hpp"
 #include <snes.hpp>
+#include "debug.h"
 
 #include <nall/snes/info.hpp>
 using namespace nall;
@@ -62,9 +63,11 @@ void snes_set_controller_port_device(bool port, unsigned device) {
 }
 
 void snes_init(void) {
+  SNES_DBG("Initializing SNES\n");
   SNES::system.init(&interface);
   SNES::input.port_set_device(0, SNES::Input::Device::Joypad);
   SNES::input.port_set_device(1, SNES::Input::Device::Joypad);
+  SNES_DBG("Done initializing SNES\n");
 }
 
 void snes_term(void) {
@@ -114,11 +117,18 @@ void snes_cheat_set(unsigned index, bool enabled, const char *code) {
 bool snes_load_cartridge_normal(
   const char *rom_xml, const uint8_t *rom_data, unsigned rom_size
 ) {
+   SNES_DBG("In snes_load_cartridge_normal\n");
+   SNES_DBG("Resetting cheats\n");
   snes_cheat_reset();
+   SNES_DBG("Copying rom data\n");
   if(rom_data) SNES::memory::cartrom.copy(rom_data, rom_size);
+   SNES_DBG("Loading XML data\n");
   string xmlrom = (rom_xml && *rom_xml) ? string(rom_xml) : snes_information(rom_data, rom_size).xml_memory_map;
+   SNES_DBG("Load cartridge\n");
   SNES::cartridge.load(SNES::Cartridge::Mode::Normal, lstring(xmlrom));
+   SNES_DBG("Turn power on\n");
   SNES::system.power();
+   SNES_DBG("Completed load_cartridge\n");
   return true;
 }
 

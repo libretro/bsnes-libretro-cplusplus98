@@ -1,4 +1,5 @@
 #include <snes.hpp>
+#include "debug.h"
 
 #define SYSTEM_CPP
 namespace SNES {
@@ -98,6 +99,7 @@ void System::term() {
 }
 
 void System::power() {
+   SNES_DBG("Entering System::power()\n");
   region = config.region;
   expansion = config.expansion_port;
   if(region.i == Region::Autodetect) {
@@ -107,6 +109,7 @@ void System::power() {
   cpu_frequency = region.i == Region::NTSC ? config.cpu.ntsc_frequency : config.cpu.pal_frequency;
   apu_frequency = region.i == Region::NTSC ? config.smp.ntsc_frequency : config.smp.pal_frequency;
 
+   SNES_DBG("#1\n");
   bus.power();
   for(unsigned i = 0x2100; i <= 0x213f; i++) memory::mmio.map(i, ppu);
   for(unsigned i = 0x2140; i <= 0x217f; i++) memory::mmio.map(i, cpu);
@@ -115,12 +118,14 @@ void System::power() {
   for(unsigned i = 0x4200; i <= 0x421f; i++) memory::mmio.map(i, cpu);
   for(unsigned i = 0x4300; i <= 0x437f; i++) memory::mmio.map(i, cpu);
 
+   SNES_DBG("#2\n");
   audio.coprocessor_enable(false);
   if(expansion.i == ExpansionPortDevice::BSX) bsxbase.enable();
   if(memory::bsxflash.data()) bsxflash.enable();
   if(cartridge.mode.i == Cartridge::Mode::Bsx) bsxcart.enable();
   if(cartridge.mode.i == Cartridge::Mode::SuperGameBoy) supergameboy.enable();
 
+   SNES_DBG("#3\n");
   if(cartridge.has_superfx()) superfx.enable();
   if(cartridge.has_sa1()) sa1.enable();
   if(cartridge.has_srtc()) srtc.enable();
@@ -138,6 +143,7 @@ void System::power() {
   if(cartridge.has_msu1()) msu1.enable();
   if(cartridge.has_serial()) serial.enable();
 
+   SNES_DBG("#4\n");
   cpu.power();
   smp.power();
   dsp.power();
@@ -148,6 +154,7 @@ void System::power() {
   if(cartridge.mode.i == Cartridge::Mode::Bsx) bsxcart.power();
   if(cartridge.mode.i == Cartridge::Mode::SuperGameBoy) supergameboy.power();
 
+   SNES_DBG("#5\n");
   if(cartridge.has_superfx()) superfx.power();
   if(cartridge.has_sa1()) sa1.power();
   if(cartridge.has_srtc()) srtc.power();
@@ -165,18 +172,23 @@ void System::power() {
   if(cartridge.has_msu1()) msu1.power();
   if(cartridge.has_serial()) serial.power();
 
+   SNES_DBG("#6\n");
   if(cartridge.mode.i == Cartridge::Mode::SuperGameBoy) cpu.coprocessors.append(&supergameboy);
   if(cartridge.has_superfx()) cpu.coprocessors.append(&superfx);
   if(cartridge.has_sa1()) cpu.coprocessors.append(&sa1);
   if(cartridge.has_msu1()) cpu.coprocessors.append(&msu1);
   if(cartridge.has_serial()) cpu.coprocessors.append(&serial);
 
+   SNES_DBG("#7\n");
   scheduler.init();
 
+   SNES_DBG("#8\n");
   input.port_set_device(0, config.controller_port1.i);
   input.port_set_device(1, config.controller_port2.i);
+   SNES_DBG("#9: Updating Input\n");
   input.update();
 //video.update();
+   SNES_DBG("Completing System::power()\n");
 }
 
 void System::reset() {
