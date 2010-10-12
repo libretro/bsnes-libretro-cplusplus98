@@ -1,4 +1,5 @@
 #include <snes.hpp>
+#include "debug.h"
 
 #define CPU_CPP
 namespace SNES {
@@ -99,22 +100,36 @@ void CPU::op_irq() {
 }
 
 void CPU::power() {
+   SNES_DBG("CPU::power()\n");
+   SNES_DBG("#0\n");
   cpu_version = config.cpu.version;
+   SNES_DBG("#1\n");
 
   regs.a = regs.x = regs.y = 0x0000;
+   SNES_DBG("#2\n");
   regs.s = 0x01ff;
+   SNES_DBG("#3\n");
 
   mmio_power();
+   SNES_DBG("#4\n");
   dma_power();
+   SNES_DBG("#5\n");
   timing_power();
+   SNES_DBG("#6\n");
 
   reset();
+   SNES_DBG("Exiting CPU::power()\n");
 }
 
 void CPU::reset() {
+   SNES_DBG("CPU::reset()\n");
+   SNES_DBG("#0\n");
   create(Enter, system.cpu_frequency());
+   SNES_DBG("#1\n");
   coprocessors.reset();
+   SNES_DBG("#2\n");
   PPUcounter::reset();
+   SNES_DBG("#3\n");
 
   //note: some registers are not fully reset by SNES
   regs.pc   = 0x000000;
@@ -127,11 +142,17 @@ void CPU::reset() {
   regs.e    = 1;
   regs.mdr  = 0x00;
   regs.wai  = false;
+   SNES_DBG("#4\n");
   update_table();
+   SNES_DBG("#5\n");
 
   mmio_reset();
+   SNES_DBG("#6\n");
   dma_reset();
+   SNES_DBG("#7\n");
   timing_reset();
+   SNES_DBG("#8\n");
+   SNES_DBG("Exiting CPU::reset()\n");
 }
 
 CPU::CPU() {
