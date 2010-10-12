@@ -10,6 +10,7 @@
 	extern "C" {
 #endif
 
+#if 0
 #if defined(__i386__) || defined(_MSC_VER)
   #if defined(__GNUC__)
     #if defined(__NetBSD__) || defined(__OpenBSD__)
@@ -22,10 +23,17 @@
   #endif
 #else
   #define co_abi
+
+#endif
+#else
+#define co_abi
 #endif
 
+
+
 /* Reference to a cooperative thread */
-typedef struct cothread_t_* cothread_t;
+//typedef struct cothread_t_* cothread_t;
+typedef void* cothread_t;
 
 /* Sets size of main stack and stack space for other threads in portable version.
 Defaults to 64K and 256K, respectively. Must be set before first call to

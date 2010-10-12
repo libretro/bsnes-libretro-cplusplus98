@@ -15,6 +15,16 @@ typedef struct
 static cothread_data_t g_current;
 static int g_first = 1;
 
+static void allocate_first(void)
+{
+   pthread_mutex_init(&g_current.cond_lock, NULL);
+   pthread_cond_init(&g_current.cond, NULL);
+   g_current.active = 1;
+   g_current.entry = NULL;
+   g_first = 0;
+}
+
+
 void co_switch(cothread_t t)
 {
    if (g_first)
@@ -28,7 +38,7 @@ void co_switch(cothread_t t)
    pthread_mutex_lock(&cur.cond_lock);
    pthread_cond_wait(&cur.cond, &cur.cond_lock);
    pthread_mutex_unlock(&cur.cond_lock);
-   if (!cur->active)
+   if (!cur.active)
       pthread_exit(NULL);
 }
 
@@ -37,9 +47,9 @@ void co_delete(cothread_t t)
    if (g_first)
       allocate_first();
 
-   cothread_data_t *data = t;
+   cothread_data_t *data = (cothread_data_t*)t;
    data->active = 0;
-   pthread_cond_signal(data->cond);
+   pthread_cond_signal(&data->cond);
    pthread_join(data->thread, NULL);
    pthread_mutex_destroy(&data->cond_lock);
    pthread_cond_destroy(&data->cond);
@@ -51,23 +61,19 @@ cothread_t co_active(void)
    if (g_first)
       allocate_first();
 
-   return &g_current;
+   return (cothread_t)&g_current;
 }
 
 static void* co_entry(void* in_data)
 {
    cothread_data_t *data = in_data;
-   pthread_cond_wait(data->cond);
-   data->entry();
-}
 
-static void allocate_first(void)
-{
-   pthread_mutex_init(&g_current.cond_lock);
-   pthread_cond_init(&g_current.cond);
-   g_current.active = 1;
-   g_current.entry = NULL;
-   g_first = 0;
+   pthread_mutex_lock(&data->cond_lock);
+   pthread_cond_wait(&data->cond, &data->cond_lock);
+   pthread_mutex_unlock(&data->cond_lock);
+
+   data->entry();
+   pthread_exit(NULL);
 }
 
 cothread_t co_create(unsigned int heapsize, void (*entry)(void))
