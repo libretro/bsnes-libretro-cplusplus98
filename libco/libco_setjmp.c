@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include "../snes/debug.h"
 
 /* By Shay Green, 2008. Public domain. */
 
@@ -18,14 +19,14 @@ struct cothread_t_
    void (*entry)( void );	/* user entry function, NULL if thread deleted */
    cothread_t next;		/* next in linked list */
    unsigned stack;			/* bytes allocated to stack */
-   char* padding;
+   volatile char* padding;
 };
 
 /* Linked list of threads. First is always main thread. Last in chain is not a
    thread, just has jump_buf context for allocating next thread's stack. */
 static struct cothread_t_ main_thread;
 static cothread_t active = &main_thread; /* Currently active thread */
-static void* volatile force_alloc;
+static volatile void* volatile force_alloc;
 
 static void alloc_stack( cothread_t t, unsigned remain );
 
@@ -78,12 +79,15 @@ static void prepare_thread( cothread_t t )
 
 static void alloc_stack( cothread_t t, unsigned remain )
 {
-   char reserve [reserve_size * 2];
+   volatile char reserve [reserve_size * 2];
    force_alloc = reserve; /* ensure optimizer doesn't remove this */
+
+   SNES_DBG("alloc_stack()\n");
 
 #if CO_DEBUG
    memset( reserve, 0, sizeof reserve );
 #endif
+   SNES_DBG("#1\n");
 
    if ( remain >= sizeof reserve )
    {
@@ -91,12 +95,15 @@ static void alloc_stack( cothread_t t, unsigned remain )
    }
    else
    {
+      SNES_DBG("#2\n");
 #if CO_DEBUG
       memset( reserve, reserve_fill, sizeof reserve );
 #endif
       t->padding = reserve + reserve_size / 2;
+      SNES_DBG("#3\n");
       prepare_thread( t );
    }
+   SNES_DBG("Returning from alloc_stack()\n");
 }
 
 static cothread_t alloc_thread( void )
@@ -118,40 +125,56 @@ static void alloc_next( cothread_t t )
 
 cothread_t co_abi co_create( unsigned int size, void (*entry)( void ) )
 {
+   SNES_DBG("co_create()\n");
+   SNES_DBG("#0\n");
+   SNES_DBG("#0: co_main_stack_: %d\n", co_main_stack_);
+   SNES_DBG("#0: co_total_stack_: %d\n", co_total_stack_);
    cothread_t t;
 
    /* Initialize main stack if not already */
    if ( !main_thread.next )
    {
+      SNES_DBG("#1\n");
       main_thread.entry = 0;
       main_thread.next  = alloc_thread();
+      SNES_DBG("#2\n");
       if ( !main_thread.next )
          return 0;
 
+      SNES_DBG("#4: Calling alloc_stack()\n");
       alloc_stack( main_thread.next, co_main_stack_ );
+      SNES_DBG("#3\n");
    }
+   SNES_DBG("#4\n");
 
    /* Find a deleted thread with sufficient stack */
    for ( t = main_thread.next; t->next; t = t->next )
       if ( !t->entry && t->stack >= size )
          break;
 
+   SNES_DBG("#5\n");
    /* Allocate new if necessary */
    if ( !t->next )
    {
+      SNES_DBG("#6\n");
       if ( size > co_total_stack_ || !(t->next = alloc_thread()) )
          return 0;
 
       co_total_stack_ -= size;
       t->stack = size; /* TODO: round to multiple of 4K? */
+      SNES_DBG("#7\n");
       alloc_next( t ); /* separate function to avoid GCC warning */
    }
+   SNES_DBG("#8\n");
 
    /* Init thread */
    t->entry = entry;
+   SNES_DBG("#9\n");
    memcpy( &t->context, &t->top_context, sizeof t->context );
 
+   SNES_DBG("#10\n");
    assert( is_valid( t ) );
+   SNES_DBG("Returning from co_create()\n");
    return t;
 }
 
