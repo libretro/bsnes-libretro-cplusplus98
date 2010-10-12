@@ -2,8 +2,8 @@
 
 #include "libco_ex.h"
 
-unsigned co_main_stack_  = 128 / 4  * 1024L * sizeof (void*);
-unsigned co_total_stack_ = 1024 / 4 * 1024L * sizeof (void*);
+unsigned co_main_stack_  = 128 * 1024L;
+unsigned co_total_stack_ = 128 * 1024L;
 
 void co_abi co_set_stack( unsigned main_stack, unsigned total_stack )
 {
