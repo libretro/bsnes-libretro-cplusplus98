@@ -29,7 +29,7 @@ namespace SNES {
 #include <nall/utility.hpp>
 #include <nall/varint.hpp>
 #include <nall/vector.hpp>
-#include <stdio.h>
+//#include <stdio.h>
 using namespace nall;
 
 #ifdef DEBUGGER
@@ -61,14 +61,14 @@ namespace SNES {
     int64 clock;
 
     inline void create(void (*entrypoint_)(), unsigned frequency_) {
-      printf("Calling create()\n");
+      //printf("Calling create()\n");
       if(thread) 
       {
-         printf("Calling co_delete()\n");
+         //printf("Calling co_delete()\n");
          co_delete(thread);
       }
       //thread = co_create(65536 * sizeof(void*), entrypoint_);
-      thread = co_create(65536 / 512, entrypoint_);
+      thread = co_create(65536 / 16, entrypoint_);
       frequency = frequency_;
       clock = 0;
     }
