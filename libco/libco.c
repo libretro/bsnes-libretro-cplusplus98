@@ -20,7 +20,7 @@ static int g_first = 1;
 
 static void allocate_first(void)
 {
-   fprintf(stderr, "main thread is %zu\n", (size_t)pthread_self());
+   //fprintf(stderr, "main thread is %zu\n", (size_t)pthread_self());
    g_current = calloc(1, sizeof(cothread_data_t));
    pthread_mutex_init(&g_current->cond_lock, NULL);
    pthread_cond_init(&g_current->cond, NULL);
@@ -35,25 +35,29 @@ static void allocate_first(void)
 
 void co_switch(cothread_t t)
 {
-   fprintf(stderr, "co_switch() in thread %zu\n", (size_t)pthread_self());
+   //fprintf(stderr, "co_switch() in thread %zu\n", (size_t)pthread_self());
 
    cothread_data_t *cur = g_current;
    g_current = t;
 
-   pthread_cond_signal(&g_current->cond);
    pthread_mutex_lock(&cur->cond_lock);
 
-   //pthread_mutex_lock(&g_current->cond_lock);
-   //g_current->can_sleep = 0;
-   //pthread_mutex_unlock(&g_current->cond_lock);
+   pthread_mutex_lock(&g_current->cond_lock);
+   g_current->can_sleep = 0;
+   pthread_cond_signal(&g_current->cond);
+   pthread_mutex_unlock(&g_current->cond_lock);
 
-   //if (cur->can_sleep)
-   //{
+   if (cur->can_sleep)
+   {
       pthread_cond_wait(&cur->cond, &cur->cond_lock);
+      cur->can_sleep = 1;
       pthread_mutex_unlock(&cur->cond_lock);
-   //}
-   //pthread_mutex_unlock(&cur->cond_lock);
-   //cur->can_sleep = 1;
+   }
+   else
+   {
+      cur->can_sleep = 1;
+      pthread_mutex_unlock(&cur->cond_lock);
+   }
    if (!cur->active)
       pthread_exit(NULL);
 }
@@ -82,11 +86,20 @@ static void* co_entry(void* in_data)
    cothread_data_t *data = in_data;
 
    pthread_mutex_lock(&data->cond_lock);
-   pthread_cond_wait(&data->cond, &data->cond_lock);
-   pthread_mutex_unlock(&data->cond_lock);
+   if (data->can_sleep)
+   {
+      pthread_cond_wait(&data->cond, &data->cond_lock);
+      data->can_sleep = 1;
+      pthread_mutex_unlock(&data->cond_lock);
+   }
+   else
+   {
+      data->can_sleep = 1;
+      pthread_mutex_unlock(&data->cond_lock);
+   }
 
    data->entry();
-   pthread_exit(NULL);
+   pthread_exit(NULL); // Can't get here. :D
 }
 
 cothread_t co_create(unsigned int heapsize, void (*entry)(void))
