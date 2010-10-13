@@ -1,8 +1,8 @@
 #include "libco.h"
 #include <pthread.h>
 #include <string.h>
-#include <malloc.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef struct 
 {
