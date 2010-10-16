@@ -3,24 +3,25 @@
 
 typedef unsigned long ulong;
 typedef unsigned int uint;
+#include <stdint.h>
 
 #define	setcontext(u)	_setmcontext(&(u)->mc)
 #define	getcontext(u)	_getmcontext(&(u)->mc)
 typedef struct mcontext
 {
-	ulong	pc;		/* lr */
-	ulong	cr;		/* mfcr */
-	ulong	ctr;		/* mfcr */
-	ulong	xer;		/* mfcr */
-	ulong	sp;		/* callee saved: r1 */
-	ulong	toc;		/* callee saved: r2 */
-	ulong	r3;		/* first arg to function, return register: r3 */
-	ulong	gpr[19];	/* callee saved: r13-r31 */
+	uint64_t	pc;		/* lr */
+	uint64_t	cr;		/* mfcr */
+	uint64_t	ctr;		/* mfcr */
+	uint64_t	xer;		/* mfcr */
+	uint64_t	sp;		/* callee saved: r1 */
+	uint64_t	toc;		/* callee saved: r2 */
+	uint64_t	r3;		/* first arg to function, return register: r3 */
+	uint64_t	gpr[19];	/* callee saved: r13-r31 */
 /*
 // XXX: currently do not save vector registers or floating-point state
-//	ulong	pad;
+//	uint64_t	pad;
 //	uvlong	fpr[18];	/ * callee saved: f14-f31 * /
-//	ulong	vr[4*12];	/ * callee saved: v20-v31, 256-bits each * /
+//	uint64_t	vr[4*12];	/ * callee saved: v20-v31, 256-bits each * /
 */
 } mcontext_t;
 
