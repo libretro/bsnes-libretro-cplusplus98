@@ -108,12 +108,12 @@ namespace nall {
     //index
     inline T& operator[](unsigned index) {
       if(index >= buffersize) resize(index + 1);
-      if(index >= buffersize) throw "array[] out of bounds";
+      //if(index >= buffersize) throw "array[] out of bounds";
       return pool[index];
     }
 
     inline const T& operator[](unsigned index) const {
-      if(index >= buffersize) throw "array[] out of bounds";
+      //if(index >= buffersize) throw "array[] out of bounds";
       return pool[index];
     }
   };

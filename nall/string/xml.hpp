@@ -112,7 +112,7 @@ inline void xml_element::parse_doctype(const char *&data) {
       return;
     }
   }
-  throw "...";
+  //throw "...";
 }
 
 inline bool xml_element::parse_head(string data) {
@@ -128,19 +128,19 @@ inline bool xml_element::parse_head(string data) {
   part.qsplit(" ", data);
 
   name = part[0];
-  if(name == "") throw "...";
+  //if(name == "") throw "...";
 
   for(unsigned i = 1; i < part.size(); i++) {
     lstring side;
     side.qsplit("=", part[i]);
-    if(side.size() != 2) throw "...";
+    //if(side.size() != 2) throw "...";
 
     xml_attribute attr;
     attr.name = side[0];
     attr.content = side[1];
     if(strbegin(attr.content, "\"") && strend(attr.content, "\"")) attr.content.trim_once("\"");
     else if(strbegin(attr.content, "'") && strend(attr.content, "'")) attr.content.trim_once("'");
-    else throw "...";
+    //else throw "...";
     attribute.append(attr);
   }
 }
@@ -161,7 +161,7 @@ inline bool xml_element::parse_body(const char *&data) {
         data += offset() + 3;
         continue;
       } else {
-        throw "...";
+        //throw "...";
       }
     }
 
@@ -170,12 +170,12 @@ inline bool xml_element::parse_body(const char *&data) {
         data += offset() + 3;
         continue;
       } else {
-        throw "...";
+        //throw "...";
       }
     }
 
     optional<unsigned> offset = strpos(data, ">");
-    if(!offset) throw "...";
+    //if(!offset) throw "...";
 
     string tag = substr(data, 0, offset());
     data += offset() + 1;
@@ -204,7 +204,7 @@ inline bool xml_element::parse_body(const char *&data) {
 
           data++;
           optional<unsigned> offset = strpos(data, ">");
-          if(!offset) throw "...";
+          //if(!offset) throw "...";
 
           tag = substr(data, 0, offset());
           data += offset() + 1;
@@ -215,7 +215,7 @@ inline bool xml_element::parse_body(const char *&data) {
           while(strpos(tag, "  ")) tag.replace("  ", " ");
           tag.rtrim();
 
-          if(name != tag) throw "...";
+          //if(name != tag) throw "...";
           return true;
         }
       } else {
@@ -242,7 +242,7 @@ inline bool xml_validate(xml_element &document) {
 inline xml_element xml_parse(const char *data) {
   xml_element self;
 
-  try {
+  //try {
     while(*data) {
       xml_element node;
       if(node.parse_body(data) == false) {
@@ -252,12 +252,12 @@ inline xml_element xml_parse(const char *data) {
       }
     }
 
-    if(xml_validate(self) == false) throw "...";
+    //if(xml_validate(self) == false) throw "...";
     return self;
-  } catch(const char*) {
-    xml_element empty;
-    return empty;
-  }
+  //} catch(const char*) {
+  //  xml_element empty;
+  //  return empty;
+  //}
 }
 
 }

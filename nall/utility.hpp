@@ -24,7 +24,7 @@ namespace nall {
     T value;
   public:
     inline operator bool() const { return valid; }
-    inline const T& operator()() const { if(!valid) throw; return value; }
+    inline const T& operator()() const { /*if(!valid) throw;*/ return value; }
     inline optional(bool valid, const T &value) : valid(valid), value(value) {}
   };
 

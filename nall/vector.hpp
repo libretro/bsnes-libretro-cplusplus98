@@ -98,7 +98,7 @@ namespace nall {
     }
 
     inline const T& operator[](unsigned index) const {
-      if(index >= objectsize) throw "vector[] out of bounds";
+      //if(index >= objectsize) throw "vector[] out of bounds";
       return pool[index];
     }
 
@@ -212,7 +212,7 @@ namespace nall {
     }
 
     inline const T& operator[](unsigned index) const {
-      if(index >= objectsize || !pool[index]) throw "vector[] out of bounds";
+      //if(index >= objectsize || !pool[index]) throw "vector[] out of bounds";
       return *pool[index];
     }
 

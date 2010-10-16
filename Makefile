@@ -12,6 +12,7 @@ cpp     := $(subst cc,++,$(compiler))
 as      := $(subst gcc,as,$(compiler))
 #flags   := -O2 -I. -I$(snes) -DLIBSNES_DEBUG -DLIBCO_PPC_FP -DLIBCO_PPC_ALTIVEC
 flags   := -O2 -I. -I$(snes) -DLIBCO_PPC_FP -DLIBCO_PPC_ALTIVEC
+cxxflags := -fno-rtti -fno-exceptions
 #flags   := -O2 -I. -I$(snes)
 #flags   := -g -I. -I$(snes) -fpic
 link    :=
@@ -30,7 +31,7 @@ compile = \
     $(if $(filter %.c,$<), \
       $(c) $(flags) $1 -c $< -o $@, \
       $(if $(filter %.cpp,$<), \
-        $(cpp) $(flags) $1 -c $< -o $@, \
+        $(cpp) $(flags) $(cxxflags) $1 -c $< -o $@, \
 		  $(if $(filter %.s,$<), \
 		    $(as) $< -o $@ \
 		  ) \

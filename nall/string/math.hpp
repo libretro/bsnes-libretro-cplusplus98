@@ -4,7 +4,7 @@
 namespace nall {
 
 static int eval_integer(const char *&s) {
-  if(!*s) throw "unrecognized_integer";
+  //if(!*s) throw "unrecognized_integer";
   int value = 0, x = *s, y = *(s + 1);
 
   //hexadecimal
@@ -50,21 +50,21 @@ static int eval_integer(const char *&s) {
     while(true) {
       value = value * 256 + *s++;
       if(*s == '\'') { s += 1; return value; }
-      if(!*s) throw "mismatched_char";
+      //if(!*s) throw "mismatched_char";
     }
   }
 
-  throw "unrecognized_integer";
+  //throw "unrecognized_integer";
 }
 
 static int eval(const char *&s, int depth = 0) {
   while(*s == ' ' || *s == '\t') s++; //trim whitespace
-  if(!*s) throw "unrecognized_token";
+  //if(!*s) throw "unrecognized_token";
   int value = 0, x = *s, y = *(s + 1);
 
   if(*s == '(') {
     value = eval(++s, 1);
-    if(*s++ != ')') throw "mismatched_group";
+    //if(*s++ != ')') throw "mismatched_group";
   }
 
   else if(x == '!') value = !eval(++s, 13);
@@ -74,7 +74,7 @@ static int eval(const char *&s, int depth = 0) {
 
   else if((x >= '0' && x <= '9') || x == '\'') value = eval_integer(s);
 
-  else throw "unrecognized_token";
+  //else throw "unrecognized_token";
 
   while(true) {
     while(*s == ' ' || *s == '\t') s++; //trim whitespace
@@ -124,7 +124,7 @@ static int eval(const char *&s, int depth = 0) {
 
     if(x == '?') {
       int lhs = eval(++s, 2);
-      if(*s != ':') throw "mismatched_ternary";
+      //if(*s != ':') throw "mismatched_ternary";
       int rhs = eval(++s, 2);
       value = value ? lhs : rhs;
       continue;
@@ -133,30 +133,30 @@ static int eval(const char *&s, int depth = 0) {
 
     if(depth > 0 && x == ')') break;
 
-    throw "unrecognized_token";
+    //throw "unrecognized_token";
   }
 
   return value;
 }
 
 bool strint(const char *s, int &result) {
-  try {
+  //try {
     result = eval_integer(s);
     return true;
-  } catch(const char*) {
-    result = 0;
-    return false;
-  }
+  //} catch(const char*) {
+  //  result = 0;
+  //  return false;
+  //}
 }
 
 bool strmath(const char *s, int &result) {
-  try {
+  //try {
     result = eval(s);
     return true;
-  } catch(const char*) {
-    result = 0;
-    return false;
-  }
+  //} catch(const char*) {
+  //  result = 0;
+  //  return false;
+  //}
 }
 
 }
