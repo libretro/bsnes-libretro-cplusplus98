@@ -32,14 +32,14 @@
 	mfcr	5
 	mfctr	6
 	mfxer	7
-	stw	0, 0*8(3)
+	stw	0, 4(3)        /* PC, 4 bytes on PS3 */
 	stw	5, 1*8(3)
 	stw	6, 2*8(3)
 	stw	7, 3*8(3)
 
-	std	1, 4*8(3)
+	stw	1, 36(3)       /* SP, 4 bytes on PS3 */
 	std	2, 5*8(3)
-	li	5, 1			/* return value for setmcontext */
+	li	   5, 1			/* return value for setmcontext */
 	std	5, 6*8(3)
 
 	std	13, (0+7)*8(3)	/* callee-save GPRs */
@@ -62,7 +62,7 @@
 	std	30, (17+7)*8(3)
 	std	31, (18+7)*8(3)
 
-	li	3, 0			/* return */
+	li	   3, 0			/* return */
 	blr
 
 
@@ -87,10 +87,10 @@
 	ld	30, (17+7)*8(3)
 	ld	31, (18+7)*8(3)
 
-	ld	1, 4*8(3)
+	lwz	1, 36(3)   /* SP, 4 bytes on PS3 */
 	ld	2, 5*8(3)
 
-	lwz	0, 0*8(3)
+	lwz	0, 4(3)    /* PC, 4 bytes on PS3. Big endian, so we use the low bytes only */
 	mtlr	0
 	lwz	0, 1*8(3)
 	mtcr	0			/* mtcrf 0xFF, r0 */
