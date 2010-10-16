@@ -245,7 +245,7 @@ static int co_flags;
 
 static uint32_t* co_create_( unsigned size )
 {
-	uint32_t* t = (uint32_t*) malloc( size );
+	uint32_t* t = (uint32_t*) memalign(128, size);
 	
 	if ( t )
 	{

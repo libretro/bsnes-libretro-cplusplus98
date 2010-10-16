@@ -11,7 +11,7 @@ c       := $(compiler) -std=gnu99
 cpp     := $(subst cc,++,$(compiler))
 as      := $(subst gcc,as,$(compiler))
 #flags   := -O3 -fomit-frame-pointer -I. -I$(snes) -DLIBSNES_DEBUG
-flags   := -O3 -fomit-frame-pointer -I. -I$(snes)
+flags   := -O2 -I. -I$(snes)
 #flags   := -g -I. -I$(snes) -fpic
 link    :=
 objects :=
