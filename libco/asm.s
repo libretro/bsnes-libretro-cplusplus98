@@ -32,12 +32,12 @@
 	mfcr	5
 	mfctr	6
 	mfxer	7
-	stw	0, 4(3)        /* PC, 4 bytes on PS3 */
-	stw	5, 1*8(3)
-	stw	6, 2*8(3)
-	stw	7, 3*8(3)
+	std	0, 0(3)        /* PC, 4 bytes on PS3 */
+	std	5, 1*8(3)
+	std	6, 2*8(3)
+	std	7, 3*8(3)
 
-	stw	1, 36(3)       /* SP, 4 bytes on PS3 */
+	std	1, 4*8(3)       /* SP, 4 bytes on PS3 */
 	std	2, 5*8(3)
 	li	   5, 1			/* return value for setmcontext */
 	std	5, 6*8(3)
@@ -87,16 +87,16 @@
 	ld	30, (17+7)*8(3)
 	ld	31, (18+7)*8(3)
 
-	lwz	1, 36(3)   /* SP, 4 bytes on PS3 */
+	ld	1, 4*8(3)   /* SP, 4 bytes on PS3 */
 	ld	2, 5*8(3)
 
-	lwz	0, 4(3)    /* PC, 4 bytes on PS3. Big endian, so we use the low bytes only */
+	ld	0, 0(3)    /* PC, 4 bytes on PS3. Big endian, so we use the low bytes only */
 	mtlr	0
-	lwz	0, 1*8(3)
+	ld	0, 1*8(3)
 	mtcr	0			/* mtcrf 0xFF, r0 */
-	lwz	0, 2*8(3)
+	ld	0, 2*8(3)
 	mtctr	0
-	lwz	0, 3*8(3)
+	ld	0, 3*8(3)
 	mtxer	0
 
 	ld	3,	6*8(3)

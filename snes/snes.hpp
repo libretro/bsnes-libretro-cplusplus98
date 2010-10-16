@@ -68,7 +68,7 @@ namespace SNES {
          co_delete(thread);
       }
       //thread = co_create(65536 * sizeof(void*), entrypoint_);
-      thread = co_create(65536 / 16, entrypoint_);
+      thread = co_create(65536, entrypoint_);
       frequency = frequency_;
       clock = 0;
     }
