@@ -1,3 +1,5 @@
+/* Copyright (c) 2005-2006 Russ Cox, MIT; see COPYRIGHT */
+
 
 .section ".toc","aw"
 .tc32 _getmcontext[TC],_getmcontext
