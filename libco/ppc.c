@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include "debug.h"
 
 /* Code in external asm file */
 #if LIBCO_PPC_ASM
@@ -245,6 +246,7 @@ static int co_flags;
 
 static uint32_t* co_create_( unsigned size )
 {
+   SNES_DBG("co_create_()\n");
 	uint32_t* t = (uint32_t*) memalign(128, size);
 	
 	if ( t )
@@ -253,11 +255,13 @@ static uint32_t* co_create_( unsigned size )
 		*t = co_flags;
 	}
 	
+   SNES_DBG("returning from co_create_()\n");
 	return t;
 }
 
 cothread_t co_create( unsigned int size, void (*entry_)( void ) )
 {
+   SNES_DBG("co_create()\n");
 	uint32_t* t = NULL;
 	
 	size += state_size + above_stack + stack_align;
@@ -298,16 +302,20 @@ cothread_t co_create( unsigned int size, void (*entry_)( void ) )
 		t [5] = (uint32_t) sp;
 	}
 	
+   SNES_DBG("returning from co_create()\n");
 	return t;
 }
 
 void co_delete( cothread_t t )
 {
+   SNES_DBG("co_delete()\n");
 	free( t );
+   SNES_DBG("returning from co_delete()\n");
 }
 
 cothread_t co_active()
 {
+   SNES_DBG("co_active()\n");
 	if ( !co_active_handle )
 	{
 		co_active_handle = co_create_( state_size );
@@ -321,13 +329,16 @@ cothread_t co_active()
 		#endif
 	}
 	
+   SNES_DBG("returning from active()\n");
 	return co_active_handle;
 }
 
 void co_switch( cothread_t t )
 {
+   //SNES_DBG("co_switch()\n");
 	cothread_t old = co_active_handle;
 	co_active_handle = t;
 	
 	CO_SWAP_ASM( t, old );
+   //SNES_DBG("returning from co_switch()\n"); // This happens in a different cothread.
 }

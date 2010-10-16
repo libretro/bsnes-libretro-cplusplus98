@@ -29,12 +29,12 @@ else ifeq ($(profile),performance)
   snesppu := $(snes)/alt/ppu-performance
 endif
 
-#libco_obj := obj/ppc.o
-#obj/ppc.o : libco/ppc.c
-libco_obj := obj/context.o obj/ucontext.o obj/asm.o
-obj/context.o : libco/context.c
-obj/ucontext.o : libco/ucontext.c
-obj/asm.o : libco/asm.s
+libco_obj := obj/ppc.o
+obj/ppc.o : libco/ppc.c
+#libco_obj := obj/context.o obj/ucontext.o obj/asm.o
+#obj/context.o : libco/context.c
+#obj/ucontext.o : libco/ucontext.c
+#obj/asm.o : libco/asm.s
 
 obj/libsnes.o: $(snes)/libsnes/libsnes.cpp $(snes)/libsnes/*
 

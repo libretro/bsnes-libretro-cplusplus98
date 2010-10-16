@@ -10,7 +10,7 @@ compiler := wine /home/maister/bin/cell_sdk_341_001/host-win32/ppu/bin/ppu-lv2-g
 c       := $(compiler) -std=gnu99
 cpp     := $(subst cc,++,$(compiler))
 as      := $(subst gcc,as,$(compiler))
-flags   := -O2 -I. -I$(snes) -DLIBSNES_DEBUG
+flags   := -O2 -I. -I$(snes) -DLIBSNES_DEBUG -DLIBCO_PPC_FP -DLIBCO_PPC_ALTIVEC
 #flags   := -O2 -I. -I$(snes)
 #flags   := -g -I. -I$(snes) -fpic
 link    :=
