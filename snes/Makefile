@@ -1,4 +1,3 @@
-snes_objects := libco
 snes_objects += snes-system
 snes_objects += snes-cartridge snes-cheat
 snes_objects += snes-memory snes-cpucore snes-smpcore
@@ -30,7 +29,11 @@ else ifeq ($(profile),performance)
   snesppu := $(snes)/alt/ppu-performance
 endif
 
-obj/libco.o  : libco/libco.c libco/*
+libco_obj := obj/ucontext.o obj/asm.o obj/context.o
+obj/ucontext.o  : libco/ucontext.c libco/*
+obj/asm.o  : libco/asm.s libco/*
+obj/context.o  : libco/context.c libco/*
+
 obj/libsnes.o: $(snes)/libsnes/libsnes.cpp $(snes)/libsnes/*
 
 obj/snes-system.o   : $(snes)/system/system.cpp $(call rwildcard,$(snes)/system/) $(call rwildcard,$(snes)/video/)
@@ -72,7 +75,7 @@ snes_objects := $(patsubst %,obj/%.o,$(snes_objects))
 #library: $(snes_objects) obj/libsnes.o obj/libco_ex.o
 #	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o obj/libco_ex.o
 
-library: $(snes_objects) obj/libsnes.o obj/libco.o
-	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o obj/libco.o
+library: $(snes_objects) obj/libsnes.o $(libco_obj)
+	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o $(libco_obj)
 
 

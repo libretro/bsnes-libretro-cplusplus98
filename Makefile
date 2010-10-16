@@ -9,6 +9,7 @@ compiler := wine /home/maister/bin/cell_sdk_341_001/host-win32/ppu/bin/ppu-lv2-g
 
 c       := $(compiler) -std=gnu99
 cpp     := $(subst cc,++,$(compiler))
+as      := $(subst gcc,as,$(compiler))
 #flags   := -O3 -fomit-frame-pointer -I. -I$(snes) -DLIBSNES_DEBUG
 flags   := -O3 -fomit-frame-pointer -I. -I$(snes)
 #flags   := -g -I. -I$(snes) -fpic
@@ -28,7 +29,10 @@ compile = \
     $(if $(filter %.c,$<), \
       $(c) $(flags) $1 -c $< -o $@, \
       $(if $(filter %.cpp,$<), \
-        $(cpp) $(flags) $1 -c $< -o $@ \
+        $(cpp) $(flags) $1 -c $< -o $@, \
+		  $(if $(filter %.s,$<), \
+		    $(as) $< -o $@ \
+		  ) \
       ) \
     ) \
   )

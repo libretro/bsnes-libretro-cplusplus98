@@ -1,6 +1,7 @@
 /* Copyright (c) 2005-2006 Russ Cox, MIT; see COPYRIGHT */
 
-#include "taskimpl.h"
+#include "power-ucontext.h"
+#include <stdarg.h>
 
 void
 makecontext(ucontext_t *ucp, void (*func)(void), int argc, ...)
@@ -17,7 +18,6 @@ makecontext(ucontext_t *ucp, void (*func)(void), int argc, ...)
 	va_end(arg);
 }
 
-#ifdef NEEDSWAPCONTEXT
 int
 swapcontext(ucontext_t *oucp, const ucontext_t *ucp)
 {
@@ -25,5 +25,4 @@ swapcontext(ucontext_t *oucp, const ucontext_t *ucp)
 		setcontext(ucp);
 	return 0;
 }
-#endif
 
