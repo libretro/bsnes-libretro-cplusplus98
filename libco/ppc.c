@@ -329,7 +329,7 @@ cothread_t co_active()
 		#endif
 	}
 	
-   SNES_DBG("returning from active()\n");
+   SNES_DBG("returning from co_active(): %p\n", co_active_handle);
 	return co_active_handle;
 }
 
