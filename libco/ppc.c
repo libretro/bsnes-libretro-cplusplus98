@@ -313,6 +313,8 @@ void co_delete( cothread_t t )
    SNES_DBG("returning from co_delete()\n");
 }
 
+//static int co_switch_cnt = 0;
+
 cothread_t co_active()
 {
    SNES_DBG("co_active()\n");
@@ -329,12 +331,13 @@ cothread_t co_active()
 		#endif
 	}
 	
-   SNES_DBG("returning from co_active(): %p\n", co_active_handle);
+   SNES_DBG("returning from co_active(): %p. co_switch count: %d\n", co_active_handle, co_switch_cnt);
 	return co_active_handle;
 }
 
 void co_switch( cothread_t t )
 {
+   //co_switch_cnt++;
    //SNES_DBG("co_switch()\n");
 	cothread_t old = co_active_handle;
 	co_active_handle = t;
