@@ -4,14 +4,20 @@ profile := performance
 
 # compiler
 
+CELL_SDK := /usr/local/cell
+ifeq ($(platform),win)
+   HOST_DIR := host-win32
+else
+   HOST_DIR := host-linux
+endif
 # SDK compiler
-compiler := wine /home/maister/bin/cell_sdk_341_001/host-win32/ppu/bin/ppu-lv2-gcc.exe
+compiler := $(CELL_SDK)/$(HOST_DIR)/ppu/bin/ppu-lv2-gcc
 
 c       := $(compiler) -std=gnu99
 cpp     := $(subst cc,++,$(compiler))
 as      := $(subst gcc,as,$(compiler))
 #flags   := -O2 -I. -I$(snes) -DLIBSNES_DEBUG -DLIBCO_PPC_FP -DLIBCO_PPC_ALTIVEC
-flags   := -O3 -funroll-loops -maltivec -I. -I$(snes) -DLIBCO_PPC_FP -DLIBCO_PPC_ALTIVEC
+flags   := -O3 -I. -I$(snes) -DLIBCO_PPC_FP -DLIBCO_PPC_ALTIVEC
 cxxflags := -fno-rtti -fno-exceptions
 #flags   := -O2 -I. -I$(snes)
 #flags   := -g -I. -I$(snes) -fpic
@@ -38,8 +44,6 @@ compile = \
       ) \
     ) \
   )
-
-
 
 all: library;
 

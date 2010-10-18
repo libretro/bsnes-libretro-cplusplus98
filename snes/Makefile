@@ -75,6 +75,6 @@ obj/snes-serial.o      : $(snes)/chip/serial/serial.cpp $(snes)/chip/serial/*
 snes_objects := $(patsubst %,obj/%.o,$(snes_objects))
 
 library: $(snes_objects) obj/libsnes.o $(libco_obj)
-	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o $(libco_obj)
+	$(CELL_SDK)/$(HOST_DIR)/ppu/bin/ppu-lv2-ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o $(libco_obj)
 
 
