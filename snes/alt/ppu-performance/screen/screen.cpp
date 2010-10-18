@@ -121,11 +121,11 @@ void PPU::Screen::render() {
   uint16 *light = light_table[self.regs.display_brightness];
 
   if(!self.regs.pseudo_hires && self.regs.bgmode != 5 && self.regs.bgmode != 6) {
-    for(unsigned i = 0; i < 256; i++) {
+    for(uint64_t i = 0; i < 256; i++) {
       data[i] = light[get_pixel_main(i)];
     }
   } else {
-    for(unsigned i = 0; i < 256; i++) {
+    for(uint64_t i = 0; i < 256; i++) {
       *data++ = light[get_pixel_sub(i)];
       *data++ = light[get_pixel_main(i)];
     }
@@ -133,16 +133,16 @@ void PPU::Screen::render() {
 }
 
 PPU::Screen::Screen(PPU &self) : self(self) {
-  light_table = new uint16*[16];
-  for(unsigned l = 0; l < 16; l++) {
-    light_table[l] = new uint16[32768];
-    for(unsigned r = 0; r < 32; r++) {
-      for(unsigned g = 0; g < 32; g++) {
-        for(unsigned b = 0; b < 32; b++) {
+  light_table = (uint16_t**)memalign(128, 16 * sizeof(uint16_t*));
+  for(uint64_t l = 0; l < 16; l++) {
+    light_table[l] = (uint16_t*)memalign(128, 32768 * sizeof(uint16_t));
+    for(uint64_t r = 0; r < 32; r++) {
+      for(uint64_t g = 0; g < 32; g++) {
+        for(uint64_t b = 0; b < 32; b++) {
           double luma = (double)l / 15.0;
-          unsigned ar = static_cast<unsigned>(luma * r + 0.5);
-          unsigned ag = static_cast<unsigned>(luma * g + 0.5);
-          unsigned ab = static_cast<unsigned>(luma * b + 0.5);
+          uint64_t ar = static_cast<unsigned>(luma * r + 0.5);
+          uint64_t ag = static_cast<unsigned>(luma * g + 0.5);
+          uint64_t ab = static_cast<unsigned>(luma * b + 0.5);
           light_table[l][(r << 10) + (g << 5) + (b << 0)] = (ab << 10) + (ag << 5) + (ar << 0);
         }
       }
@@ -151,8 +151,8 @@ PPU::Screen::Screen(PPU &self) : self(self) {
 }
 
 PPU::Screen::~Screen() {
-  for(unsigned l = 0; l < 16; l++) delete[] light_table[l];
-  delete[] light_table;
+  for(uint64_t l = 0; l < 16; l++) free(light_table[l]);
+  free(light_table);
 }
 
 void PPU::Screen::Output::plot_main(unsigned x, unsigned color, unsigned priority, unsigned source) {
