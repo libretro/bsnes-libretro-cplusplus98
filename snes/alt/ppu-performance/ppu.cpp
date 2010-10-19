@@ -19,7 +19,7 @@ namespace SNES {
 #include "screen/screen.cpp"
 #include "serialization.cpp"
 
-void PPU::step(unsigned clocks) {
+void PPU::step(uint64_t clocks) {
   clock += clocks;
 }
 
@@ -50,7 +50,7 @@ void PPU::enter() {
   }
 }
 
-void PPU::add_clocks(unsigned clocks) {
+void PPU::add_clocks(uint64_t clocks) {
   tick(clocks);
   step(clocks);
   synchronize_cpu();
@@ -99,11 +99,11 @@ void PPU::reset() {
   PPUcounter::reset();
   memset(surface, 0, 512 * 512 * sizeof(uint16));
   mmio_reset();
-  display.interlace = false;
-  display.overscan = false;
+  display.interlace = 0;
+  display.overscan = 0;
 }
 
-void PPU::layer_enable(unsigned layer, unsigned priority, bool enable) {
+void PPU::layer_enable(uint64_t layer, uint64_t priority, uint64_t enable) {
   switch(layer * 4 + priority) {
     case  0: bg1.priority0_enable = enable; break;
     case  1: bg1.priority1_enable = enable; break;
@@ -120,7 +120,7 @@ void PPU::layer_enable(unsigned layer, unsigned priority, bool enable) {
   }
 }
 
-void PPU::set_frameskip(unsigned frameskip) {
+void PPU::set_frameskip(uint64_t frameskip) {
   display.frameskip = frameskip;
   display.framecounter = 0;
 }
@@ -133,7 +133,7 @@ bg3(*this, Background::ID::BG3),
 bg4(*this, Background::ID::BG4),
 oam(*this),
 screen(*this) {
-  surface = new uint16[512 * 512];
+  surface = (uint16_t*)memalign(128, 512 * 512 * sizeof(uint16_t));
   output = surface + 16 * 512;
   display.width = 256;
   display.height = 224;
@@ -142,7 +142,7 @@ screen(*this) {
 }
 
 PPU::~PPU() {
-  delete[] surface;
+  free(surface);
 }
 
 }

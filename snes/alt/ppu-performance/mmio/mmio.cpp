@@ -6,9 +6,9 @@ void PPU::latch_counters() {
   regs.counters_latched = true;
 }
 
-bool PPU::interlace() const { return display.interlace; }
-bool PPU::overscan() const { return display.overscan; }
-bool PPU::hires() const { return regs.pseudo_hires || regs.bgmode == 5 || regs.bgmode == 6; }
+uint64_t PPU::interlace() const { return display.interlace; }
+uint64_t PPU::overscan() const { return display.overscan; }
+uint64_t PPU::hires() const { return regs.pseudo_hires || regs.bgmode == 5 || regs.bgmode == 6; }
 
 uint16 PPU::get_vram_addr() {
   uint16 addr = regs.vram_addr;
