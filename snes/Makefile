@@ -72,7 +72,7 @@ snes_objects := $(patsubst %,obj/%.o,$(snes_objects))
 library: $(snes_objects) obj/libsnes.o
 ifeq ($(platform),x)
 	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o
-	$(cpp) -o out/libsnes.so -shared -Wl,-soname,libsnes.so.1 $(snes_objects) obj/libsnes.o
+	$(cpp) -o out/libsnes.so -fPIC -shared -Wl,-soname,libsnes.so.1 $(snes_objects) obj/libsnes.o
 else ifeq ($(platform),osx)
 	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o
 	$(cpp) -o out/libsnes.dylib -install_name @executable_path/../Libraries/libsnes.dylib -shared -dynamiclib $(snes_objects) obj/libsnes.o
