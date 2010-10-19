@@ -38,15 +38,15 @@ void Audio::coprocessor_sample(int16 left, int16 right) {
     return;
   }
 
-  r_sum_l += static_cast<unsigned int>(left  * r_frac);
-  r_sum_r += static_cast<unsigned int>(right * r_frac);
+  r_sum_l += static_cast<uint64_t>(left  * r_frac);
+  r_sum_r += static_cast<uint64_t>(right * r_frac);
 
   uint16 output_left  = sclamp<16>(int(r_sum_l / r_step));
   uint16 output_right = sclamp<16>(int(r_sum_r / r_step));
 
   double first = 1.0 - r_frac;
-  r_sum_l = static_cast<unsigned int>(left  * first);
-  r_sum_r = static_cast<unsigned int>(right * first);
+  r_sum_l = static_cast<uint64_t>(left  * first);
+  r_sum_r = static_cast<uint64_t>(right * first);
   r_frac = r_step - first;
 
   cop_buffer[cop_wroffset] = (output_left << 0) + (output_right << 16);

@@ -1,6 +1,6 @@
 class CPUDebugger : public CPU, public ChipDebugger {
 public:
-  bool property(unsigned id, string &name, string &value);
+  bool property(uint64_t id, string &name, string &value);
 
   function<void ()> step_event;
 

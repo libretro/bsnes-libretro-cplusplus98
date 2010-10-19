@@ -23,14 +23,14 @@ namespace nall {
 
     bool open(const char *filename, filemode mode) { return p_open(filename, mode); }
     void close() { return p_close(); }
-    unsigned size() const { return p_size; }
+    uint64_t size() const { return p_size; }
     uint8_t* handle() { return p_handle; }
     const uint8_t* handle() const { return p_handle; }
     filemap() : p_size(0), p_handle(0) { p_ctor(); }
     ~filemap() { p_dtor(); }
 
   private:
-    unsigned p_size;
+    uint64_t p_size;
     uint8_t *p_handle;
 
     #if defined(_WIN32)

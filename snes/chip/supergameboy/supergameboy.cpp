@@ -25,8 +25,8 @@ void SuperGameBoy::enter() {
       scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
     }
 
-    unsigned samples = sgb_run(samplebuffer, 16);
-    for(unsigned i = 0; i < samples; i++) {
+    uint64_t samples = sgb_run(samplebuffer, 16);
+    for(uint64_t i = 0; i < samples; i++) {
       int16 left  = samplebuffer[i] >>  0;
       int16 right = samplebuffer[i] >> 16;
 
@@ -43,7 +43,7 @@ void SuperGameBoy::save() {
   if(sgb_save) sgb_save();
 }
 
-uint8 SuperGameBoy::mmio_read(unsigned addr) {
+uint8 SuperGameBoy::mmio_read(uint64_t addr) {
   addr &= 0xffff;
 
   if(addr == 0x2181) return mmio[0]->mmio_read(addr);
@@ -53,7 +53,7 @@ uint8 SuperGameBoy::mmio_read(unsigned addr) {
   return 0x00;
 }
 
-void SuperGameBoy::mmio_write(unsigned addr, uint8 data) {
+void SuperGameBoy::mmio_write(uint64_t addr, uint8 data) {
   addr &= 0xffff;
 
   if(addr == 0x2181) {
@@ -75,12 +75,12 @@ void SuperGameBoy::mmio_write(unsigned addr, uint8 data) {
   }
 }
 
-uint8 SuperGameBoy::read(unsigned addr) {
+uint8 SuperGameBoy::read(uint64_t addr) {
   if(sgb_read) return sgb_read(addr);
   return 0x00;
 }
 
-void SuperGameBoy::write(unsigned addr, uint8 data) {
+void SuperGameBoy::write(uint64_t addr, uint8 data) {
   if(sgb_write) sgb_write(addr, data);
 }
 
@@ -112,7 +112,7 @@ void SuperGameBoy::enable() {
 }
 
 void SuperGameBoy::power() {
-  unsigned frequency = (cartridge.supergameboy_version.i == Cartridge::SuperGameBoyVersion::Version1 ? system.cpu_frequency() / 10 : 2097152);
+  uint64_t frequency = (cartridge.supergameboy_version.i == Cartridge::SuperGameBoyVersion::Version1 ? system.cpu_frequency() / 10 : 2097152);
   create(SuperGameBoy::Enter, frequency);
 
   audio.coprocessor_enable(true);
@@ -128,7 +128,7 @@ void SuperGameBoy::power() {
 }
 
 void SuperGameBoy::reset() {
-  unsigned frequency = (cartridge.supergameboy_version.i == Cartridge::SuperGameBoyVersion::Version1 ? system.cpu_frequency() / 10 : 2097152);
+  uint64_t frequency = (cartridge.supergameboy_version.i == Cartridge::SuperGameBoyVersion::Version1 ? system.cpu_frequency() / 10 : 2097152);
   create(SuperGameBoy::Enter, frequency);
 
   if(sgb_reset) sgb_reset();

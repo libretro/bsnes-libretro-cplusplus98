@@ -25,15 +25,15 @@ namespace nall {
   template<typename T> class linear_vector {
   protected:
     T *pool;
-    unsigned poolsize, objectsize;
+    uint64_t poolsize, objectsize;
 
   public:
-    unsigned size() const { return objectsize; }
-    unsigned capacity() const { return poolsize; }
+    uint64_t size() const { return objectsize; }
+    uint64_t capacity() const { return poolsize; }
 
     void reset() {
       if(pool) {
-        for(unsigned i = 0; i < objectsize; i++) pool[i].~T();
+        for(uint64_t i = 0; i < objectsize; i++) pool[i].~T();
         free(pool);
       }
       pool = 0;
@@ -41,27 +41,27 @@ namespace nall {
       objectsize = 0;
     }
 
-    void reserve(unsigned newsize) {
+    void reserve(uint64_t newsize) {
       newsize = bit::round(newsize);  //round to nearest power of two (for amortized growth)
 
       T *poolcopy = (T*)malloc(newsize * sizeof(T));
-      for(unsigned i = 0; i < min(objectsize, newsize); i++) new(poolcopy + i) T(pool[i]);
-      for(unsigned i = 0; i < objectsize; i++) pool[i].~T();
+      for(uint64_t i = 0; i < min(objectsize, newsize); i++) new(poolcopy + i) T(pool[i]);
+      for(uint64_t i = 0; i < objectsize; i++) pool[i].~T();
       free(pool);
       pool = poolcopy;
       poolsize = newsize;
       objectsize = min(objectsize, newsize);
     }
 
-    void resize(unsigned newsize) {
+    void resize(uint64_t newsize) {
       if(newsize > poolsize) reserve(newsize);
 
       if(newsize < objectsize) {
         //vector is shrinking; destroy excess objects
-        for(unsigned i = newsize; i < objectsize; i++) pool[i].~T();
+        for(uint64_t i = newsize; i < objectsize; i++) pool[i].~T();
       } else if(newsize > objectsize) {
         //vector is expanding; allocate new objects
-        for(unsigned i = objectsize; i < newsize; i++) new(pool + i) T;
+        for(uint64_t i = objectsize; i < newsize; i++) new(pool + i) T;
       }
 
       objectsize = newsize;
@@ -72,32 +72,32 @@ namespace nall {
       new(pool + objectsize++) T(data);
     }
 
-    template<typename U> void insert(unsigned index, const U list) {
+    template<typename U> void insert(uint64_t index, const U list) {
       linear_vector<T> merged;
-      for(unsigned i = 0; i < index; i++) merged.append(pool[i]);
+      for(uint64_t i = 0; i < index; i++) merged.append(pool[i]);
       foreach(item, list) merged.append(item);
-      for(unsigned i = index; i < objectsize; i++) merged.append(pool[i]);
+      for(uint64_t i = index; i < objectsize; i++) merged.append(pool[i]);
       operator=(merged);
     }
 
-    void insert(unsigned index, const T item) {
+    void insert(uint64_t index, const T item) {
       insert(index, linear_vector<T>(item));
     }
 
-    void remove(unsigned index, unsigned count = 1) {
-      for(unsigned i = index; count + i < objectsize; i++) {
+    void remove(uint64_t index, uint64_t count = 1) {
+      for(uint64_t i = index; count + i < objectsize; i++) {
         pool[i] = pool[count + i];
       }
       if(count + index >= objectsize) resize(index);  //every element >= index was removed
       else resize(objectsize - count);
     }
 
-    inline T& operator[](unsigned index) {
+    inline T& operator[](uint64_t index) {
       if(index >= objectsize) resize(index + 1);
       return pool[index];
     }
 
-    inline const T& operator[](unsigned index) const {
+    inline const T& operator[](uint64_t index) const {
       //if(index >= objectsize) throw "vector[] out of bounds";
       return pool[index];
     }
@@ -107,7 +107,7 @@ namespace nall {
       reset();
       reserve(source.capacity());
       resize(source.size());
-      for(unsigned i = 0; i < source.size(); i++) operator[](i) = source.operator[](i);
+      for(uint64_t i = 0; i < source.size(); i++) operator[](i) = source.operator[](i);
       return *this;
     }
 
@@ -141,15 +141,15 @@ namespace nall {
   template<typename T> class pointer_vector {
   protected:
     T **pool;
-    unsigned poolsize, objectsize;
+    uint64_t poolsize, objectsize;
 
   public:
-    unsigned size() const { return objectsize; }
-    unsigned capacity() const { return poolsize; }
+    uint64_t size() const { return objectsize; }
+    uint64_t capacity() const { return poolsize; }
 
     void reset() {
       if(pool) {
-        for(unsigned i = 0; i < objectsize; i++) { if(pool[i]) delete pool[i]; }
+        for(uint64_t i = 0; i < objectsize; i++) { if(pool[i]) delete pool[i]; }
         free(pool);
       }
       pool = 0;
@@ -157,23 +157,23 @@ namespace nall {
       objectsize = 0;
     }
 
-    void reserve(unsigned newsize) {
+    void reserve(uint64_t newsize) {
       newsize = bit::round(newsize);  //round to nearest power of two (for amortized growth)
 
-      for(unsigned i = newsize; i < objectsize; i++) {
+      for(uint64_t i = newsize; i < objectsize; i++) {
         if(pool[i]) { delete pool[i]; pool[i] = 0; }
       }
 
       pool = (T**)realloc(pool, newsize * sizeof(T*));
-      for(unsigned i = poolsize; i < newsize; i++) pool[i] = 0;
+      for(uint64_t i = poolsize; i < newsize; i++) pool[i] = 0;
       poolsize = newsize;
       objectsize = min(objectsize, newsize);
     }
 
-    void resize(unsigned newsize) {
+    void resize(uint64_t newsize) {
       if(newsize > poolsize) reserve(newsize);
 
-      for(unsigned i = newsize; i < objectsize; i++) {
+      for(uint64_t i = newsize; i < objectsize; i++) {
         if(pool[i]) { delete pool[i]; pool[i] = 0; }
       }
 
@@ -185,33 +185,33 @@ namespace nall {
       pool[objectsize++] = new T(data);
     }
 
-    template<typename U> void insert(unsigned index, const U list) {
+    template<typename U> void insert(uint64_t index, const U list) {
       pointer_vector<T> merged;
-      for(unsigned i = 0; i < index; i++) merged.append(*pool[i]);
+      for(uint64_t i = 0; i < index; i++) merged.append(*pool[i]);
       foreach(item, list) merged.append(item);
-      for(unsigned i = index; i < objectsize; i++) merged.append(*pool[i]);
+      for(uint64_t i = index; i < objectsize; i++) merged.append(*pool[i]);
       operator=(merged);
     }
 
-    void insert(unsigned index, const T item) {
+    void insert(uint64_t index, const T item) {
       insert(index, pointer_vector<T>(item));
     }
 
-    void remove(unsigned index, unsigned count = 1) {
-      for(unsigned i = index; count + i < objectsize; i++) {
+    void remove(uint64_t index, uint64_t count = 1) {
+      for(uint64_t i = index; count + i < objectsize; i++) {
         *pool[i] = *pool[count + i];
       }
       if(count + index >= objectsize) resize(index);  //every element >= index was removed
       else resize(objectsize - count);
     }
 
-    inline T& operator[](unsigned index) {
+    inline T& operator[](uint64_t index) {
       if(index >= objectsize) resize(index + 1);
       if(!pool[index]) pool[index] = new T;
       return *pool[index];
     }
 
-    inline const T& operator[](unsigned index) const {
+    inline const T& operator[](uint64_t index) const {
       //if(index >= objectsize || !pool[index]) throw "vector[] out of bounds";
       return *pool[index];
     }
@@ -221,7 +221,7 @@ namespace nall {
       reset();
       reserve(source.capacity());
       resize(source.size());
-      for(unsigned i = 0; i < source.size(); i++) operator[](i) = source.operator[](i);
+      for(uint64_t i = 0; i < source.size(); i++) operator[](i) = source.operator[](i);
       return *this;
     }
 

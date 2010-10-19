@@ -5,15 +5,15 @@ struct Sprite {
   bool priority3_enable;
 
   struct Regs {
-    unsigned priority0;
-    unsigned priority1;
-    unsigned priority2;
-    unsigned priority3;
+    uint64_t priority0;
+    uint64_t priority1;
+    uint64_t priority2;
+    uint64_t priority3;
 
-    unsigned base_size;
-    unsigned nameselect;
-    unsigned tiledata_addr;
-    unsigned first_sprite;
+    uint64_t base_size;
+    uint64_t nameselect;
+    uint64_t tiledata_addr;
+    uint64_t first_sprite;
 
     bool main_enable;
     bool sub_enable;
@@ -25,27 +25,27 @@ struct Sprite {
   } regs;
 
   struct List {
-    unsigned width;
-    unsigned height;
-    unsigned x;
-    unsigned y;
-    unsigned character;
+    uint64_t width;
+    uint64_t height;
+    uint64_t x;
+    uint64_t y;
+    uint64_t character;
     bool use_nameselect;
     bool vflip;
     bool hflip;
-    unsigned palette;
-    unsigned priority;
+    uint64_t palette;
+    uint64_t priority;
     bool size;
   } list[128];
   bool list_valid;
 
   uint8 itemlist[32];
   struct TileList {
-    unsigned x;
-    unsigned y;
-    unsigned priority;
-    unsigned palette;
-    unsigned tile;
+    uint64_t x;
+    uint64_t y;
+    uint64_t priority;
+    uint64_t palette;
+    uint64_t tile;
     bool hflip;
   } tilelist[34];
 
@@ -57,10 +57,10 @@ struct Sprite {
   LayerWindow window;
 
   void frame();
-  void update_list(unsigned addr, uint8 data);
+  void update_list(uint64_t addr, uint8 data);
   void address_reset();
   void set_first();
-  alwaysinline bool on_scanline(unsigned sprite);
+  alwaysinline bool on_scanline(uint64_t sprite);
   void render();
 
   void serialize(serializer&);

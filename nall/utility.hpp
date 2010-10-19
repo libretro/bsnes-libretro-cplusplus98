@@ -28,9 +28,9 @@ namespace nall {
     inline optional(bool valid, const T &value) : valid(valid), value(value) {}
   };
 
-  template<typename T> inline T* allocate(unsigned size, const T &value) {
+  template<typename T> inline T* allocate(uint64_t size, const T &value) {
     T *array = new T[size];
-    for(unsigned i = 0; i < size; i++) array[i] = value;
+    for(uint64_t i = 0; i < size; i++) array[i] = value;
     return array;
   }
 }

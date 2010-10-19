@@ -2,11 +2,11 @@
 
 #include "mode7.cpp"
 
-unsigned PPU::Background::get_tile(unsigned hoffset, unsigned voffset) {
-  unsigned tile_x = (hoffset & mask_x) >> tile_width;
-  unsigned tile_y = (voffset & mask_y) >> tile_height;
+uint64_t PPU::Background::get_tile(uint64_t hoffset, uint64_t voffset) {
+  uint64_t tile_x = (hoffset & mask_x) >> tile_width;
+  uint64_t tile_y = (voffset & mask_y) >> tile_height;
 
-  unsigned tile_pos = ((tile_y & 0x1f) << 5) + (tile_x & 0x1f);
+  uint64_t tile_pos = ((tile_y & 0x1f) << 5) + (tile_x & 0x1f);
   if(tile_y & 0x20) tile_pos += scy;
   if(tile_x & 0x20) tile_pos += scx;
 
@@ -14,8 +14,8 @@ unsigned PPU::Background::get_tile(unsigned hoffset, unsigned voffset) {
   return (memory::vram[tiledata_addr + 0] << 0) + (memory::vram[tiledata_addr + 1] << 8);
 }
 
-void PPU::Background::offset_per_tile(unsigned x, unsigned y, unsigned &hoffset, unsigned &voffset) {
-  unsigned opt_x = (x + (hscroll & 7)), hval, vval;
+void PPU::Background::offset_per_tile(uint64_t x, uint64_t y, uint64_t &hoffset, uint64_t &voffset) {
+  uint64_t opt_x = (x + (hscroll & 7)), hval, vval;
   if(opt_x >= 8) {
     hval = self.bg3.get_tile((opt_x - 8) + (self.bg3.regs.hoffset & ~7), self.bg3.regs.voffset + 0);
     if(self.regs.bgmode != 4)
@@ -76,32 +76,32 @@ void PPU::Background::render() {
   if(regs.sub_enable) window.render(1);
   if(regs.mode == Mode::Mode7) return render_mode7();
 
-  unsigned priority0 = (priority0_enable ? regs.priority0 : 0);
-  unsigned priority1 = (priority1_enable ? regs.priority1 : 0);
+  uint64_t priority0 = (priority0_enable ? regs.priority0 : 0);
+  uint64_t priority1 = (priority1_enable ? regs.priority1 : 0);
   if(priority0 + priority1 == 0) return;
 
-  unsigned mosaic_hcounter = 1;
-  unsigned mosaic_palette = 0;
-  unsigned mosaic_priority = 0;
-  unsigned mosaic_color = 0;
+  uint64_t mosaic_hcounter = 1;
+  uint64_t mosaic_palette = 0;
+  uint64_t mosaic_priority = 0;
+  uint64_t mosaic_color = 0;
 
-  const unsigned bgpal_index = (self.regs.bgmode == 0 ? id << 5 : 0);
-  const unsigned pal_size = 2 << regs.mode;
-  const unsigned tile_mask = 0x0fff >> regs.mode;
-  const unsigned tiledata_index = regs.tiledata_addr >> (4 + regs.mode);
+  const uint64_t bgpal_index = (self.regs.bgmode == 0 ? id << 5 : 0);
+  const uint64_t pal_size = 2 << regs.mode;
+  const uint64_t tile_mask = 0x0fff >> regs.mode;
+  const uint64_t tiledata_index = regs.tiledata_addr >> (4 + regs.mode);
 
   hscroll = regs.hoffset;
   vscroll = regs.voffset;
 
-  unsigned y = Background::y;
+  uint64_t y = Background::y;
   if(hires) {
     hscroll <<= 1;
     if(self.regs.interlace) y = (y << 1) + self.field();
   }
 
-  unsigned tile_pri, tile_num;
-  unsigned pal_index, pal_num;
-  unsigned hoffset, voffset, col;
+  uint64_t tile_pri, tile_num;
+  uint64_t pal_index, pal_num;
+  uint64_t hoffset, voffset, col;
   bool mirror_x, mirror_y;
 
   const bool is_opt_mode = (self.regs.bgmode == 2 || self.regs.bgmode == 4 || self.regs.bgmode == 6);
@@ -127,12 +127,12 @@ void PPU::Background::render() {
     tile_num = ((tile_num & 0x03ff) + tiledata_index) & tile_mask;
 
     if(mirror_y) voffset ^= 7;
-    unsigned mirror_xmask = !mirror_x ? 0 : 7;
+    uint64_t mirror_xmask = !mirror_x ? 0 : 7;
 
     uint8 *tiledata = self.cache.tile(regs.mode, tile_num);
     tiledata += ((voffset & 7) * 8);
 
-    for(unsigned n = 0; n < 8; n++, x++) {
+    for(uint64_t n = 0; n < 8; n++, x++) {
       if(x & width) continue;
       if(--mosaic_hcounter == 0) {
         mosaic_hcounter = regs.mosaic + 1;
@@ -161,23 +161,23 @@ void PPU::Background::render() {
   }
 }
 
-PPU::Background::Background(PPU &self, unsigned id) : self(self), id(id) {
+PPU::Background::Background(PPU &self, uint64_t id) : self(self), id(id) {
   priority0_enable = true;
   priority1_enable = true;
 
   opt_valid_bit = (id == ID::BG1 ? 0x2000 : id == ID::BG2 ? 0x4000 : 0x0000);
 
   mosaic_table = new uint16*[16];
-  for(unsigned m = 0; m < 16; m++) {
+  for(uint64_t m = 0; m < 16; m++) {
     mosaic_table[m] = new uint16[4096];
-    for(unsigned x = 0; x < 4096; x++) {
+    for(uint64_t x = 0; x < 4096; x++) {
       mosaic_table[m][x] = (x / (m + 1)) * (m + 1);
     }
   }
 }
 
 PPU::Background::~Background() {
-  for(unsigned m = 0; m < 16; m++) delete[] mosaic_table[m];
+  for(uint64_t m = 0; m < 16; m++) delete[] mosaic_table[m];
   delete[] mosaic_table;
 }
 

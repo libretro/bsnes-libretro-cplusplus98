@@ -29,11 +29,11 @@ namespace nall {
       return idata;
     }
 
-    unsigned size() const {
+    uint64_t size() const {
       return isize;
     }
 
-    unsigned capacity() const {
+    uint64_t capacity() const {
       return icapacity;
     }
 
@@ -43,9 +43,9 @@ namespace nall {
       //but there is no standardized way to export FP-values
       uint8_t *p = (uint8_t*)&value;
       if(imode == Save) {
-        for(unsigned n = 0; n < size; n++) idata[isize++] = p[n];
+        for(uint64_t n = 0; n < size; n++) idata[isize++] = p[n];
       } else if(imode == Load) {
-        for(unsigned n = 0; n < size; n++) p[n] = idata[isize++];
+        for(uint64_t n = 0; n < size; n++) p[n] = idata[isize++];
       } else {
         isize += size;
       }
@@ -54,10 +54,10 @@ namespace nall {
     template<typename T> void integer(T &value) {
       enum { size = std::is_same<bool, T>::value ? 1 : sizeof(T) };
       if(imode == Save) {
-        for(unsigned n = 0; n < size; n++) idata[isize++] = value >> (n << 3);
+        for(uint64_t n = 0; n < size; n++) idata[isize++] = value >> (n << 3);
       } else if(imode == Load) {
         value = 0;
-        for(unsigned n = 0; n < size; n++) value |= idata[isize++] << (n << 3);
+        for(uint64_t n = 0; n < size; n++) value |= idata[isize++] << (n << 3);
       } else if(imode == Size) {
         isize += size;
       }
@@ -65,11 +65,11 @@ namespace nall {
 
     template<typename T> void array(T &array) {
       enum { size = sizeof(T) / sizeof(typename std::remove_extent<T>::type) };
-      for(unsigned n = 0; n < size; n++) integer(array[n]);
+      for(uint64_t n = 0; n < size; n++) integer(array[n]);
     }
 
-    template<typename T> void array(T array, unsigned size) {
-      for(unsigned n = 0; n < size; n++) integer(array[n]);
+    template<typename T> void array(T array, uint64_t size) {
+      for(uint64_t n = 0; n < size; n++) integer(array[n]);
     }
 
     //copy
@@ -96,14 +96,14 @@ namespace nall {
       isize = 0;
     }
 
-    serializer(unsigned capacity) {
+    serializer(uint64_t capacity) {
       imode = Save;
       idata = new uint8_t[capacity]();
       isize = 0;
       icapacity = capacity;
     }
 
-    serializer(const uint8_t *data, unsigned capacity) {
+    serializer(const uint8_t *data, uint64_t capacity) {
       imode = Load;
       idata = new uint8_t[capacity];
       isize = 0;
@@ -118,8 +118,8 @@ namespace nall {
   private:
     mode_t imode;
     uint8_t *idata;
-    unsigned isize;
-    unsigned icapacity;
+    uint64_t isize;
+    uint64_t icapacity;
   };
 
 };

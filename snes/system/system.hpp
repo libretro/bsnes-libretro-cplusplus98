@@ -20,9 +20,9 @@ public:
   //return *active* system information (settings are cached upon power-on)
   Region region;
   ExpansionPortDevice expansion;
-  readonly<unsigned> cpu_frequency;
-  readonly<unsigned> apu_frequency;
-  readonly<unsigned> serialize_size;
+  readonly<uint64_t> cpu_frequency;
+  readonly<uint64_t> apu_frequency;
+  readonly<uint64_t> serialize_size;
 
   serializer serialize();
   bool unserialize(serializer&);

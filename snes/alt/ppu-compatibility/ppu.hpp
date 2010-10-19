@@ -1,7 +1,7 @@
 class PPU : public Processor, public PPUcounter, public MMIO {
 public:
   enum{ Threaded = true };
-  alwaysinline void step(unsigned clocks);
+  alwaysinline void step(uint64_t clocks);
   alwaysinline void synchronize_cpu();
 
   #include "memory/memory.hpp"
@@ -15,10 +15,10 @@ public:
   uint8 ppu2_version;
 
   static void Enter();
-  void add_clocks(unsigned clocks);
+  void add_clocks(uint64_t clocks);
 
   uint8 region;
-  unsigned line;
+  uint64_t line;
 
   enum { NTSC = 0, PAL = 1 };
   enum { BG1 = 0, BG2 = 1, BG3 = 2, BG4 = 3, OAM = 4, BACK = 5, COL = 5 };
@@ -60,10 +60,10 @@ public:
   void reset();
 
   bool layer_enabled[5][4];
-  void layer_enable(unsigned layer, unsigned priority, bool enable);
-  unsigned frameskip;
-  unsigned framecounter;
-  void set_frameskip(unsigned frameskip);
+  void layer_enable(uint64_t layer, uint64_t priority, bool enable);
+  uint64_t frameskip;
+  uint64_t framecounter;
+  void set_frameskip(uint64_t frameskip);
 
   void serialize(serializer&);
   PPU();

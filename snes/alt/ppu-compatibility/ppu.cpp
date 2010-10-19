@@ -15,7 +15,7 @@ namespace SNES {
 #include "render/render.cpp"
 #include "serialization.cpp"
 
-void PPU::step(unsigned clocks) {
+void PPU::step(uint64_t clocks) {
   clock += clocks;
 }
 
@@ -72,7 +72,7 @@ void PPU::enter() {
   }
 }
 
-void PPU::add_clocks(unsigned clocks) {
+void PPU::add_clocks(uint64_t clocks) {
   tick(clocks);
   step(clocks);
   synchronize_cpu();
@@ -126,9 +126,9 @@ void PPU::power() {
   ppu1_version = config.ppu1.version;
   ppu2_version = config.ppu2.version;
 
-  for(unsigned i = 0; i < memory::vram.size();  i++) memory::vram[i]  = 0x00;
-  for(unsigned i = 0; i < memory::oam.size();   i++) memory::oam[i]   = 0x00;
-  for(unsigned i = 0; i < memory::cgram.size(); i++) memory::cgram[i] = 0x00;
+  for(uint64_t i = 0; i < memory::vram.size();  i++) memory::vram[i]  = 0x00;
+  for(uint64_t i = 0; i < memory::oam.size();   i++) memory::oam[i]   = 0x00;
+  for(uint64_t i = 0; i < memory::cgram.size(); i++) memory::cgram[i] = 0x00;
   flush_tiledata_cache();
 
   region = (system.region.i == System::Region::NTSC ? 0 : 1);  //0 = NTSC, 1 = PAL
@@ -368,7 +368,7 @@ void PPU::reset() {
   regs.bg_y[3] = 0;
 }
 
-void PPU::layer_enable(unsigned layer, unsigned priority, bool enable) {
+void PPU::layer_enable(uint64_t layer, uint64_t priority, bool enable) {
   switch(layer * 4 + priority) {
     case  0: layer_enabled[BG1][0] = enable; break;
     case  1: layer_enabled[BG1][1] = enable; break;
@@ -385,7 +385,7 @@ void PPU::layer_enable(unsigned layer, unsigned priority, bool enable) {
   }
 }
 
-void PPU::set_frameskip(unsigned frameskip_) {
+void PPU::set_frameskip(uint64_t frameskip_) {
   frameskip = frameskip_;
   framecounter = 0;
 }
@@ -396,20 +396,20 @@ PPU::PPU() {
 
   alloc_tiledata_cache();
 
-  for(unsigned l = 0; l < 16; l++) {
-    for(unsigned i = 0; i < 4096; i++) {
+  for(uint64_t l = 0; l < 16; l++) {
+    for(uint64_t i = 0; i < 4096; i++) {
       mosaic_table[l][i] = (i / (l + 1)) * (l + 1);
     }
   }
 
-  for(unsigned l = 0; l < 16; l++) {
-    for(unsigned r = 0; r < 32; r++) {
-      for(unsigned g = 0; g < 32; g++) {
-        for(unsigned b = 0; b < 32; b++) {
+  for(uint64_t l = 0; l < 16; l++) {
+    for(uint64_t r = 0; r < 32; r++) {
+      for(uint64_t g = 0; g < 32; g++) {
+        for(uint64_t b = 0; b < 32; b++) {
           double luma = (double)l / 15.0;
-          unsigned ar = static_cast<unsigned>(luma * r + 0.5);
-          unsigned ag = static_cast<unsigned>(luma * g + 0.5);
-          unsigned ab = static_cast<unsigned>(luma * b + 0.5);
+          uint64_t ar = static_cast<uint64_t>(luma * r + 0.5);
+          uint64_t ag = static_cast<uint64_t>(luma * g + 0.5);
+          uint64_t ab = static_cast<uint64_t>(luma * b + 0.5);
           light_table[l][(r << 10) + (g << 5) + b] = (ab << 10) + (ag << 5) + ar;
         }
       }

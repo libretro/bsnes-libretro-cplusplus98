@@ -52,8 +52,8 @@ private:
 
   struct port_t {
     Device device;
-    unsigned counter0;  //read counters
-    unsigned counter1;
+    uint64_t counter0;  //read counters
+    uint64_t counter1;
 
     struct superscope_t {
       int x, y;

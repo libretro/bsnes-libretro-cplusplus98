@@ -9,7 +9,7 @@ void SPC7110Decomp::serialize(serializer &s) {
   s.integer(decomp_buffer_wroffset);
   s.integer(decomp_buffer_length);
 
-  for(unsigned n = 0; n < 32; n++) {
+  for(uint64_t n = 0; n < 32; n++) {
     s.integer(context[n].index);
     s.integer(context[n].invert);
   }

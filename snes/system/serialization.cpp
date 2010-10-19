@@ -3,7 +3,7 @@
 serializer System::serialize() {
   serializer s(serialize_size);
 
-  unsigned signature = 0x31545342, version = Info::SerializerVersion, crc32 = cartridge.crc32();
+  uint64_t signature = 0x31545342, version = Info::SerializerVersion, crc32 = cartridge.crc32();
   char profile[16], description[512];
   memset(&profile, 0, sizeof profile);
   memset(&description, 0, sizeof description);
@@ -20,7 +20,7 @@ serializer System::serialize() {
 }
 
 bool System::unserialize(serializer &s) {
-  unsigned signature, version, crc32;
+  uint64_t signature, version, crc32;
   char profile[16], description[512];
 
   s.integer(signature);
@@ -44,8 +44,8 @@ bool System::unserialize(serializer &s) {
 //========
 
 void System::serialize(serializer &s) {
-  s.integer((unsigned&)region);
-  s.integer((unsigned&)expansion);
+  s.integer((uint64_t&)region);
+  s.integer((uint64_t&)expansion);
 }
 
 void System::serialize_all(serializer &s) {
@@ -78,7 +78,7 @@ void System::serialize_all(serializer &s) {
 void System::serialize_init() {
   serializer s;
 
-  unsigned signature = 0, version = 0, crc32 = 0;
+  uint64_t signature = 0, version = 0, crc32 = 0;
   char profile[16], description[512];
 
   s.integer(signature);

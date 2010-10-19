@@ -1,7 +1,7 @@
 //timing.cpp
-unsigned dma_counter();
+uint64_t dma_counter();
 
-void add_clocks(unsigned clocks);
+void add_clocks(uint64_t clocks);
 void scanline();
 
 alwaysinline void alu_edge();

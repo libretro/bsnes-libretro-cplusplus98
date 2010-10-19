@@ -13,7 +13,7 @@ void BSXCart::power() {
 }
 
 void BSXCart::reset() {
-  for(unsigned i = 0; i < 16; i++) regs.r[i] = 0x00;
+  for(uint64_t i = 0; i < 16; i++) regs.r[i] = 0x00;
   regs.r[0x07] = 0x80;
   regs.r[0x08] = 0x80;
 
@@ -60,7 +60,7 @@ void BSXCart::update_memory_map() {
   bus.map(Bus::MapMode::Linear, 0x70, 0x77, 0x0000, 0xffff, memory::bsxpram);
 }
 
-uint8 BSXCart::mmio_read(unsigned addr) {
+uint8 BSXCart::mmio_read(uint64_t addr) {
   if((addr & 0xf0ffff) == 0x005000) {  //$[00-0f]:5000 MMIO
     uint8 n = (addr >> 16) & 15;
     return regs.r[n];
@@ -73,7 +73,7 @@ uint8 BSXCart::mmio_read(unsigned addr) {
   return 0x00;
 }
 
-void BSXCart::mmio_write(unsigned addr, uint8 data) {
+void BSXCart::mmio_write(uint64_t addr, uint8 data) {
   if((addr & 0xf0ffff) == 0x005000) {  //$[00-0f]:5000 MMIO
     uint8 n = (addr >> 16) & 15;
     regs.r[n] = data;

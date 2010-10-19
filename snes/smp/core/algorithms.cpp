@@ -106,7 +106,7 @@ uint8 SMPcore::op_lsr(uint8 x) {
 }
 
 uint8 SMPcore::op_rol(uint8 x) {
-  unsigned carry = (unsigned)regs.p.c;
+  uint64_t carry = (uint64_t)regs.p.c;
   regs.p.c = x & 0x80;
   x = (x << 1) | carry;
   regs.p.n = x & 0x80;
@@ -115,7 +115,7 @@ uint8 SMPcore::op_rol(uint8 x) {
 }
 
 uint8 SMPcore::op_ror(uint8 x) {
-  unsigned carry = (unsigned)regs.p.c << 7;
+  uint64_t carry = (uint64_t)regs.p.c << 7;
   regs.p.c = x & 0x01;
   x = carry | (x >> 1);
   regs.p.n = x & 0x80;

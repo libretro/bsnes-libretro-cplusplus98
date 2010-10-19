@@ -5,27 +5,27 @@ struct Configuration {
   System::Region region;
 
   struct CPU {
-    unsigned version;
-    unsigned ntsc_frequency;
-    unsigned pal_frequency;
-    unsigned wram_init_value;
+    uint64_t version;
+    uint64_t ntsc_frequency;
+    uint64_t pal_frequency;
+    uint64_t wram_init_value;
   } cpu;
 
   struct SMP {
-    unsigned ntsc_frequency;
-    unsigned pal_frequency;
+    uint64_t ntsc_frequency;
+    uint64_t pal_frequency;
   } smp;
 
   struct PPU1 {
-    unsigned version;
+    uint64_t version;
   } ppu1;
 
   struct PPU2 {
-    unsigned version;
+    uint64_t version;
   } ppu2;
 
   struct SuperFX {
-    unsigned speed;
+    uint64_t speed;
   } superfx;
 
   Configuration();

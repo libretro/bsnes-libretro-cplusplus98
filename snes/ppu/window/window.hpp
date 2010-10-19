@@ -64,7 +64,7 @@ class Window {
   } output;
 
   struct {
-    unsigned x;
+    uint64_t x;
     bool one;
     bool two;
   };

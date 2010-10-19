@@ -28,8 +28,8 @@ char* strtr(char *dest, const char *before, const char *after) {
   int sl = strlen(dest), bsl = strlen(before), asl = strlen(after);
 
   if(bsl != asl || bsl == 0) return dest;  //patterns must be the same length for 1:1 replace
-  for(unsigned i = 0; i < sl; i++) {
-    for(unsigned l = 0; l < bsl; l++) {
+  for(uint64_t i = 0; i < sl; i++) {
+    for(uint64_t l = 0; l < bsl; l++) {
       if(dest[i] == before[l]) {
         dest[i] = after[l];
         break;
@@ -85,7 +85,7 @@ intmax_t strsigned(const char *str) {
   return !negate ? result : -result;
 }
 
-uintmax_t strunsigned(const char *str) {
+uintmax_t struint64_t(const char *str) {
   if(!str) return 0;
   uintmax_t result = 0;
 

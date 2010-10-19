@@ -47,7 +47,7 @@ void System::runtosave() {
     runthreadtosave();
   }
 
-  for(unsigned i = 0; i < cpu.coprocessors.size(); i++) {
+  for(uint64_t i = 0; i < cpu.coprocessors.size(); i++) {
     Processor &chip = *cpu.coprocessors[i];
     scheduler.thread = chip.thread;
     runthreadtosave();
@@ -111,12 +111,12 @@ void System::power() {
 
    SNES_DBG("#1\n");
   bus.power();
-  for(unsigned i = 0x2100; i <= 0x213f; i++) memory::mmio.map(i, ppu);
-  for(unsigned i = 0x2140; i <= 0x217f; i++) memory::mmio.map(i, cpu);
-  for(unsigned i = 0x2180; i <= 0x2183; i++) memory::mmio.map(i, cpu);
-  for(unsigned i = 0x4016; i <= 0x4017; i++) memory::mmio.map(i, cpu);
-  for(unsigned i = 0x4200; i <= 0x421f; i++) memory::mmio.map(i, cpu);
-  for(unsigned i = 0x4300; i <= 0x437f; i++) memory::mmio.map(i, cpu);
+  for(uint64_t i = 0x2100; i <= 0x213f; i++) memory::mmio.map(i, ppu);
+  for(uint64_t i = 0x2140; i <= 0x217f; i++) memory::mmio.map(i, cpu);
+  for(uint64_t i = 0x2180; i <= 0x2183; i++) memory::mmio.map(i, cpu);
+  for(uint64_t i = 0x4016; i <= 0x4017; i++) memory::mmio.map(i, cpu);
+  for(uint64_t i = 0x4200; i <= 0x421f; i++) memory::mmio.map(i, cpu);
+  for(uint64_t i = 0x4300; i <= 0x437f; i++) memory::mmio.map(i, cpu);
 
    SNES_DBG("#2\n");
   audio.coprocessor_enable(false);

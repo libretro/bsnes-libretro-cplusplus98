@@ -8,19 +8,19 @@ class Background {
   bool priority1_enable;
 
   struct Regs {
-    unsigned mode;
-    unsigned priority0;
-    unsigned priority1;
+    uint64_t mode;
+    uint64_t priority0;
+    uint64_t priority1;
 
     bool tile_size;
-    unsigned mosaic;
+    uint64_t mosaic;
 
-    unsigned screen_addr;
-    unsigned screen_size;
-    unsigned tiledata_addr;
+    uint64_t screen_addr;
+    uint64_t screen_size;
+    uint64_t tiledata_addr;
 
-    unsigned hoffset;
-    unsigned voffset;
+    uint64_t hoffset;
+    uint64_t voffset;
 
     bool main_enable;
     bool sub_enable;
@@ -28,37 +28,37 @@ class Background {
 
   uint16 **mosaic_table;
 
-  const unsigned id;
-  unsigned opt_valid_bit;
+  const uint64_t id;
+  uint64_t opt_valid_bit;
 
-  unsigned y;
+  uint64_t y;
   bool hires;
   signed width;
 
-  unsigned tile_width;
-  unsigned tile_height;
+  uint64_t tile_width;
+  uint64_t tile_height;
 
-  unsigned mask_x;
-  unsigned mask_y;
+  uint64_t mask_x;
+  uint64_t mask_y;
 
-  unsigned scx;
-  unsigned scy;
+  uint64_t scx;
+  uint64_t scy;
 
-  unsigned hscroll;
-  unsigned vscroll;
+  uint64_t hscroll;
+  uint64_t vscroll;
 
-  unsigned mosaic_vcounter;
+  uint64_t mosaic_vcounter;
 
   LayerWindow window;
 
-  alwaysinline unsigned get_tile(unsigned hoffset, unsigned voffset);
-  void offset_per_tile(unsigned x, unsigned y, unsigned &hoffset, unsigned &voffset);
+  alwaysinline uint64_t get_tile(uint64_t hoffset, uint64_t voffset);
+  void offset_per_tile(uint64_t x, uint64_t y, uint64_t &hoffset, uint64_t &voffset);
   void scanline();
   void render();
   void render_mode7();
 
   void serialize(serializer&);
-  Background(PPU &self, unsigned id);
+  Background(PPU &self, uint64_t id);
   ~Background();
 
   PPU &self;

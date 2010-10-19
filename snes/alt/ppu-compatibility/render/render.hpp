@@ -28,7 +28,7 @@ struct pixel_t {
 uint8 *bg_tiledata[3];
 uint8 *bg_tiledata_state[3];  //0 = valid, 1 = dirty
 
-template<unsigned color_depth> void render_bg_tile(uint16 tile_num);
+template<uint64_t color_depth> void render_bg_tile(uint16 tile_num);
 inline void flush_pixel_cache();
 void alloc_tiledata_cache();
 void flush_tiledata_cache();
@@ -50,8 +50,8 @@ struct {
 } bg_info[4];
 void update_bg_info();
 
-template<unsigned bg> uint16 bg_get_tile(uint16 x, uint16 y);
-template<unsigned mode, unsigned bg, unsigned color_depth> void render_line_bg(uint8 pri0_pos, uint8 pri1_pos);
+template<uint64_t bg> uint16 bg_get_tile(uint16 x, uint16 y);
+template<uint64_t mode, uint64_t bg, uint64_t color_depth> void render_line_bg(uint8 pri0_pos, uint8 pri1_pos);
 
 //oam.cpp
 struct sprite_item {
@@ -65,7 +65,7 @@ struct sprite_item {
   bool   size;
 } sprite_list[128];
 bool sprite_list_valid;
-unsigned active_sprite;
+uint64_t active_sprite;
 
 uint8 oam_itemlist[32];
 struct oam_tileitem {
@@ -76,7 +76,7 @@ struct oam_tileitem {
 enum { OAM_PRI_NONE = 4 };
 uint8 oam_line_pal[256], oam_line_pri[256];
 
-void update_sprite_list(unsigned addr, uint8 data);
+void update_sprite_list(uint64_t addr, uint8 data);
 void build_sprite_list();
 bool is_sprite_on_scanline();
 void load_oam_tiles();
@@ -85,7 +85,7 @@ void render_line_oam_rto();
 void render_line_oam(uint8 pri0_pos, uint8 pri1_pos, uint8 pri2_pos, uint8 pri3_pos);
 
 //mode7.cpp
-template<unsigned bg> void render_line_mode7(uint8 pri0_pos, uint8 pri1_pos);
+template<uint64_t bg> void render_line_mode7(uint8 pri0_pos, uint8 pri1_pos);
 
 //addsub.cpp
 inline uint16 addsub(uint32 x, uint32 y, bool halve);

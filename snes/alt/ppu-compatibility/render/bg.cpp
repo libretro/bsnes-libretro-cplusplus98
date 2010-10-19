@@ -2,10 +2,10 @@
 
 //called once at the start of every rendered scanline
 void PPU::update_bg_info() {
-  const unsigned hires = (regs.bg_mode == 5 || regs.bg_mode == 6);
-  const unsigned width = (!hires ? 256 : 512);
+  const uint64_t hires = (regs.bg_mode == 5 || regs.bg_mode == 6);
+  const uint64_t width = (!hires ? 256 : 512);
 
-  for(unsigned bg = 0; bg < 4; bg++) {
+  for(uint64_t bg = 0; bg < 4; bg++) {
     bg_info[bg].th = (regs.bg_tilesize[bg] ? 4 : 3);
     bg_info[bg].tw = (hires ? 4 : bg_info[bg].th);
 
@@ -22,7 +22,7 @@ void PPU::update_bg_info() {
   }
 }
 
-template<unsigned bg>
+template<uint64_t bg>
 uint16 PPU::bg_get_tile(uint16 x, uint16 y) {
   x = (x & bg_info[bg].mx) >> bg_info[bg].tw;
   y = (y & bg_info[bg].my) >> bg_info[bg].th;
@@ -51,7 +51,7 @@ uint16 PPU::bg_get_tile(uint16 x, uint16 y) {
     pixel_cache[x].ce_sub  = false; \
   }
 
-template<unsigned mode, unsigned bg, unsigned color_depth>
+template<uint64_t mode, uint64_t bg, uint64_t color_depth>
 void PPU::render_line_bg(uint8 pri0_pos, uint8 pri1_pos) {
   if(layer_enabled[bg][0] == false) pri0_pos = 0;
   if(layer_enabled[bg][1] == false) pri1_pos = 0;
@@ -69,7 +69,7 @@ void PPU::render_line_bg(uint8 pri0_pos, uint8 pri1_pos) {
   const uint16 tile_mask = 0x0fff >> color_depth;  //0x0fff, 0x07ff, 0x03ff
   //4 + color_depth = >>(4-6) -- / {16, 32, 64 } bytes/tile
   //index is a tile number count to add to base tile number
-  const unsigned tiledata_index = regs.bg_tdaddr[bg] >> (4 + color_depth);
+  const uint64_t tiledata_index = regs.bg_tdaddr[bg] >> (4 + color_depth);
 
   const uint8 *bg_td       = bg_tiledata[color_depth];
   const uint8 *bg_td_state = bg_tiledata_state[color_depth];
@@ -83,8 +83,8 @@ void PPU::render_line_bg(uint8 pri0_pos, uint8 pri1_pos) {
   uint16 hscroll = regs.bg_hofs[bg];
   uint16 vscroll = regs.bg_vofs[bg];
 
-  const unsigned hires = (mode == 5 || mode == 6);
-  const unsigned width = (!hires ? 256 : 512);
+  const uint64_t hires = (mode == 5 || mode == 6);
+  const uint64_t width = (!hires ? 256 : 512);
 
   if(hires) {
     hscroll <<= 1;

@@ -3,7 +3,7 @@
 
 namespace nall {
 
-void string::reserve(unsigned size_) {
+void string::reserve(uint64_t size_) {
   if(size_ > size) {
     size = size_;
     data = (char*)realloc(data, size + 1);
@@ -11,19 +11,19 @@ void string::reserve(unsigned size_) {
   }
 }
 
-unsigned string::length() const {
+uint64_t string::length() const {
   return strlen(data);
 }
 
 string& string::assign(const char *s) {
-  unsigned length = strlen(s);
+  uint64_t length = strlen(s);
   reserve(length);
   strcpy(data, s);
   return *this;
 }
 
 string& string::append(const char *s) {
-  unsigned length = strlen(data) + strlen(s);
+  uint64_t length = strlen(data) + strlen(s);
   reserve(length);
   strcat(data, s);
   return *this;
@@ -31,7 +31,7 @@ string& string::append(const char *s) {
 
 string& string::append(bool value) { append(value ? "true" : "false"); return *this; }
 string& string::append(signed int value) { append(strsigned(value)); return *this; }
-string& string::append(unsigned int value) { append(strunsigned(value)); return *this; }
+string& string::append(uint64_t value) { append(struint64_t(value)); return *this; }
 string& string::append(double value) { append(strdouble(value)); return *this; }
 
 string::operator const char*() const {
@@ -263,10 +263,10 @@ bool string::readfile(const char *filename) {
   if(!fp) return false;
 
   fseek(fp, 0, SEEK_END);
-  unsigned size = ftell(fp);
+  uint64_t size = ftell(fp);
   rewind(fp);
   char *fdata = new char[size + 1];
-  unsigned unused = fread(fdata, 1, size, fp);
+  uint64_t unused = fread(fdata, 1, size, fp);
   fclose(fp);
   fdata[size] = 0;
   assign(fdata);
@@ -275,11 +275,11 @@ bool string::readfile(const char *filename) {
   return true;
 }
 
-optional<unsigned> lstring::find(const char *key) {
-  for(unsigned i = 0; i < size(); i++) {
-    if(operator[](i) == key) return optional<unsigned>(true, i);
+optional<uint64_t> lstring::find(const char *key) {
+  for(uint64_t i = 0; i < size(); i++) {
+    if(operator[](i) == key) return optional<uint64_t>(true, i);
   }
-  return optional<unsigned>(false, 0);
+  return optional<uint64_t>(false, 0);
 }
 
 inline lstring::lstring() {

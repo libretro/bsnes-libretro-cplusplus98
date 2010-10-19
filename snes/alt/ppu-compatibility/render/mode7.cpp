@@ -12,7 +12,7 @@
 //--s---vvvvvvvvvv -> ssssssvvvvvvvvvv
 #define CLIP(x) ( ((x) & 0x2000) ? ( (x) | ~0x03ff) : ((x) & 0x03ff) )
 
-template<unsigned bg>
+template<uint64_t bg>
 void PPU::render_line_mode7(uint8 pri0_pos, uint8 pri1_pos) {
   if(layer_enabled[bg][0] == false) pri0_pos = 0;
   if(layer_enabled[bg][1] == false) pri1_pos = 0;

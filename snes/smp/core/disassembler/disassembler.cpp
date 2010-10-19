@@ -22,8 +22,8 @@ void SMPcore::disassemble_opcode(char *output, uint16 addr) {
   op0 = disassemble_read(addr + 1);
   op1 = disassemble_read(addr + 2);
   opw = (op0) | (op1 << 8);
-  opdp0 = ((unsigned)regs.p.p << 8) + op0;
-  opdp1 = ((unsigned)regs.p.p << 8) + op1;
+  opdp0 = ((uint64_t)regs.p.p << 8) + op0;
+  opdp1 = ((uint64_t)regs.p.p << 8) + op1;
 
   strcpy(t, "                       ");
 

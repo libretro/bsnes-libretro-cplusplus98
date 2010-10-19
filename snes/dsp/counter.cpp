@@ -44,9 +44,9 @@ inline void DSP::counter_tick() {
 
 //return true if counter event should trigger
 
-inline bool DSP::counter_poll(unsigned rate) {
+inline bool DSP::counter_poll(uint64_t rate) {
   if(rate == 0) return false;
-  return (((unsigned)state.counter + counter_offset[rate]) % counter_rate[rate]) == 0;
+  return (((uint64_t)state.counter + counter_offset[rate]) % counter_rate[rate]) == 0;
 }
 
 #endif

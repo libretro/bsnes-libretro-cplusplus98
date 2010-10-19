@@ -81,7 +81,7 @@ void SuperFX::serialize(serializer &s) {
   s.array(cache.buffer);
   s.array(cache.valid);
 
-  for(unsigned i = 0; i < 2; i++) {
+  for(uint64_t i = 0; i < 2; i++) {
     s.integer(pixelcache[i].offset);
     s.integer(pixelcache[i].bitpend);
     s.array(pixelcache[i].data);

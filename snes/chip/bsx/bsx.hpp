@@ -5,8 +5,8 @@ public:
   void power();
   void reset();
 
-  uint8 mmio_read(unsigned addr);
-  void mmio_write(unsigned addr, uint8 data);
+  uint8 mmio_read(uint64_t addr);
+  void mmio_write(uint64_t addr, uint8 data);
 
 private:
   struct {
@@ -29,8 +29,8 @@ public:
   void power();
   void reset();
 
-  uint8 mmio_read(unsigned addr);
-  void mmio_write(unsigned addr, uint8 data);
+  uint8 mmio_read(uint64_t addr);
+  void mmio_write(uint64_t addr, uint8 data);
 
   BSXCart();
   ~BSXCart();
@@ -50,13 +50,13 @@ public:
   void power();
   void reset();
 
-  unsigned size() const;
-  uint8 read(unsigned addr);
-  void write(unsigned addr, uint8 data);
+  uint64_t size() const;
+  uint8 read(uint64_t addr);
+  void write(uint64_t addr, uint8 data);
 
 private:
   struct {
-    unsigned command;
+    uint64_t command;
     uint8 write_old;
     uint8 write_new;
 

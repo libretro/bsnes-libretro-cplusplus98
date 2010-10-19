@@ -42,8 +42,8 @@ CPUDebugger::~CPUDebugger() {
   delete[] usage;
 }
 
-bool CPUDebugger::property(unsigned id, string &name, string &value) {
-  unsigned n = 0;
+bool CPUDebugger::property(uint64_t id, string &name, string &value) {
+  uint64_t n = 0;
 
   #define item(name_, value_) \
   if(id == n++) { \
@@ -99,15 +99,15 @@ bool CPUDebugger::property(unsigned id, string &name, string &value) {
   item("V-Time", string("0x", strhex<4>(status.virq_pos)));
 
   //$420b
-  unsigned dma_enable = 0;
-  for(unsigned n = 0; n < 8; n++) dma_enable |= channel[n].dma_enabled << n;
+  uint64_t dma_enable = 0;
+  for(uint64_t n = 0; n < 8; n++) dma_enable |= channel[n].dma_enabled << n;
 
   item("$420b", "");
   item("DMA Enable", string("0x", strhex<2>(dma_enable)));
 
   //$420c
-  unsigned hdma_enable = 0;
-  for(unsigned n = 0; n < 8; n++) hdma_enable |= channel[n].hdma_enabled << n;
+  uint64_t hdma_enable = 0;
+  for(uint64_t n = 0; n < 8; n++) hdma_enable |= channel[n].hdma_enabled << n;
 
   item("$420c", "");
   item("HDMA Enable", string("0x", strhex<2>(hdma_enable)));
@@ -116,7 +116,7 @@ bool CPUDebugger::property(unsigned id, string &name, string &value) {
   item("$420d", "");
   item("FastROM Enable", status.rom_speed == 6);
 
-  for(unsigned i = 0; i < 8; i++) {
+  for(uint64_t i = 0; i < 8; i++) {
     item(string("DMA Channel ", i), "");
 
     //$43x0
@@ -124,7 +124,7 @@ bool CPUDebugger::property(unsigned id, string &name, string &value) {
     item("Indirect", channel[i].indirect);
     item("Reverse Transfer", channel[i].reverse_transfer);
     item("Fixed Transfer", channel[i].fixed_transfer);
-    item("Transfer Mode", (unsigned)channel[i].transfer_mode);
+    item("Transfer Mode", (uint64_t)channel[i].transfer_mode);
 
     //$43x1
     item("B-Bus Address", string("0x", strhex<4>(channel[i].dest_addr)));

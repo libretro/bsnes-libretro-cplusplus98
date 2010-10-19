@@ -1,18 +1,18 @@
 //Memory
 
-unsigned Memory::size() const { return 0; }
+uint64_t Memory::size() const { return 0; }
 
 //StaticRAM
 
 uint8* StaticRAM::data() { return data_; }
-unsigned StaticRAM::size() const { return size_; }
+uint64_t StaticRAM::size() const { return size_; }
 
-uint8 StaticRAM::read(unsigned addr) { return data_[addr]; }
-void StaticRAM::write(unsigned addr, uint8 n) { data_[addr] = n; }
-uint8& StaticRAM::operator[](unsigned addr) { return data_[addr]; }
-const uint8& StaticRAM::operator[](unsigned addr) const { return data_[addr]; }
+uint8 StaticRAM::read(uint64_t addr) { return data_[addr]; }
+void StaticRAM::write(uint64_t addr, uint8 n) { data_[addr] = n; }
+uint8& StaticRAM::operator[](uint64_t addr) { return data_[addr]; }
+const uint8& StaticRAM::operator[](uint64_t addr) const { return data_[addr]; }
 
-StaticRAM::StaticRAM(unsigned n) : size_(n) { data_ = new uint8[size_]; }
+StaticRAM::StaticRAM(uint64_t n) : size_(n) { data_ = new uint8[size_]; }
 StaticRAM::~StaticRAM() { delete[] data_; }
 
 //MappedRAM
@@ -26,13 +26,13 @@ void MappedRAM::reset() {
   write_protect_ = false;
 }
 
-void MappedRAM::map(uint8 *source, unsigned length) {
+void MappedRAM::map(uint8 *source, uint64_t length) {
   reset();
   data_ = source;
   size_ = data_ && length > 0 ? length : -1U;
 }
 
-void MappedRAM::copy(const uint8 *data, unsigned size) {
+void MappedRAM::copy(const uint8 *data, uint64_t size) {
   if(!data_) {
     size_ = (size & ~255) + ((bool)(size & 255) << 8);
     data_ = new uint8[size_]();
@@ -42,11 +42,11 @@ void MappedRAM::copy(const uint8 *data, unsigned size) {
 
 void MappedRAM::write_protect(bool status) { write_protect_ = status; }
 uint8* MappedRAM::data() { return data_; }
-unsigned MappedRAM::size() const { return size_; }
+uint64_t MappedRAM::size() const { return size_; }
 
-uint8 MappedRAM::read(unsigned addr) { return data_[addr]; }
-void MappedRAM::write(unsigned addr, uint8 n) { if(!write_protect_) data_[addr] = n; }
-const uint8& MappedRAM::operator[](unsigned addr) const { return data_[addr]; }
+uint8 MappedRAM::read(uint64_t addr) { return data_[addr]; }
+void MappedRAM::write(uint64_t addr, uint8 n) { if(!write_protect_) data_[addr] = n; }
+const uint8& MappedRAM::operator[](uint64_t addr) const { return data_[addr]; }
 MappedRAM::MappedRAM() : data_(0), size_(-1U), write_protect_(false) {}
 
 //Bus

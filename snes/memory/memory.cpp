@@ -19,37 +19,37 @@ namespace memory {
   UnmappedMMIO mmio_unmapped;
 };
 
-unsigned UnmappedMemory::size() const { return 16 * 1024 * 1024; }
-uint8 UnmappedMemory::read(unsigned) { return cpu.regs.mdr; }
-void UnmappedMemory::write(unsigned, uint8) {}
+uint64_t UnmappedMemory::size() const { return 16 * 1024 * 1024; }
+uint8 UnmappedMemory::read(uint64_t) { return cpu.regs.mdr; }
+void UnmappedMemory::write(uint64_t, uint8) {}
 
-uint8 UnmappedMMIO::mmio_read(unsigned) { return cpu.regs.mdr; }
-void UnmappedMMIO::mmio_write(unsigned, uint8) {}
+uint8 UnmappedMMIO::mmio_read(uint64_t) { return cpu.regs.mdr; }
+void UnmappedMMIO::mmio_write(uint64_t, uint8) {}
 
-MMIO* MMIOAccess::handle(unsigned addr) {
+MMIO* MMIOAccess::handle(uint64_t addr) {
   return mmio[addr & 0x7fff];
 }
 
-void MMIOAccess::map(unsigned addr, MMIO &access) {
+void MMIOAccess::map(uint64_t addr, MMIO &access) {
   mmio[addr & 0x7fff] = &access;
 }
 
-uint8 MMIOAccess::read(unsigned addr) {
+uint8 MMIOAccess::read(uint64_t addr) {
   return mmio[addr & 0x7fff]->mmio_read(addr);
 }
 
-void MMIOAccess::write(unsigned addr, uint8 data) {
+void MMIOAccess::write(uint64_t addr, uint8 data) {
   mmio[addr & 0x7fff]->mmio_write(addr, data);
 }
 
 MMIOAccess::MMIOAccess() {
-  for(unsigned i = 0; i < 0x8000; i++) mmio[i] = &memory::mmio_unmapped;
+  for(uint64_t i = 0; i < 0x8000; i++) mmio[i] = &memory::mmio_unmapped;
 }
 
-unsigned Bus::mirror(unsigned addr, unsigned size) {
-  unsigned base = 0;
+uint64_t Bus::mirror(uint64_t addr, uint64_t size) {
+  uint64_t base = 0;
   if(size) {
-    unsigned mask = 1 << 23;
+    uint64_t mask = 1 << 23;
     while(addr >= size) {
       while(!(addr & mask)) mask >>= 1;
       addr -= mask;
@@ -64,7 +64,7 @@ unsigned Bus::mirror(unsigned addr, unsigned size) {
   return base;
 }
 
-void Bus::map(unsigned addr, Memory &access, unsigned offset) {
+void Bus::map(uint64_t addr, Memory &access, uint64_t offset) {
   Page &p = page[addr >> 8];
   p.access = &access;
   p.offset = offset - addr;
@@ -74,7 +74,7 @@ void Bus::map(
   MapMode::e mode,
   uint8  bank_lo, uint8  bank_hi,
   uint16 addr_lo, uint16 addr_hi,
-  Memory &access, unsigned offset, unsigned size
+  Memory &access, uint64_t offset, uint64_t size
 ) {
   assert(bank_lo <= bank_hi);
   assert(addr_lo <= addr_hi);
@@ -82,20 +82,20 @@ void Bus::map(
 
   uint8 page_lo = addr_lo >> 8;
   uint8 page_hi = addr_hi >> 8;
-  unsigned index = 0;
+  uint64_t index = 0;
 
   switch(mode) {
     case MapMode::Direct: {
-      for(unsigned bank = bank_lo; bank <= bank_hi; bank++) {
-        for(unsigned page = page_lo; page <= page_hi; page++) {
+      for(uint64_t bank = bank_lo; bank <= bank_hi; bank++) {
+        for(uint64_t page = page_lo; page <= page_hi; page++) {
           map((bank << 16) + (page << 8), access, (bank << 16) + (page << 8));
         }
       }
     } break;
 
     case MapMode::Linear: {
-      for(unsigned bank = bank_lo; bank <= bank_hi; bank++) {
-        for(unsigned page = page_lo; page <= page_hi; page++) {
+      for(uint64_t bank = bank_lo; bank <= bank_hi; bank++) {
+        for(uint64_t page = page_lo; page <= page_hi; page++) {
           map((bank << 16) + (page << 8), access, mirror(offset + index, access.size()));
           index += 256;
           if(size) index %= size;
@@ -104,11 +104,11 @@ void Bus::map(
     } break;
 
     case MapMode::Shadow: {
-      for(unsigned bank = bank_lo; bank <= bank_hi; bank++) {
+      for(uint64_t bank = bank_lo; bank <= bank_hi; bank++) {
         index += page_lo * 256;
         if(size) index %= size;
 
-        for(unsigned page = page_lo; page <= page_hi; page++) {
+        for(uint64_t page = page_lo; page <= page_hi; page++) {
           map((bank << 16) + (page << 8), access, mirror(offset + index, access.size()));
           index += 256;
           if(size) index %= size;
@@ -137,7 +137,7 @@ void Bus::map_reset() {
   map(MapMode::Direct, 0x00, 0xff, 0x0000, 0xffff, memory::memory_unmapped);
   map(MapMode::Direct, 0x00, 0x3f, 0x2000, 0x5fff, memory::mmio);
   map(MapMode::Direct, 0x80, 0xbf, 0x2000, 0x5fff, memory::mmio);
-  for(unsigned i = 0x2000; i <= 0x5fff; i++) memory::mmio.map(i, memory::mmio_unmapped);
+  for(uint64_t i = 0x2000; i <= 0x5fff; i++) memory::mmio.map(i, memory::mmio_unmapped);
 }
 
 void Bus::map_xml() {
@@ -145,7 +145,7 @@ void Bus::map_xml() {
     if(m.memory) {
       map(m.mode.i, m.banklo, m.bankhi, m.addrlo, m.addrhi, *m.memory, m.offset, m.size);
     } else if(m.mmio) {
-      for(unsigned i = m.addrlo; i <= m.addrhi; i++) memory::mmio.map(i, *m.mmio);
+      for(uint64_t i = m.addrlo; i <= m.addrhi; i++) memory::mmio.map(i, *m.mmio);
     }
   }
 }

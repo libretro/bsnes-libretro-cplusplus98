@@ -10,21 +10,21 @@ public:
   enum { Breakpoints = 8 };
   struct Breakpoint {
     bool enabled;
-    unsigned addr;
+    uint64_t addr;
     signed data;  //-1 = unused
     struct Mode{ enum e{ Exec, Read, Write } i; } mode;
     struct Source{ enum e{ CPUBus, APURAM, VRAM, OAM, CGRAM } i; } source;
-    unsigned counter;  //number of times breakpoint has been hit since being set
+    uint64_t counter;  //number of times breakpoint has been hit since being set
   } breakpoint[Breakpoints];
-  unsigned breakpoint_hit;
-  void breakpoint_test(Breakpoint::Source::e source, Breakpoint::Mode::e mode, unsigned addr, uint8 data);
+  uint64_t breakpoint_hit;
+  void breakpoint_test(Breakpoint::Source::e source, Breakpoint::Mode::e mode, uint64_t addr, uint8 data);
 
   bool step_cpu;
   bool step_smp;
 
   struct MemorySource{ enum e{ CPUBus, APURAM, VRAM, OAM, CGRAM } i; };
-  uint8 read(MemorySource::e, unsigned addr);
-  void write(MemorySource::e, unsigned addr, uint8 data);
+  uint8 read(MemorySource::e, uint64_t addr);
+  void write(MemorySource::e, uint64_t addr, uint8 data);
 
   Debugger();
 };

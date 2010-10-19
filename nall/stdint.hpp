@@ -15,10 +15,10 @@
   typedef int32_t intptr_t;
   #endif
 
-  typedef unsigned char uint8_t;
-  typedef unsigned short uint16_t;
-  typedef unsigned int uint32_t;
-  typedef unsigned long long uint64_t;
+  typedef uint64_t char uint8_t;
+  typedef uint64_t short uint16_t;
+  typedef uint64_t uint32_t;
+  typedef uint64_t long long uint64_t;
   typedef uint64_t uintmax_t;
   #if defined(_WIN64)
   typedef uint64_t uintptr_t;

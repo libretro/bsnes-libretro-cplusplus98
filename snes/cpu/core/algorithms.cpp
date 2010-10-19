@@ -277,7 +277,7 @@ inline void CPUcore::op_lsr_w() {
 }
 
 inline void CPUcore::op_rol_b() {
-  unsigned carry = (unsigned)regs.p.c;
+  uint64_t carry = (uint64_t)regs.p.c;
   regs.p.c = rd.l & 0x80;
   rd.l = (rd.l << 1) | carry;
   regs.p.n = rd.l & 0x80;
@@ -285,7 +285,7 @@ inline void CPUcore::op_rol_b() {
 }
 
 inline void CPUcore::op_rol_w() {
-  unsigned carry = (unsigned)regs.p.c;
+  uint64_t carry = (uint64_t)regs.p.c;
   regs.p.c = rd.w & 0x8000;
   rd.w = (rd.w << 1) | carry;
   regs.p.n = rd.w & 0x8000;
@@ -293,7 +293,7 @@ inline void CPUcore::op_rol_w() {
 }
 
 inline void CPUcore::op_ror_b() {
-  unsigned carry = (unsigned)regs.p.c << 7;
+  uint64_t carry = (uint64_t)regs.p.c << 7;
   regs.p.c = rd.l & 1;
   rd.l = carry | (rd.l >> 1);
   regs.p.n = rd.l & 0x80;
@@ -301,7 +301,7 @@ inline void CPUcore::op_ror_b() {
 }
 
 inline void CPUcore::op_ror_w() {
-  unsigned carry = (unsigned)regs.p.c << 15;
+  uint64_t carry = (uint64_t)regs.p.c << 15;
   regs.p.c = rd.w & 1;
   rd.w = carry | (rd.w >> 1);
   regs.p.n = rd.w & 0x8000;

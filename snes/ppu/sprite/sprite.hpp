@@ -9,8 +9,8 @@ class Sprite {
     uint8 priority;
     uint8 palette;
     bool size;
-    unsigned width() const;
-    unsigned height() const;
+    uint64_t width() const;
+    uint64_t height() const;
   } list[128];
 
   struct TileItem {
@@ -22,11 +22,11 @@ class Sprite {
   };
 
   struct State {
-    unsigned x;
-    unsigned y;
+    uint64_t x;
+    uint64_t y;
 
-    unsigned item_count;
-    unsigned tile_count;
+    uint64_t item_count;
+    uint64_t tile_count;
 
     bool active;
     uint8 item[2][32];
@@ -43,10 +43,10 @@ class Sprite {
     uint16 tiledata_addr;
     uint8 first_sprite;
 
-    unsigned priority0;
-    unsigned priority1;
-    unsigned priority2;
-    unsigned priority3;
+    uint64_t priority0;
+    uint64_t priority1;
+    uint64_t priority2;
+    uint64_t priority3;
 
     bool time_over;
     bool range_over;
@@ -54,13 +54,13 @@ class Sprite {
 
   struct Output {
     struct Pixel {
-      unsigned priority;  //0 = none (transparent)
+      uint64_t priority;  //0 = none (transparent)
       uint8 palette;
     } main, sub;
   } output;
 
   //list.cpp
-  void update(unsigned addr, uint8 data);
+  void update(uint64_t addr, uint8 data);
 
   //sprite.cpp
   void address_reset();

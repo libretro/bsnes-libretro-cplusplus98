@@ -18,14 +18,14 @@ void OBC1::power() {
 }
 
 void OBC1::reset() {
-  for(unsigned i = 0x0000; i <= 0x1fff; i++) ram_write(i, 0xff);
+  for(uint64_t i = 0x0000; i <= 0x1fff; i++) ram_write(i, 0xff);
 
   status.baseptr = (ram_read(0x1ff5) & 1) ? 0x1800 : 0x1c00;
   status.address = (ram_read(0x1ff6) & 0x7f);
   status.shift   = (ram_read(0x1ff6) & 3) << 1;
 }
 
-uint8 OBC1::read(unsigned addr) {
+uint8 OBC1::read(uint64_t addr) {
   addr &= 0x1fff;
   if((addr & 0x1ff8) != 0x1ff0) return ram_read(addr);
 
@@ -39,7 +39,7 @@ uint8 OBC1::read(unsigned addr) {
   }
 }
 
-void OBC1::write(unsigned addr, uint8 data) {
+void OBC1::write(uint64_t addr, uint8 data) {
   addr &= 0x1fff;
   if((addr & 0x1ff8) != 0x1ff0) return ram_write(addr, data);
 
@@ -68,11 +68,11 @@ void OBC1::write(unsigned addr, uint8 data) {
   }
 }
 
-uint8 OBC1::ram_read(unsigned addr) {
+uint8 OBC1::ram_read(uint64_t addr) {
   return memory::cartram.read(addr & 0x1fff);
 }
 
-void OBC1::ram_write(unsigned addr, uint8 data) {
+void OBC1::ram_write(uint64_t addr, uint8 data) {
   memory::cartram.write(addr & 0x1fff, data);
 }
 

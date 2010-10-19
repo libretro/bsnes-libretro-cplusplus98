@@ -5,8 +5,8 @@ public:
   void power();
   void reset();
 
-  uint8 mmio_read(unsigned addr);
-  void mmio_write(unsigned addr, uint8 data);
+  uint8 mmio_read(uint64_t addr);
+  void mmio_write(uint64_t addr, uint8 data);
 
   enum mode_t { Waiting, BoardUpload };
   struct regs_t {
@@ -16,8 +16,8 @@ public:
     uint8 r3800_01;
     uint8 r3804;
 
-    unsigned w3804;
-    unsigned counter;
+    uint64_t w3804;
+    uint64_t counter;
   } regs;
 
   enum PieceID {

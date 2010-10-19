@@ -1,7 +1,7 @@
 class SMP : public Processor, public SMPcore {
 public:
   enum{ Threaded = true };
-  alwaysinline void step(unsigned clocks);
+  alwaysinline void step(uint64_t clocks);
   alwaysinline void synchronize_cpu();
   alwaysinline void synchronize_dsp();
 
@@ -24,9 +24,9 @@ private:
 
   struct {
     //timing
-    unsigned clock_counter;
-    unsigned dsp_counter;
-    unsigned timer_step;
+    uint64_t clock_counter;
+    uint64_t dsp_counter;
+    uint64_t timer_step;
 
     //$00f0
     uint8 clock_speed;

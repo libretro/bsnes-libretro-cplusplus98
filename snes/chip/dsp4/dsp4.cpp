@@ -38,7 +38,7 @@ void DSP4::reset() {
   DSP4i::InitDSP4();
 }
 
-uint8 DSP4::read(unsigned addr) {
+uint8 DSP4::read(uint64_t addr) {
   addr &= 0xffff;
   if(addr < 0xc000) {
     DSP4i::dsp4_address = addr;
@@ -48,7 +48,7 @@ uint8 DSP4::read(unsigned addr) {
   return 0x80;
 }
 
-void DSP4::write(unsigned addr, uint8 data) {
+void DSP4::write(uint64_t addr, uint8 data) {
   addr &= 0xffff;
   if(addr < 0xc000) {
     DSP4i::dsp4_address = addr;

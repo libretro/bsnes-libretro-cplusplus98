@@ -18,19 +18,19 @@ void Cheat::synchronize() {
   memset(bitmask, 0x00, sizeof bitmask);
   code_enabled = false;
 
-  for(unsigned i = 0; i < size(); i++) {
+  for(uint64_t i = 0; i < size(); i++) {
     const CheatCode &code = operator[](i);
     if(code.enabled == false) continue;
 
-    for(unsigned n = 0; n < code.addr.size(); n++) {
+    for(uint64_t n = 0; n < code.addr.size(); n++) {
       code_enabled = true;
 
-      unsigned addr = mirror(code.addr[n]);
+      uint64_t addr = mirror(code.addr[n]);
       bitmask[addr >> 3] |= 1 << (addr & 7);
       if((addr & 0xffe000) == 0x7e0000) {
         //mirror $7e:0000-1fff to $00-3f|80-bf:0000-1fff
-        unsigned mirroraddr;
-        for(unsigned x = 0; x <= 0x3f; x++) {
+        uint64_t mirroraddr;
+        for(uint64_t x = 0; x <= 0x3f; x++) {
           mirroraddr = ((0x00 + x) << 16) + (addr & 0x1fff);
           bitmask[mirroraddr >> 3] |= 1 << (mirroraddr & 7);
 
@@ -44,14 +44,14 @@ void Cheat::synchronize() {
   cheat_enabled = system_enabled && code_enabled;
 }
 
-bool Cheat::read(unsigned addr, uint8 &data) const {
+bool Cheat::read(uint64_t addr, uint8 &data) const {
   addr = mirror(addr);
 
-  for(unsigned i = 0; i < size(); i++) {
+  for(uint64_t i = 0; i < size(); i++) {
     const CheatCode &code = operator[](i);
     if(code.enabled == false) continue;
 
-    for(unsigned n = 0; n < code.addr.size(); n++) {
+    for(uint64_t n = 0; n < code.addr.size(); n++) {
       if(addr == mirror(code.addr[n])) {
         data = code.data[n];
         return true;
@@ -71,7 +71,7 @@ Cheat::Cheat() {
 //encode / decode
 //===============
 
-bool Cheat::decode(const char *s, unsigned &addr, uint8 &data, Type &type) {
+bool Cheat::decode(const char *s, uint64_t &addr, uint8 &data, Type &type) {
   string t = s;
   t.lower();
 
@@ -81,10 +81,10 @@ bool Cheat::decode(const char *s, unsigned &addr, uint8 &data, Type &type) {
     //strip ':'
     if(strlen(t) == 9 && t[6] == ':') t = string() << substr(t, 0, 6) << substr(t, 7);
     //validate input
-    for(unsigned i = 0; i < 8; i++) if(!ischr(t[i])) return false;
+    for(uint64_t i = 0; i < 8; i++) if(!ischr(t[i])) return false;
 
     type.i = Type::ProActionReplay;
-    unsigned r = strhex((const char*)t);
+    uint64_t r = strhex((const char*)t);
     addr = r >> 8;
     data = r & 0xff;
     return true;
@@ -92,11 +92,11 @@ bool Cheat::decode(const char *s, unsigned &addr, uint8 &data, Type &type) {
     //strip '-'
     t = string() << substr(t, 0, 4) << substr(t, 5);
     //validate input
-    for(unsigned i = 0; i < 8; i++) if(!ischr(t[i])) return false;
+    for(uint64_t i = 0; i < 8; i++) if(!ischr(t[i])) return false;
 
     type.i = Type::GameGenie;
     t.transform("df4709156bc8a23e", "0123456789abcdef");
-    unsigned r = strhex((const char*)t);
+    uint64_t r = strhex((const char*)t);
     //8421 8421 8421 8421 8421 8421
     //abcd efgh ijkl mnop qrst uvwx
     //ijkl qrst opab cduv wxef ghmn
@@ -121,14 +121,14 @@ bool Cheat::decode(const char *s, unsigned &addr, uint8 &data, Type &type) {
   #undef ischr
 }
 
-bool Cheat::encode(string &s, unsigned addr, uint8 data, Type type) {
+bool Cheat::encode(string &s, uint64_t addr, uint8 data, Type type) {
   char t[16];
 
   if(type.i == Type::ProActionReplay) {
     s = string(strhex<6>(addr), strhex<2>(data));
     return true;
   } else if(type.i == Type::GameGenie) {
-    unsigned r = addr;
+    uint64_t r = addr;
     addr = (!!(r & 0x008000) << 23) | (!!(r & 0x004000) << 22)
          | (!!(r & 0x002000) << 21) | (!!(r & 0x001000) << 20)
          | (!!(r & 0x000080) << 19) | (!!(r & 0x000040) << 18)
@@ -153,7 +153,7 @@ bool Cheat::encode(string &s, unsigned addr, uint8 data, Type type) {
 //internal
 //========
 
-unsigned Cheat::mirror(unsigned addr) const {
+uint64_t Cheat::mirror(uint64_t addr) const {
   //$00-3f|80-bf:0000-1fff -> $7e:0000-1fff
   if((addr & 0x40e000) == 0x000000) return (0x7e0000 + (addr & 0x1fff));  
   return addr;
@@ -170,8 +170,8 @@ bool CheatCode::operator=(string s) {
   lstring list;
   list.split("+", s.replace(" ", ""));
 
-  for(unsigned i = 0; i < list.size(); i++) {
-    unsigned addr_;
+  for(uint64_t i = 0; i < list.size(); i++) {
+    uint64_t addr_;
     uint8 data_;
     Cheat::Type type_;
     if(Cheat::decode(list[i], addr_, data_, type_) == false) {

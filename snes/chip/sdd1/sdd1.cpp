@@ -13,7 +13,7 @@ void SDD1::init() {}
 void SDD1::enable() {
   //hook S-CPU DMA MMIO registers to gather information for struct dma[];
   //buffer address and transfer size information for use in SDD1::read()
-  for(unsigned i = 0x4300; i <= 0x437f; i++) {
+  for(uint64_t i = 0x4300; i <= 0x437f; i++) {
     cpu_mmio[i & 0x7f] = memory::mmio.handle(i);
     memory::mmio.map(i, *this);
   }
@@ -32,7 +32,7 @@ void SDD1::reset() {
   mmc[2] = 2 << 20;
   mmc[3] = 3 << 20;
 
-  for(unsigned i = 0; i < 8; i++) {
+  for(uint64_t i = 0; i < 8; i++) {
     dma[i].addr = 0;
     dma[i].size = 0;
   }
@@ -40,7 +40,7 @@ void SDD1::reset() {
   buffer.ready = false;
 }
 
-uint8 SDD1::mmio_read(unsigned addr) {
+uint8 SDD1::mmio_read(uint64_t addr) {
   addr &= 0xffff;
 
   if((addr & 0x4380) == 0x4300) {
@@ -57,11 +57,11 @@ uint8 SDD1::mmio_read(unsigned addr) {
   return cpu.regs.mdr;
 }
 
-void SDD1::mmio_write(unsigned addr, uint8 data) {
+void SDD1::mmio_write(uint64_t addr, uint8 data) {
   addr &= 0xffff;
 
   if((addr & 0x4380) == 0x4300) {
-    unsigned channel = (addr >> 4) & 7;
+    uint64_t channel = (addr >> 4) & 7;
     switch(addr & 15) {
       case 2: dma[channel].addr = (dma[channel].addr & 0xffff00) + (data <<  0); break;
       case 3: dma[channel].addr = (dma[channel].addr & 0xff00ff) + (data <<  8); break;
@@ -102,10 +102,10 @@ void SDD1::mmio_write(unsigned addr, uint8 data) {
 //
 //the actual S-DD1 transfer can occur on any channel, but it is most likely limited to
 //one transfer per $420b write (for spooling purposes). however, this is not known for certain.
-uint8 SDD1::read(unsigned addr) {
+uint8 SDD1::read(uint64_t addr) {
   if(sdd1_enable & xfer_enable) {
     //at least one channel has S-DD1 decompression enabled ...
-    for(unsigned i = 0; i < 8; i++) {
+    for(uint64_t i = 0; i < 8; i++) {
       if(sdd1_enable & xfer_enable & (1 << i)) {
         //S-DD1 always uses fixed transfer mode, so address will not change during transfer
         if(addr == dma[i].addr) {
@@ -142,7 +142,7 @@ uint8 SDD1::read(unsigned addr) {
   return memory::cartrom.read(mmc[(addr >> 20) & 3] + (addr & 0x0fffff));
 }
 
-void SDD1::write(unsigned addr, uint8 data) {
+void SDD1::write(uint64_t addr, uint8 data) {
 }
 
 SDD1::SDD1() {

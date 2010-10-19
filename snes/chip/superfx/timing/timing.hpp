@@ -1,8 +1,8 @@
-unsigned cache_access_speed;
-unsigned memory_access_speed;
+uint64_t cache_access_speed;
+uint64_t memory_access_speed;
 bool r15_modified;
 
-void add_clocks(unsigned clocks);
+void add_clocks(uint64_t clocks);
 
 void rombuffer_sync();
 void rombuffer_update();

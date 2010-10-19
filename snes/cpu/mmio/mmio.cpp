@@ -130,7 +130,7 @@ void CPU::mmio_w420a(uint8 data) {
 
 //DMAEN
 void CPU::mmio_w420b(uint8 data) {
-  for(unsigned i = 0; i < 8; i++) {
+  for(uint64_t i = 0; i < 8; i++) {
     channel[i].dma_enabled = data & (1 << i);
   }
   if(data) status.dma_pending = true;
@@ -138,7 +138,7 @@ void CPU::mmio_w420b(uint8 data) {
 
 //HDMAEN
 void CPU::mmio_w420c(uint8 data) {
-  for(unsigned i = 0; i < 8; i++) {
+  for(uint64_t i = 0; i < 8; i++) {
     channel[i].hdma_enabled = data & (1 << i);
   }
 }
@@ -410,7 +410,7 @@ void CPU::mmio_reset() {
   alu.shift = 0;
 }
 
-uint8 CPU::mmio_read(unsigned addr) {
+uint8 CPU::mmio_read(uint64_t addr) {
   addr &= 0xffff;
 
   //APU
@@ -421,7 +421,7 @@ uint8 CPU::mmio_read(unsigned addr) {
 
   //DMA
   if((addr & 0xff80) == 0x4300) {  //$4300-$437f
-    unsigned i = (addr >> 4) & 7;
+    uint64_t i = (addr >> 4) & 7;
     switch(addr & 0xf) {
       case 0x0: return mmio_r43x0(i);
       case 0x1: return mmio_r43x1(i);
@@ -467,7 +467,7 @@ uint8 CPU::mmio_read(unsigned addr) {
   return regs.mdr;
 }
 
-void CPU::mmio_write(unsigned addr, uint8 data) {
+void CPU::mmio_write(uint64_t addr, uint8 data) {
   addr &= 0xffff;
 
   //APU
@@ -479,7 +479,7 @@ void CPU::mmio_write(unsigned addr, uint8 data) {
 
   //DMA
   if((addr & 0xff80) == 0x4300) {  //$4300-$437f
-    unsigned i = (addr >> 4) & 7;
+    uint64_t i = (addr >> 4) & 7;
     switch(addr & 0xf) {
       case 0x0: mmio_w43x0(i, data); return;
       case 0x1: mmio_w43x1(i, data); return;

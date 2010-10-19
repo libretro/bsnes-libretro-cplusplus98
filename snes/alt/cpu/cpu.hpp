@@ -1,8 +1,10 @@
+#include <stdint.h>
+
 class CPU : public Processor, public CPUcore, public PPUcounter, public MMIO {
 public:
   enum{ Threaded = true };
   array<Processor*> coprocessors;
-  alwaysinline void step(unsigned clocks);
+  alwaysinline void step(uint64_t clocks);
   alwaysinline void synchronize_smp();
   void synchronize_ppu();
   void synchronize_coprocessor();
@@ -12,12 +14,12 @@ public:
   bool interrupt_pending();
   uint8 port_read(uint8 port);
   void port_write(uint8 port, uint8 data);
-  uint8 mmio_read(unsigned addr);
-  void mmio_write(unsigned addr, uint8 data);
+  uint8 mmio_read(uint64_t addr);
+  void mmio_write(uint64_t addr, uint8 data);
 
   void op_io();
-  debugvirtual uint8 op_read(unsigned addr);
-  debugvirtual void op_write(unsigned addr, uint8 data);
+  debugvirtual uint8 op_read(uint64_t addr);
+  debugvirtual void op_write(uint64_t addr, uint8 data);
 
   void enter();
   void power();
@@ -41,29 +43,29 @@ private:
       ControllerLatch,
     };
   };
-  nall::priority_queue<unsigned> queue;
-  void queue_event(unsigned id);
+  nall::priority_queue<uint64_t> queue;
+  void queue_event(uint64_t id);
   void last_cycle();
-  void add_clocks(unsigned clocks);
+  void add_clocks(uint64_t clocks);
   void scanline();
   void run_auto_joypad_poll();
 
   //memory
-  unsigned speed(unsigned addr) const;
+  uint64_t speed(uint64_t addr) const;
 
   //dma
-  bool dma_transfer_valid(uint8 bbus, unsigned abus);
-  bool dma_addr_valid(unsigned abus);
-  uint8 dma_read(unsigned abus);
-  void dma_write(bool valid, unsigned addr, uint8 data);
-  void dma_transfer(bool direction, uint8 bbus, unsigned abus);
-  uint8 dma_bbus(unsigned i, unsigned index);
-  unsigned dma_addr(unsigned i);
-  unsigned hdma_addr(unsigned i);
-  unsigned hdma_iaddr(unsigned i);
+  bool dma_transfer_valid(uint8 bbus, uint64_t abus);
+  bool dma_addr_valid(uint64_t abus);
+  uint8 dma_read(uint64_t abus);
+  void dma_write(bool valid, uint64_t addr, uint8 data);
+  void dma_transfer(bool direction, uint8 bbus, uint64_t abus);
+  uint8 dma_bbus(uint64_t i, uint64_t index);
+  uint64_t dma_addr(uint64_t i);
+  uint64_t hdma_addr(uint64_t i);
+  uint64_t hdma_iaddr(uint64_t i);
   void dma_run();
-  bool hdma_active_after(unsigned i);
-  void hdma_update(unsigned i);
+  bool hdma_active_after(uint64_t i);
+  void hdma_update(uint64_t i);
   void hdma_run();
   void hdma_init();
   void dma_reset();
@@ -114,7 +116,7 @@ private:
     bool irq_lock;
     bool hdma_pending;
 
-    unsigned wram_addr;
+    uint64_t wram_addr;
 
     bool joypad_strobe_latch;
 
@@ -133,7 +135,7 @@ private:
     uint16 htime;
     uint16 vtime;
 
-    unsigned rom_speed;
+    uint64_t rom_speed;
 
     uint16 rddiv;
     uint16 rdmpy;

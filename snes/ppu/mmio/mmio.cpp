@@ -30,14 +30,14 @@ uint16 PPU::get_vram_address() {
   return (addr << 1);
 }
 
-uint8 PPU::vram_read(unsigned addr) {
+uint8 PPU::vram_read(uint64_t addr) {
   if(regs.display_disable || vcounter() >= (!regs.overscan ? 225 : 240)) {
     return memory::vram[addr];
   }
   return 0x00;
 }
 
-void PPU::vram_write(unsigned addr, uint8 data) {
+void PPU::vram_write(uint64_t addr, uint8 data) {
   if(regs.display_disable || vcounter() >= (!regs.overscan ? 225 : 240)) {
     memory::vram[addr] = data;
   }
@@ -198,7 +198,7 @@ void PPU::mmio_w2105(uint8 data) {
 
 //MOSAIC
 void PPU::mmio_w2106(uint8 data) {
-  unsigned mosaic_size = (data >> 4) & 15;
+  uint64_t mosaic_size = (data >> 4) & 15;
   bg4.regs.mosaic = (data & 0x08 ? mosaic_size : 0);
   bg3.regs.mosaic = (data & 0x04 ? mosaic_size : 0);
   bg2.regs.mosaic = (data & 0x02 ? mosaic_size : 0);
@@ -549,21 +549,21 @@ void PPU::mmio_w2133(uint8 data) {
 
 //MPYL
 uint8 PPU::mmio_r2134() {
-  unsigned result = ((int16)regs.m7a * (int8)(regs.m7b >> 8));
+  uint64_t result = ((int16)regs.m7a * (int8)(regs.m7b >> 8));
   regs.ppu1_mdr = (result >>  0);
   return regs.ppu1_mdr;
 }
 
 //MPYM
 uint8 PPU::mmio_r2135() {
-  unsigned result = ((int16)regs.m7a * (int8)(regs.m7b >> 8));
+  uint64_t result = ((int16)regs.m7a * (int8)(regs.m7b >> 8));
   regs.ppu1_mdr = (result >>  8);
   return regs.ppu1_mdr;
 }
 
 //MPYH
 uint8 PPU::mmio_r2136() {
-  unsigned result = ((int16)regs.m7a * (int8)(regs.m7b >> 8));
+  uint64_t result = ((int16)regs.m7a * (int8)(regs.m7b >> 8));
   regs.ppu1_mdr = (result >> 16);
   return regs.ppu1_mdr;
 }
@@ -764,7 +764,7 @@ void PPU::mmio_reset() {
   regs.vcounter = 0;
 }
 
-uint8 PPU::mmio_read(unsigned addr) {
+uint8 PPU::mmio_read(uint64_t addr) {
   cpu.synchronize_ppu();
 
   switch(addr & 0xffff) {
@@ -803,7 +803,7 @@ uint8 PPU::mmio_read(unsigned addr) {
   return cpu.regs.mdr;
 }
 
-void PPU::mmio_write(unsigned addr, uint8 data) {
+void PPU::mmio_write(uint64_t addr, uint8 data) {
   cpu.synchronize_ppu();
 
   switch(addr & 0xffff) {

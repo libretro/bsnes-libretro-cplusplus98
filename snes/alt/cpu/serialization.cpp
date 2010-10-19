@@ -8,7 +8,7 @@ void CPU::serialize(serializer &s) {
   queue.serialize(s);
   s.array(port_data);
 
-  for(unsigned i = 0; i < 8; i++) {
+  for(uint64_t i = 0; i < 8; i++) {
     s.integer(channel[i].dma_enabled);
     s.integer(channel[i].hdma_enabled);
 

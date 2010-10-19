@@ -7,40 +7,40 @@ struct SA1Bus : Bus {
 };
 
 struct VSPROM : Memory {
-  unsigned size() const;
-  alwaysinline uint8 read(unsigned);
-  alwaysinline void write(unsigned, uint8);
+  uint64_t size() const;
+  alwaysinline uint8 read(uint64_t);
+  alwaysinline void write(uint64_t, uint8);
 };
 
 struct CPUIRAM : Memory {
-  unsigned size() const;
-  alwaysinline uint8 read(unsigned);
-  alwaysinline void write(unsigned, uint8);
+  uint64_t size() const;
+  alwaysinline uint8 read(uint64_t);
+  alwaysinline void write(uint64_t, uint8);
 };
 
 struct SA1IRAM : Memory {
-  unsigned size() const;
-  alwaysinline uint8 read(unsigned);
-  alwaysinline void write(unsigned, uint8);
+  uint64_t size() const;
+  alwaysinline uint8 read(uint64_t);
+  alwaysinline void write(uint64_t, uint8);
 };
 
 struct SA1BWRAM : Memory {
-  unsigned size() const;
-  alwaysinline uint8 read(unsigned);
-  alwaysinline void write(unsigned, uint8);
+  uint64_t size() const;
+  alwaysinline uint8 read(uint64_t);
+  alwaysinline void write(uint64_t, uint8);
 };
 
 struct CC1BWRAM : Memory {
-  unsigned size() const;
-  alwaysinline uint8 read(unsigned);
-  alwaysinline void write(unsigned, uint8);
+  uint64_t size() const;
+  alwaysinline uint8 read(uint64_t);
+  alwaysinline void write(uint64_t, uint8);
   bool dma;
 };
 
 struct BitmapRAM : Memory {
-  unsigned size() const;
-  alwaysinline uint8 read(unsigned);
-  alwaysinline void write(unsigned, uint8);
+  uint64_t size() const;
+  alwaysinline uint8 read(uint64_t);
+  alwaysinline void write(uint64_t, uint8);
 };
 
 namespace memory {

@@ -92,9 +92,9 @@ void PPU::serialize(serializer &s) {
 
 void PPU::Cache::serialize(serializer &s) {
   //rather than save ~512KB worth of cached tiledata, invalidate it all
-  for(unsigned i = 0; i < 4096; i++) tilevalid[0][i] = false;
-  for(unsigned i = 0; i < 2048; i++) tilevalid[1][i] = false;
-  for(unsigned i = 0; i < 1024; i++) tilevalid[2][i] = false;
+  for(uint64_t i = 0; i < 4096; i++) tilevalid[0][i] = false;
+  for(uint64_t i = 0; i < 2048; i++) tilevalid[1][i] = false;
+  for(uint64_t i = 0; i < 1024; i++) tilevalid[2][i] = false;
 }
 
 void PPU::Background::serialize(serializer &s) {
@@ -155,7 +155,7 @@ void PPU::Sprite::serialize(serializer &s) {
   s.integer(regs.time_over);
   s.integer(regs.range_over);
 
-  for(unsigned i = 0; i < 128; i++) {
+  for(uint64_t i = 0; i < 128; i++) {
     s.integer(list[i].width);
     s.integer(list[i].height);
     s.integer(list[i].x);
@@ -171,7 +171,7 @@ void PPU::Sprite::serialize(serializer &s) {
   s.integer(list_valid);
 
   s.array(itemlist);
-  for(unsigned i = 0; i < 34; i++) {
+  for(uint64_t i = 0; i < 34; i++) {
     s.integer(tilelist[i].x);
     s.integer(tilelist[i].y);
     s.integer(tilelist[i].priority);
@@ -199,7 +199,7 @@ void PPU::Screen::serialize(serializer &s) {
   s.integer(regs.color_r);
   s.integer(regs.color);
 
-  for(unsigned i = 0; i < 256; i++) {
+  for(uint64_t i = 0; i < 256; i++) {
     s.integer(output.main[i].color);
     s.integer(output.main[i].priority);
     s.integer(output.main[i].source);

@@ -1,8 +1,8 @@
 #ifdef PPU_CPP
 
-void PPU::update_sprite_list(unsigned addr, uint8 data) {
+void PPU::update_sprite_list(uint64_t addr, uint8 data) {
   if(addr < 0x0200) {
-    unsigned i = addr >> 2;
+    uint64_t i = addr >> 2;
     switch(addr & 3) {
     case 0: sprite_list[i].x = (sprite_list[i].x & 0x0100) | data; break;
     case 1: sprite_list[i].y = (data + 1) & 0xff; break;
@@ -14,7 +14,7 @@ void PPU::update_sprite_list(unsigned addr, uint8 data) {
             sprite_list[i].use_nameselect = data & 0x01;
     }
   } else {
-    unsigned i = (addr & 0x1f) << 2;
+    uint64_t i = (addr & 0x1f) << 2;
     sprite_list[i + 0].x = ((data & 0x01) << 8) | (sprite_list[i + 0].x & 0xff);
     sprite_list[i + 0].size = data & 0x02;
     sprite_list[i + 1].x = ((data & 0x04) << 6) | (sprite_list[i + 1].x & 0xff);
@@ -30,7 +30,7 @@ void PPU::build_sprite_list() {
   if(sprite_list_valid == true) return;
   sprite_list_valid = true;
 
-  for(unsigned i = 0; i < 128; i++) {
+  for(uint64_t i = 0; i < 128; i++) {
     const bool size = sprite_list[i].size;
 
     switch(cache.oam_basesize) {
@@ -111,21 +111,21 @@ void PPU::load_oam_tiles() {
   chry  &= 15;
   chry <<= 4;
 
-  for(unsigned tx = 0; tx < tile_width; tx++) {
-    unsigned sx = (x + (tx << 3)) & 511;
+  for(uint64_t tx = 0; tx < tile_width; tx++) {
+    uint64_t sx = (x + (tx << 3)) & 511;
     //ignore sprites that are offscreen, x==256 is a special case that loads all tiles in OBJ
     if(x != 256 && sx >= 256 && (sx + 7) < 512) continue;
 
     if(regs.oam_tilecount++ >= 34) break;
-    unsigned n = regs.oam_tilecount - 1;
+    uint64_t n = regs.oam_tilecount - 1;
     oam_tilelist[n].x     = sx;
     oam_tilelist[n].y     = y;
     oam_tilelist[n].pri   = spr->priority;
     oam_tilelist[n].pal   = 128 + (spr->palette << 4);
     oam_tilelist[n].hflip = spr->hflip;
 
-    unsigned mx  = (spr->hflip == false) ? tx : ((tile_width - 1) - tx);
-    unsigned pos = tdaddr + ((chry + ((chrx + mx) & 15)) << 5);
+    uint64_t mx  = (spr->hflip == false) ? tx : ((tile_width - 1) - tx);
+    uint64_t pos = tdaddr + ((chry + ((chrx + mx) & 15)) << 5);
     oam_tilelist[n].tile = (pos >> 5) & 0x07ff;
   }
 }
@@ -139,12 +139,12 @@ void PPU::render_oam_tile(int tile_num) {
     render_bg_tile<COLORDEPTH_16>(t->tile);
   }
 
-  unsigned sx = t->x;
+  uint64_t sx = t->x;
   uint8 *tile_ptr = (uint8*)oam_td + (t->tile << 6) + ((t->y & 7) << 3);
-  for(unsigned x = 0; x < 8; x++) {
+  for(uint64_t x = 0; x < 8; x++) {
     sx &= 511;
     if(sx < 256) {
-      unsigned col = *(tile_ptr + ((t->hflip == false) ? x : (7 - x)));
+      uint64_t col = *(tile_ptr + ((t->hflip == false) ? x : (7 - x)));
       if(col) {
         col += t->pal;
         oam_line_pal[sx] = col;
@@ -209,7 +209,7 @@ void PPU::render_line_oam(uint8 pri0_pos, uint8 pri1_pos, uint8 pri2_pos, uint8 
 
   if(regs.bg_enabled[OAM] == false && regs.bgsub_enabled[OAM] == false) return;
 
-  for(unsigned s = 0; s < 34; s++) {
+  for(uint64_t s = 0; s < 34; s++) {
     if(oam_tilelist[s].tile == 0xffff) continue;
     render_oam_tile(s);
   }
@@ -221,11 +221,11 @@ void PPU::render_line_oam(uint8 pri0_pos, uint8 pri1_pos, uint8 pri2_pos, uint8 
   uint8 *wt_main = window[OAM].main;
   uint8 *wt_sub  = window[OAM].sub;
 
-  unsigned pri_tbl[4] = { pri0_pos, pri1_pos, pri2_pos, pri3_pos };
+  uint64_t pri_tbl[4] = { pri0_pos, pri1_pos, pri2_pos, pri3_pos };
   for(int x = 0; x < 256; x++) {
     if(oam_line_pri[x] == OAM_PRI_NONE) continue;
 
-    unsigned pri = pri_tbl[oam_line_pri[x]];
+    uint64_t pri = pri_tbl[oam_line_pri[x]];
     if(bg_enabled    == true && !wt_main[x]) { setpixel_main(x); }
     if(bgsub_enabled == true && !wt_sub[x])  { setpixel_sub(x); }
   }

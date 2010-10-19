@@ -461,7 +461,7 @@ void Cartridge::xml_parse_cx4(xml_element &root) {
 }
 
 void Cartridge::xml_parse_necdsp(xml_element &root) {
-  unsigned program = 0;
+  uint64_t program = 0;
 
   foreach(attr, root.attribute) {
     if(attr.name == "program") {
@@ -528,7 +528,7 @@ void Cartridge::xml_parse_obc1(xml_element &root) {
 }
 
 void Cartridge::xml_parse_setadsp(xml_element &root) {
-  unsigned program = 0;
+  uint64_t program = 0;
 
   foreach(attr, root.attribute) {
     if(attr.name == "program") {
@@ -560,7 +560,7 @@ void Cartridge::xml_parse_setadsp(xml_element &root) {
 }
 
 void Cartridge::xml_parse_setarisc(xml_element &root) {
-  unsigned program = 0;
+  uint64_t program = 0;
 
   foreach(attr, root.attribute) {
     if(attr.name == "program") {

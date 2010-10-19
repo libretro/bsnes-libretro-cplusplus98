@@ -8,7 +8,7 @@ void DSP::brr_decode(voice_t &v) {
   const int scale  = (state.t_brr_header >> 4);
 
   //decode four samples
-  for(unsigned i = 0; i < 4; i++) {
+  for(uint64_t i = 0; i < 4; i++) {
     //bits 12-15 = current nybble; sign extend, then shift right to 4-bit precision
     //result: s = 4-bit sign-extended sample value
     int s = (int16)nybbles >> 12;

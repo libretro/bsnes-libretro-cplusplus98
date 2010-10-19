@@ -2,9 +2,9 @@ class DSP2 {
 public:
   struct {
     bool waiting_for_command;
-    unsigned command;
-    unsigned in_count,  in_index;
-    unsigned out_count, out_index;
+    uint64_t command;
+    uint64_t in_count,  in_index;
+    uint64_t out_count, out_index;
 
     uint8  parameters[512];
     uint8  output[512];
@@ -26,8 +26,8 @@ public:
   void power();
   void reset();
 
-  uint8 read(unsigned addr);
-  void write(unsigned addr, uint8 data);
+  uint8 read(uint64_t addr);
+  void write(uint64_t addr, uint8 data);
 
   void serialize(serializer&);
   DSP2();
@@ -43,13 +43,13 @@ protected:
 };
 
 class DSP2DR : public Memory {
-  uint8 read(unsigned addr);
-  void write(unsigned addr, uint8 data);
+  uint8 read(uint64_t addr);
+  void write(uint64_t addr, uint8 data);
 };
 
 class DSP2SR : public Memory {
-  uint8 read(unsigned addr);
-  void write(unsigned addr, uint8 data);
+  uint8 read(uint64_t addr);
+  void write(uint64_t addr, uint8 data);
 };
 
 extern DSP2 dsp2;

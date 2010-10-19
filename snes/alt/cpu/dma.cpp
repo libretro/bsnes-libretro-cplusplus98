@@ -1,12 +1,12 @@
 #ifdef CPU_CPP
 
-bool CPU::dma_transfer_valid(uint8 bbus, unsigned abus) {
+bool CPU::dma_transfer_valid(uint8 bbus, uint64_t abus) {
   //transfers from WRAM to WRAM are invalid; chip only has one address bus
   if(bbus == 0x80 && ((abus & 0xfe0000) == 0x7e0000 || (abus & 0x40e000) == 0x0000)) return false;
   return true;
 }
 
-bool CPU::dma_addr_valid(unsigned abus) {
+bool CPU::dma_addr_valid(uint64_t abus) {
   //A-bus access to B-bus or S-CPU registers are invalid
   if((abus & 0x40ff00) == 0x2100) return false;  //$[00-3f|80-bf]:[2100-21ff]
   if((abus & 0x40fe00) == 0x4000) return false;  //$[00-3f|80-bf]:[4000-41ff]
@@ -15,16 +15,16 @@ bool CPU::dma_addr_valid(unsigned abus) {
   return true;
 }
 
-uint8 CPU::dma_read(unsigned abus) {
+uint8 CPU::dma_read(uint64_t abus) {
   if(dma_addr_valid(abus) == false) return 0x00;
   return bus.read(abus);
 }
 
-void CPU::dma_write(bool valid, unsigned addr, uint8 data) {
+void CPU::dma_write(bool valid, uint64_t addr, uint8 data) {
   if(valid) bus.write(addr, data);
 }
 
-void CPU::dma_transfer(bool direction, uint8 bbus, unsigned abus) {
+void CPU::dma_transfer(bool direction, uint8 bbus, uint64_t abus) {
   if(direction == 0) {
     uint8 data = dma_read(abus);
     add_clocks(8);
@@ -36,7 +36,7 @@ void CPU::dma_transfer(bool direction, uint8 bbus, unsigned abus) {
   }
 }
 
-uint8 CPU::dma_bbus(unsigned i, unsigned index) {
+uint8 CPU::dma_bbus(uint64_t i, uint64_t index) {
   switch(channel[i].transfer_mode) { default:
     case 0: return (channel[i].dest_addr);                       //0
     case 1: return (channel[i].dest_addr + (index & 1));         //0,1
@@ -49,8 +49,8 @@ uint8 CPU::dma_bbus(unsigned i, unsigned index) {
   }
 }
 
-unsigned CPU::dma_addr(unsigned i) {
-  unsigned result = (channel[i].source_bank << 16) | (channel[i].source_addr);
+uint64_t CPU::dma_addr(uint64_t i) {
+  uint64_t result = (channel[i].source_bank << 16) | (channel[i].source_addr);
 
   if(channel[i].fixed_transfer == false) {
     if(channel[i].reverse_transfer == false) {
@@ -63,22 +63,22 @@ unsigned CPU::dma_addr(unsigned i) {
   return result;
 }
 
-unsigned CPU::hdma_addr(unsigned i) {
+uint64_t CPU::hdma_addr(uint64_t i) {
   return (channel[i].source_bank << 16) | (channel[i].hdma_addr++);
 }
 
-unsigned CPU::hdma_iaddr(unsigned i) {
+uint64_t CPU::hdma_iaddr(uint64_t i) {
   return (channel[i].indirect_bank << 16) | (channel[i].indirect_addr++);
 }
 
 void CPU::dma_run() {
   add_clocks(16);
 
-  for(unsigned i = 0; i < 8; i++) {
+  for(uint64_t i = 0; i < 8; i++) {
     if(channel[i].dma_enabled == false) continue;
     add_clocks(8);
 
-    unsigned index = 0;
+    uint64_t index = 0;
     do {
       dma_transfer(channel[i].direction, dma_bbus(i, index++), dma_addr(i));
     } while(channel[i].dma_enabled && --channel[i].transfer_size);
@@ -89,14 +89,14 @@ void CPU::dma_run() {
   status.irq_lock = true;
 }
 
-bool CPU::hdma_active_after(unsigned i) {
-  for(unsigned n = i + 1; i < 8; i++) {
+bool CPU::hdma_active_after(uint64_t i) {
+  for(uint64_t n = i + 1; i < 8; i++) {
     if(channel[i].hdma_enabled && !channel[i].hdma_completed) return true;
   }
   return false;
 }
 
-void CPU::hdma_update(unsigned i) {
+void CPU::hdma_update(uint64_t i) {
   if((channel[i].line_counter & 0x7f) == 0) {
     channel[i].line_counter = dma_read(hdma_addr(i));
     channel[i].hdma_completed = (channel[i].line_counter == 0);
@@ -118,28 +118,28 @@ void CPU::hdma_update(unsigned i) {
 }
 
 void CPU::hdma_run() {
-  unsigned channels = 0;
-  for(unsigned i = 0; i < 8; i++) {
+  uint64_t channels = 0;
+  for(uint64_t i = 0; i < 8; i++) {
     if(channel[i].hdma_enabled) channels++;
   }
   if(channels == 0) return;
 
   add_clocks(16);
-  for(unsigned i = 0; i < 8; i++) {
+  for(uint64_t i = 0; i < 8; i++) {
     if(channel[i].hdma_enabled == false || channel[i].hdma_completed == true) continue;
     channel[i].dma_enabled = false;
 
     if(channel[i].hdma_do_transfer) {
-      static const unsigned transfer_length[] = { 1, 2, 2, 4, 4, 4, 2, 4 };
-      unsigned length = transfer_length[channel[i].transfer_mode];
-      for(unsigned index = 0; index < length; index++) {
-        unsigned addr = channel[i].indirect == false ? hdma_addr(i) : hdma_iaddr(i);
+      static const uint64_t transfer_length[] = { 1, 2, 2, 4, 4, 4, 2, 4 };
+      uint64_t length = transfer_length[channel[i].transfer_mode];
+      for(uint64_t index = 0; index < length; index++) {
+        uint64_t addr = channel[i].indirect == false ? hdma_addr(i) : hdma_iaddr(i);
         dma_transfer(channel[i].direction, dma_bbus(i, index), addr);
       }
     }
   }
 
-  for(unsigned i = 0; i < 8; i++) {
+  for(uint64_t i = 0; i < 8; i++) {
     if(channel[i].hdma_enabled == false || channel[i].hdma_completed == true) continue;
 
     channel[i].line_counter--;
@@ -151,8 +151,8 @@ void CPU::hdma_run() {
 }
 
 void CPU::hdma_init() {
-  unsigned channels = 0;
-  for(unsigned i = 0; i < 8; i++) {
+  uint64_t channels = 0;
+  for(uint64_t i = 0; i < 8; i++) {
     channel[i].hdma_completed = false;
     channel[i].hdma_do_transfer = false;
     if(channel[i].hdma_enabled) channels++;
@@ -160,7 +160,7 @@ void CPU::hdma_init() {
   if(channels == 0) return;
 
   add_clocks(16);
-  for(unsigned i = 0; i < 8; i++) {
+  for(uint64_t i = 0; i < 8; i++) {
     if(!channel[i].hdma_enabled) continue;
     channel[i].dma_enabled = false;
 
@@ -173,7 +173,7 @@ void CPU::hdma_init() {
 }
 
 void CPU::dma_reset() {
-  for(unsigned i = 0; i < 8; i++) {
+  for(uint64_t i = 0; i < 8; i++) {
     channel[i].dma_enabled = false;
     channel[i].hdma_enabled = false;
 

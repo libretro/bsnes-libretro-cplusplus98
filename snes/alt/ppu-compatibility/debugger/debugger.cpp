@@ -36,8 +36,8 @@ void PPUDebugger::cgram_mmio_write(uint16 addr, uint8 data) {
 PPUDebugger::PPUDebugger() {
 }
 
-bool PPUDebugger::property(unsigned id, string &name, string &value) {
-  unsigned n = 0;
+bool PPUDebugger::property(uint64_t id, string &name, string &value) {
+  uint64_t n = 0;
 
   #define item(name_, value_) \
   if(id == n++) { \
@@ -53,12 +53,12 @@ bool PPUDebugger::property(unsigned id, string &name, string &value) {
   //$2100
   item("$2100", "");
   item("Display Disable", regs.display_disabled);
-  item("Display Brightness", (unsigned)regs.display_brightness);
+  item("Display Brightness", (uint64_t)regs.display_brightness);
 
   //$2101
   item("$2101", "");
-  item("OAM Base Size", (unsigned)regs.oam_basesize);
-  item("OAM Name Select", (unsigned)regs.oam_nameselect);
+  item("OAM Base Size", (uint64_t)regs.oam_basesize);
+  item("OAM Name Select", (uint64_t)regs.oam_nameselect);
   item("OAM Name Base Address", string("0x", strhex<4>(regs.oam_tdaddr)));
 
   //$2102-$2103
@@ -73,11 +73,11 @@ bool PPUDebugger::property(unsigned id, string &name, string &value) {
   item("BG3 Tile Size", regs.bg_tilesize[BG3] ? "16x16" : "8x8");
   item("BG4 Tile Size", regs.bg_tilesize[BG4] ? "16x16" : "8x8");
   item("BG3 Priority", regs.bg3_priority);
-  item("BG Mode", (unsigned)regs.bg_mode);
+  item("BG Mode", (uint64_t)regs.bg_mode);
 
   //$2106
   item("$2106", "");
-  item("Mosaic Size", (unsigned)regs.mosaic_size);
+  item("Mosaic Size", (uint64_t)regs.mosaic_size);
   item("BG1 Mosaic Enable", regs.mosaic_enabled[BG1]);
   item("BG2 Mosaic Enable", regs.mosaic_enabled[BG2]);
   item("BG3 Mosaic Enable", regs.mosaic_enabled[BG3]);
@@ -117,43 +117,43 @@ bool PPUDebugger::property(unsigned id, string &name, string &value) {
 
   //$210d
   item("$210d", "");
-  item("Mode 7 Scroll H-offset", (unsigned)(regs.m7_hofs & 0x1fff));
-  item("BG1 Scroll H-offset", (unsigned)(regs.bg_hofs[BG1] & 0x03ff));
+  item("Mode 7 Scroll H-offset", (uint64_t)(regs.m7_hofs & 0x1fff));
+  item("BG1 Scroll H-offset", (uint64_t)(regs.bg_hofs[BG1] & 0x03ff));
 
   //$210e
   item("$210e", "");
-  item("Mode 7 Scroll V-offset", (unsigned)(regs.m7_vofs & 0x1fff));
-  item("BG1 Scroll V-offset", (unsigned)(regs.bg_vofs[BG1] & 0x03ff));
+  item("Mode 7 Scroll V-offset", (uint64_t)(regs.m7_vofs & 0x1fff));
+  item("BG1 Scroll V-offset", (uint64_t)(regs.bg_vofs[BG1] & 0x03ff));
 
   //$210f
   item("$210f", "");
-  item("BG2 Scroll H-offset", (unsigned)(regs.bg_hofs[BG2] & 0x03ff));
+  item("BG2 Scroll H-offset", (uint64_t)(regs.bg_hofs[BG2] & 0x03ff));
 
   //$2110
   item("$2110", "");
-  item("BG2 Scroll V-offset", (unsigned)(regs.bg_vofs[BG2] & 0x03ff));
+  item("BG2 Scroll V-offset", (uint64_t)(regs.bg_vofs[BG2] & 0x03ff));
 
   //$2111
   item("$2111", "");
-  item("BG3 Scroll H-offset", (unsigned)(regs.bg_hofs[BG3] & 0x03ff));
+  item("BG3 Scroll H-offset", (uint64_t)(regs.bg_hofs[BG3] & 0x03ff));
 
   //$2112
   item("$2112", "");
-  item("BG3 Scroll V-offset", (unsigned)(regs.bg_vofs[BG3] & 0x03ff));
+  item("BG3 Scroll V-offset", (uint64_t)(regs.bg_vofs[BG3] & 0x03ff));
 
   //$2113
   item("$2113", "");
-  item("BG4 Scroll H-offset", (unsigned)(regs.bg_hofs[BG4] & 0x03ff));
+  item("BG4 Scroll H-offset", (uint64_t)(regs.bg_hofs[BG4] & 0x03ff));
 
   //$2114
   item("$2114", "");
-  item("BG4 Scroll V-offset", (unsigned)(regs.bg_vofs[BG4] & 0x03ff));
+  item("BG4 Scroll V-offset", (uint64_t)(regs.bg_vofs[BG4] & 0x03ff));
 
   //$2115
   item("$2115", "");
-  item("VRAM Increment Mode", (unsigned)regs.vram_incmode);
-  item("VRAM Increment Formation", (unsigned)regs.vram_mapping);
-  item("VRAM Increment Size", (unsigned)regs.vram_incsize);
+  item("VRAM Increment Mode", (uint64_t)regs.vram_incmode);
+  item("VRAM Increment Formation", (uint64_t)regs.vram_mapping);
+  item("VRAM Increment Size", (uint64_t)regs.vram_incsize);
 
   //$2116-$2117
   item("$2116-$2117", "");
@@ -161,33 +161,33 @@ bool PPUDebugger::property(unsigned id, string &name, string &value) {
 
   //$211a
   item("$211a", "");
-  item("Mode 7 Repeat", (unsigned)regs.mode7_repeat);
+  item("Mode 7 Repeat", (uint64_t)regs.mode7_repeat);
   item("Mode 7 V-flip", regs.mode7_vflip);
   item("Mode 7 H-flip", regs.mode7_hflip);
 
   //$211b
   item("$211b", "");
-  item("Mode 7 A", (unsigned)regs.m7a);
+  item("Mode 7 A", (uint64_t)regs.m7a);
 
   //$211c
   item("$211c", "");
-  item("Mode 7 B", (unsigned)regs.m7b);
+  item("Mode 7 B", (uint64_t)regs.m7b);
 
   //$211d
   item("$211d", "");
-  item("Mode 7 C", (unsigned)regs.m7c);
+  item("Mode 7 C", (uint64_t)regs.m7c);
 
   //$211e
   item("$211e", "");
-  item("Mode 7 D", (unsigned)regs.m7d);
+  item("Mode 7 D", (uint64_t)regs.m7d);
 
   //$211f
   item("$211f", "");
-  item("Mode 7 X", (unsigned)regs.m7x);
+  item("Mode 7 X", (uint64_t)regs.m7x);
 
   //$2120
   item("$2120", "");
-  item("Mode 7 Y", (unsigned)regs.m7y);
+  item("Mode 7 Y", (uint64_t)regs.m7y);
 
   //$2121
   item("$2121", "");
@@ -228,19 +228,19 @@ bool PPUDebugger::property(unsigned id, string &name, string &value) {
 
   //$2126
   item("$2126", "");
-  item("Window 1 Left", (unsigned)regs.window1_left);
+  item("Window 1 Left", (uint64_t)regs.window1_left);
 
   //$2127
   item("$2127", "");
-  item("Window 1 Right", (unsigned)regs.window1_right);
+  item("Window 1 Right", (uint64_t)regs.window1_right);
 
   //$2128
   item("$2128", "");
-  item("Window 2 Left", (unsigned)regs.window2_left);
+  item("Window 2 Left", (uint64_t)regs.window2_left);
 
   //$2129
   item("$2129", "");
-  item("Window 2 Right", (unsigned)regs.window2_right);
+  item("Window 2 Right", (uint64_t)regs.window2_right);
 
   static char window_mask_mode[4][8] = { "OR", "AND", "XOR", "XNOR" };
 
@@ -310,9 +310,9 @@ bool PPUDebugger::property(unsigned id, string &name, string &value) {
 
   //$2132
   item("$2132", "");
-  item("Color Constant - Blue", (unsigned)regs.color_b);
-  item("Color Constant - Green", (unsigned)regs.color_g);
-  item("Color Constant - Red", (unsigned)regs.color_r);
+  item("Color Constant - Blue", (uint64_t)regs.color_b);
+  item("Color Constant - Green", (uint64_t)regs.color_g);
+  item("Color Constant - Red", (uint64_t)regs.color_r);
 
   //$2133
   item("$2133", "");
@@ -324,23 +324,23 @@ bool PPUDebugger::property(unsigned id, string &name, string &value) {
 
   //$213c
   item("$213c", "");
-  item("H-counter", (unsigned)hcounter());
+  item("H-counter", (uint64_t)hcounter());
 
   //$213d
   item("$213d", "");
-  item("V-counter", (unsigned)vcounter());
+  item("V-counter", (uint64_t)vcounter());
 
   //$213e
   item("$213e", "");
   item("Range Over", regs.range_over);
   item("Time Over", regs.time_over);
-  item("S-PPU1 Version", (unsigned)ppu1_version);
+  item("S-PPU1 Version", (uint64_t)ppu1_version);
 
   //$213f
   item("$213f", "");
   item("Field", cpu.field());
   item("Region", !region ? "NTSC" : "PAL");
-  item("S-PPU2 Version", (unsigned)ppu2_version);
+  item("S-PPU2 Version", (uint64_t)ppu2_version);
 
   #undef item
   return false;

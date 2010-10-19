@@ -24,19 +24,19 @@ public:
   void power();
   void reset();
 
-  unsigned datarom_addr(unsigned addr);
+  uint64_t datarom_addr(uint64_t addr);
 
-  unsigned data_pointer();
-  unsigned data_adjust();
-  unsigned data_increment();
-  void set_data_pointer(unsigned addr);
-  void set_data_adjust(unsigned addr);
+  uint64_t data_pointer();
+  uint64_t data_adjust();
+  uint64_t data_increment();
+  void set_data_pointer(uint64_t addr);
+  void set_data_adjust(uint64_t addr);
 
   void update_time(int offset = 0);
   time_t create_time();
 
-  uint8 mmio_read(unsigned addr);
-  void mmio_write(unsigned addr, uint8 data);
+  uint8 mmio_read(uint64_t addr);
+  void mmio_write(uint64_t addr, uint8 data);
 
   //spc7110decomp
   void decomp_init();
@@ -110,9 +110,9 @@ private:
   uint8 r4833;  //$[f0-ff]:[0000-ffff] mapping
   uint8 r4834;  //???
 
-  unsigned dx_offset;
-  unsigned ex_offset;
-  unsigned fx_offset;
+  uint64_t dx_offset;
+  uint64_t ex_offset;
+  uint64_t fx_offset;
 
   //====================
   //real-time clock unit
@@ -123,11 +123,11 @@ private:
 
   enum RTC_State { RTCS_Inactive, RTCS_ModeSelect, RTCS_IndexSelect, RTCS_Write };
   enum RTC_Mode  { RTCM_Linear = 0x03, RTCM_Indexed = 0x0c };
-  unsigned rtc_state;
-  unsigned rtc_mode;
-  unsigned rtc_index;
+  uint64_t rtc_state;
+  uint64_t rtc_mode;
+  uint64_t rtc_index;
 
-  static const unsigned months[12];
+  static const uint64_t months[12];
   friend class SPC7110MCU;
   friend class SPC7110DCU;
   friend class SPC7110RAM;
@@ -135,22 +135,22 @@ private:
 
 class SPC7110MCU : public Memory {
 public:
-  unsigned size() const;
-  uint8 read(unsigned addr);
-  void write(unsigned addr, uint8 data);
+  uint64_t size() const;
+  uint8 read(uint64_t addr);
+  void write(uint64_t addr, uint8 data);
 };
 
 class SPC7110DCU : public Memory {
 public:
-  uint8 read(unsigned addr);
-  void write(unsigned addr, uint8 data);
+  uint8 read(uint64_t addr);
+  void write(uint64_t addr, uint8 data);
 };
 
 class SPC7110RAM : public Memory {
 public:
-  unsigned size() const;
-  uint8 read(unsigned addr);
-  void write(unsigned addr, uint8 data);
+  uint64_t size() const;
+  uint8 read(uint64_t addr);
+  void write(uint64_t addr, uint8 data);
 };
 
 extern SPC7110 spc7110;

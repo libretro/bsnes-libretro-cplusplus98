@@ -196,7 +196,7 @@ uint8 mmio_r213d();  //OPVCT
 uint8 mmio_r213e();  //STAT77
 uint8 mmio_r213f();  //STAT78
 
-uint8 mmio_read(unsigned addr);
-void mmio_write(unsigned addr, uint8 data);
+uint8 mmio_read(uint64_t addr);
+void mmio_write(uint64_t addr, uint8 data);
 
 void latch_counters();

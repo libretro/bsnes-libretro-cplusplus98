@@ -3,27 +3,27 @@ struct SuperFXBus : Bus {
 };
 
 struct SuperFXGSUROM : Memory {
-  unsigned size() const;
-  uint8 read(unsigned);
-  void write(unsigned, uint8);
+  uint64_t size() const;
+  uint8 read(uint64_t);
+  void write(uint64_t, uint8);
 };
 
 struct SuperFXGSURAM : Memory {
-  unsigned size() const;
-  uint8 read(unsigned);
-  void write(unsigned, uint8);
+  uint64_t size() const;
+  uint8 read(uint64_t);
+  void write(uint64_t, uint8);
 };
 
 struct SuperFXCPUROM : Memory {
-  unsigned size() const;
-  uint8 read(unsigned);
-  void write(unsigned, uint8);
+  uint64_t size() const;
+  uint8 read(uint64_t);
+  void write(uint64_t, uint8);
 };
 
 struct SuperFXCPURAM : Memory {
-  unsigned size() const;
-  uint8 read(unsigned);
-  void write(unsigned, uint8);
+  uint64_t size() const;
+  uint8 read(uint64_t);
+  void write(uint64_t, uint8);
 };
 
 namespace memory {

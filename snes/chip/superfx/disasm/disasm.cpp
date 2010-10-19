@@ -17,7 +17,7 @@ void SuperFX::disassemble_opcode(char *output) {
     }
   }
 
-  unsigned length = strlen(output);
+  uint64_t length = strlen(output);
   while(length++ < 20) strcat(output, " ");
 }
 

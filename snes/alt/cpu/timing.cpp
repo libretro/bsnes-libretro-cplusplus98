@@ -1,6 +1,6 @@
 #ifdef CPU_CPP
 
-void CPU::queue_event(unsigned id) {
+void CPU::queue_event(uint64_t id) {
   switch(id) {
     case QueueEvent::DramRefresh: return add_clocks(40);
     case QueueEvent::HdmaRun: return hdma_run();
@@ -27,18 +27,18 @@ void CPU::last_cycle() {
   }
 }
 
-void CPU::add_clocks(unsigned clocks) {
+void CPU::add_clocks(uint64_t clocks) {
   if(status.hirq_enabled) {
     if(status.virq_enabled) {
-      unsigned cpu_time = vcounter() * 1364 + hcounter();
-      unsigned irq_time = status.vtime * 1364 + status.htime * 4;
-      unsigned framelines = (system.region.i == System::Region::NTSC ? 262 : 312) + field();
+      uint64_t cpu_time = vcounter() * 1364 + hcounter();
+      uint64_t irq_time = status.vtime * 1364 + status.htime * 4;
+      uint64_t framelines = (system.region.i == System::Region::NTSC ? 262 : 312) + field();
       if(cpu_time > irq_time) irq_time += framelines * 1364;
       bool irq_valid = status.irq_valid;
       status.irq_valid = cpu_time <= irq_time && cpu_time + clocks > irq_time;
       if(!irq_valid && status.irq_valid) status.irq_line = true;
     } else {
-      unsigned irq_time = status.htime * 4;
+      uint64_t irq_time = status.htime * 4;
       if(hcounter() > irq_time) irq_time += 1364;
       bool irq_valid = status.irq_valid;
       status.irq_valid = hcounter() <= irq_time && hcounter() + clocks > irq_time;
@@ -94,7 +94,7 @@ void CPU::scanline() {
 
 void CPU::run_auto_joypad_poll() {
   uint16 joy1 = 0, joy2 = 0, joy3 = 0, joy4 = 0;
-  for(unsigned i = 0; i < 16; i++) {
+  for(uint64_t i = 0; i < 16; i++) {
     uint8 port0 = input.port_read(0);
     uint8 port1 = input.port_read(1);
 

@@ -7,33 +7,33 @@
 
 namespace nall {
 
-inline optional<unsigned> strpos(const char *str, const char *key) {
-  unsigned ssl = strlen(str), ksl = strlen(key);
-  if(ksl > ssl) return optional<unsigned>(false, 0);
+inline optional<uint64_t> strpos(const char *str, const char *key) {
+  uint64_t ssl = strlen(str), ksl = strlen(key);
+  if(ksl > ssl) return optional<uint64_t>(false, 0);
 
-  for(unsigned i = 0; i <= ssl - ksl; i++) {
-    if(!memcmp(str + i, key, ksl)) return optional<unsigned>(true, i);
+  for(uint64_t i = 0; i <= ssl - ksl; i++) {
+    if(!memcmp(str + i, key, ksl)) return optional<uint64_t>(true, i);
   }
 
-  return optional<unsigned>(false, 0);
+  return optional<uint64_t>(false, 0);
 }
 
-inline optional<unsigned> qstrpos(const char *str, const char *key) {
-  unsigned ssl = strlen(str), ksl = strlen(key);
-  if(ksl > ssl) return optional<unsigned>(false, 0);
+inline optional<uint64_t> qstrpos(const char *str, const char *key) {
+  uint64_t ssl = strlen(str), ksl = strlen(key);
+  if(ksl > ssl) return optional<uint64_t>(false, 0);
 
-  for(unsigned i = 0; i <= ssl - ksl;) {
+  for(uint64_t i = 0; i <= ssl - ksl;) {
     uint8_t x = str[i];
     if(x == '\"' || x == '\'') {
       uint8_t z = i++;
       while(str[i] != x && i < ssl) i++;
       if(i >= ssl) i = z;
     }
-    if(!memcmp(str + i, key, ksl)) return optional<unsigned>(true, i);
+    if(!memcmp(str + i, key, ksl)) return optional<uint64_t>(true, i);
     i++;
   }
 
-  return optional<unsigned>(false, 0);
+  return optional<uint64_t>(false, 0);
 }
 
 }

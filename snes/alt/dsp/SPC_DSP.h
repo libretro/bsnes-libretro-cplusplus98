@@ -189,7 +189,7 @@ private:
 	
 	void init_counter();
 	void run_counters();
-	unsigned read_counter( int rate );
+	uint64_t read_counter( uint64_t rate );
 	
 	int  interpolate( voice_t const* v );
 	void run_envelope( voice_t* const v );
@@ -239,13 +239,13 @@ inline int SPC_DSP::sample_count() const { return m.out - m.out_begin; }
 
 inline int SPC_DSP::read( int addr ) const
 {
-	assert( (unsigned) addr < register_count );
+	assert( (uint64_t) addr < register_count );
 	return m.regs [addr];
 }
 
 inline void SPC_DSP::write( int addr, int data )
 {
-	assert( (unsigned) addr < register_count );
+	assert( (uint64_t) addr < register_count );
 	
 	m.regs [addr] = (uint8_t) data;
 	switch ( addr & 0x0F )

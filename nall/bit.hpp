@@ -2,12 +2,12 @@
 #define NALL_BIT_HPP
 
 namespace nall {
-  template<int bits> inline unsigned uclamp(const unsigned x) {
+  template<int bits> inline uint64_t uclamp(const uint64_t x) {
     enum { y = (1U << bits) - 1 };
     return y + ((x - y) & -(x < y));  //min(x, y);
   }
 
-  template<int bits> inline unsigned uclip(const unsigned x) {
+  template<int bits> inline uint64_t uclip(const uint64_t x) {
     enum { m = (1U << bits) - 1 };
     return (x & m);
   }
@@ -40,7 +40,7 @@ namespace nall {
 
     //round up to next highest single bit:
     //round(15) == 16, round(16) == 16, round(17) == 32
-    inline unsigned round(unsigned x) {
+    inline uint64_t round(uint64_t x) {
       if((x & (x - 1)) == 0) return x;
       while(x & (x - 1)) x &= x - 1;
       return x << 1;

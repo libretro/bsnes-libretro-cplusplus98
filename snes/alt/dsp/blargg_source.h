@@ -52,7 +52,7 @@ static inline void blargg_dprintf_( const char*, ... ) { }
 	static inline type max( type x, type y ) { if ( y < x ) return x; return y; }
 
 DEF_MIN_MAX( int )
-DEF_MIN_MAX( unsigned )
+DEF_MIN_MAX( uint64_t )
 DEF_MIN_MAX( long )
 DEF_MIN_MAX( unsigned long )
 DEF_MIN_MAX( float )

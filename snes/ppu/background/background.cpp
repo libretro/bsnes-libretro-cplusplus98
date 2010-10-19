@@ -10,7 +10,7 @@ void PPU::Background::scanline() {
   x = -7;
   y = self.vcounter();
   tile_counter = (7 - (regs.hoffset & 7)) << hires;
-  for(unsigned n = 0; n < 8; n++) data[n] = 0;
+  for(uint64_t n = 0; n < 8; n++) data[n] = 0;
 
   if(self.vcounter() == 1) {
     mosaic_vcounter = regs.mosaic + 1;
@@ -27,44 +27,44 @@ void PPU::Background::scanline() {
 void PPU::Background::get_tile() {
   bool hires = (self.regs.bgmode == 5 || self.regs.bgmode == 6);
 
-  unsigned color_depth = (regs.mode == Mode::BPP2 ? 0 : regs.mode == Mode::BPP4 ? 1 : 2);
-  unsigned palette_offset = (self.regs.bgmode == 0 ? (id << 5) : 0);
-  unsigned palette_size = 2 << color_depth;
-  unsigned tile_mask = 0x0fff >> color_depth;
-  unsigned tiledata_index = regs.tiledata_addr >> (4 + color_depth);
+  uint64_t color_depth = (regs.mode == Mode::BPP2 ? 0 : regs.mode == Mode::BPP4 ? 1 : 2);
+  uint64_t palette_offset = (self.regs.bgmode == 0 ? (id << 5) : 0);
+  uint64_t palette_size = 2 << color_depth;
+  uint64_t tile_mask = 0x0fff >> color_depth;
+  uint64_t tiledata_index = regs.tiledata_addr >> (4 + color_depth);
 
-  unsigned tile_height = (regs.tile_size == TileSize::Size8x8 ? 3 : 4);
-  unsigned tile_width = (!hires ? tile_height : 4);
+  uint64_t tile_height = (regs.tile_size == TileSize::Size8x8 ? 3 : 4);
+  uint64_t tile_width = (!hires ? tile_height : 4);
 
-  unsigned width = 256 << hires;
+  uint64_t width = 256 << hires;
 
-  unsigned mask_x = (tile_height == 3 ? width : (width << 1));
-  unsigned mask_y = mask_x;
+  uint64_t mask_x = (tile_height == 3 ? width : (width << 1));
+  uint64_t mask_y = mask_x;
   if(regs.screen_size & 1) mask_x <<= 1;
   if(regs.screen_size & 2) mask_y <<= 1;
   mask_x--;
   mask_y--;
 
-  unsigned px = x << hires;
-  unsigned py = (regs.mosaic == 0 ? y : mosaic_voffset);
+  uint64_t px = x << hires;
+  uint64_t py = (regs.mosaic == 0 ? y : mosaic_voffset);
 
-  unsigned hscroll = regs.hoffset;
-  unsigned vscroll = regs.voffset;
+  uint64_t hscroll = regs.hoffset;
+  uint64_t vscroll = regs.voffset;
   if(hires) {
     hscroll <<= 1;
     if(self.regs.interlace) py = (py << 1) + self.field();
   }
 
-  unsigned hoffset = hscroll + px;
-  unsigned voffset = vscroll + py;
+  uint64_t hoffset = hscroll + px;
+  uint64_t voffset = vscroll + py;
 
   if(self.regs.bgmode == 2 || self.regs.bgmode == 4 || self.regs.bgmode == 6) {
     uint16 offset_x = (x + (hscroll & 7));
 
     if(offset_x >= 8) {
-      unsigned hval = self.bg3.get_tile((offset_x - 8) + (self.bg3.regs.hoffset & ~7), self.bg3.regs.voffset + 0);
-      unsigned vval = self.bg3.get_tile((offset_x - 8) + (self.bg3.regs.hoffset & ~7), self.bg3.regs.voffset + 8);
-      unsigned valid_mask = (id == ID::BG1 ? 0x2000 : 0x4000);
+      uint64_t hval = self.bg3.get_tile((offset_x - 8) + (self.bg3.regs.hoffset & ~7), self.bg3.regs.voffset + 0);
+      uint64_t vval = self.bg3.get_tile((offset_x - 8) + (self.bg3.regs.hoffset & ~7), self.bg3.regs.voffset + 8);
+      uint64_t valid_mask = (id == ID::BG1 ? 0x2000 : 0x4000);
 
       if(self.regs.bgmode == 4) {
         if(hval & valid_mask) {
@@ -84,12 +84,12 @@ void PPU::Background::get_tile() {
   hoffset &= mask_x;
   voffset &= mask_y;
 
-  unsigned screen_x = (regs.screen_size & 1 ? 32 << 5 : 0);
-  unsigned screen_y = (regs.screen_size & 2 ? 32 << 5 : 0);
+  uint64_t screen_x = (regs.screen_size & 1 ? 32 << 5 : 0);
+  uint64_t screen_y = (regs.screen_size & 2 ? 32 << 5 : 0);
   if(regs.screen_size == 3) screen_y <<= 1;
 
-  unsigned tx = hoffset >> tile_width;
-  unsigned ty = voffset >> tile_height;
+  uint64_t tx = hoffset >> tile_width;
+  uint64_t ty = voffset >> tile_height;
 
   uint16 offset = ((ty & 0x1f) << 5) + (tx & 0x1f);
   if(tx & 0x20) offset += screen_x;
@@ -125,7 +125,7 @@ void PPU::Background::get_tile() {
     data[7] = memory::vram[offset + 49];
   }
 
-  if(mirror_x) for(unsigned n = 0; n < 8; n++) {
+  if(mirror_x) for(uint64_t n = 0; n < 8; n++) {
     //reverse data bits in data[n]: 01234567 -> 76543210
     data[n] = ((data[n] >> 4) & 0x0f) | ((data[n] << 4) & 0xf0);
     data[n] = ((data[n] >> 2) & 0x33) | ((data[n] << 2) & 0xcc);
@@ -191,8 +191,8 @@ void PPU::Background::run(bool screen) {
   }
 }
 
-unsigned PPU::Background::get_tile_color() {
-  unsigned color = 0;
+uint64_t PPU::Background::get_tile_color() {
+  uint64_t color = 0;
   if(regs.mode >= Mode::BPP2) {
     color += (data[0] & 0x80) ? 0x01 : 0; data[0] <<= 1;
     color += (data[1] & 0x80) ? 0x02 : 0; data[1] <<= 1;
@@ -246,23 +246,23 @@ void PPU::Background::reset() {
   priority = 0;
   palette_number = 0;
   palette_index = 0;
-  for(unsigned n = 0; n < 8; n++) data[n] = 0;
+  for(uint64_t n = 0; n < 8; n++) data[n] = 0;
 }
 
-unsigned PPU::Background::get_tile(unsigned x, unsigned y) {
+uint64_t PPU::Background::get_tile(uint64_t x, uint64_t y) {
   bool hires = (self.regs.bgmode == 5 || self.regs.bgmode == 6);
-  unsigned tile_height = (regs.tile_size == TileSize::Size8x8 ? 3 : 4);
-  unsigned tile_width = (!hires ? tile_height : 4);
-  unsigned width = (!hires ? 256 : 512);
-  unsigned mask_x = (tile_height == 3 ? width : (width << 1));
-  unsigned mask_y = mask_x;
+  uint64_t tile_height = (regs.tile_size == TileSize::Size8x8 ? 3 : 4);
+  uint64_t tile_width = (!hires ? tile_height : 4);
+  uint64_t width = (!hires ? 256 : 512);
+  uint64_t mask_x = (tile_height == 3 ? width : (width << 1));
+  uint64_t mask_y = mask_x;
   if(regs.screen_size & 1) mask_x <<= 1;
   if(regs.screen_size & 2) mask_y <<= 1;
   mask_x--;
   mask_y--;
 
-  unsigned screen_x = (regs.screen_size & 1 ? (32 << 5) : 0);
-  unsigned screen_y = (regs.screen_size & 2 ? (32 << 5) : 0);
+  uint64_t screen_x = (regs.screen_size & 1 ? (32 << 5) : 0);
+  uint64_t screen_y = (regs.screen_size & 2 ? (32 << 5) : 0);
   if(regs.screen_size == 3) screen_y <<= 1;
 
   x = (x & mask_x) >> tile_width;
@@ -276,7 +276,7 @@ unsigned PPU::Background::get_tile(unsigned x, unsigned y) {
   return (memory::vram[addr + 0] << 0) + (memory::vram[addr + 1] << 8);
 }
 
-PPU::Background::Background(PPU &self, unsigned id) : self(self), id(id) {
+PPU::Background::Background(PPU &self, uint64_t id) : self(self), id(id) {
 }
 
 #endif

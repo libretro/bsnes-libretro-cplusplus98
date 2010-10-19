@@ -1,6 +1,6 @@
 #ifdef SMP_CPP
 
-void SMP::add_clocks(unsigned clocks) {
+void SMP::add_clocks(uint64_t clocks) {
   step(clocks);
   synchronize_dsp();
 
@@ -24,7 +24,7 @@ void SMP::cycle_edge() {
   }
 }
 
-template<unsigned timer_frequency>
+template<uint64_t timer_frequency>
 void SMP::sSMPTimer<timer_frequency>::tick() {
   //stage 0 increment
   stage0_ticks += smp.status.timer_step;
@@ -36,7 +36,7 @@ void SMP::sSMPTimer<timer_frequency>::tick() {
   sync_stage1();
 }
 
-template<unsigned frequency>
+template<uint64_t frequency>
 void SMP::sSMPTimer<frequency>::sync_stage1() {
   bool new_line = stage1_ticks;
   if(smp.status.timers_enabled == false) new_line = false;

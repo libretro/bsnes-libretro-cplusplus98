@@ -7,10 +7,10 @@
 namespace nall {
   class base64 {
   public:
-    static bool encode(char *&output, const uint8_t* input, unsigned inlength) {
+    static bool encode(char *&output, const uint8_t* input, uint64_t inlength) {
       output = new char[inlength * 8 / 6 + 6]();
 
-      unsigned i = 0, o = 0;
+      uint64_t i = 0, o = 0;
       while(i < inlength) {
         switch(i % 3) {
           case 0: {
@@ -37,11 +37,11 @@ namespace nall {
       return true;
     }
 
-    static bool decode(uint8_t *&output, unsigned &outlength, const char *input) {
-      unsigned inlength = strlen(input), infix = 0;
+    static bool decode(uint8_t *&output, uint64_t &outlength, const char *input) {
+      uint64_t inlength = strlen(input), infix = 0;
       output = new uint8_t[inlength]();
 
-      unsigned i = 0, o = 0;
+      uint64_t i = 0, o = 0;
       while(i < inlength) {
         uint8_t x = dec(input[i]);
 

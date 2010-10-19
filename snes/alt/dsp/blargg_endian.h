@@ -177,9 +177,9 @@ inline void set_le( BOOST::uint16_t* p, unsigned     n ) { SET_LE16( p, n ); }
 inline void set_le( BOOST::uint32_t* p, blargg_ulong n ) { SET_LE32( p, n ); }
 inline void set_be( BOOST::uint16_t* p, unsigned     n ) { SET_BE16( p, n ); }
 inline void set_be( BOOST::uint32_t* p, blargg_ulong n ) { SET_BE32( p, n ); }
-inline unsigned     get_le( BOOST::uint16_t* p ) { return GET_LE16( p ); }
+inline uint64_t     get_le( BOOST::uint16_t* p ) { return GET_LE16( p ); }
 inline blargg_ulong get_le( BOOST::uint32_t* p ) { return GET_LE32( p ); }
-inline unsigned     get_be( BOOST::uint16_t* p ) { return GET_BE16( p ); }
+inline uint64_t     get_be( BOOST::uint16_t* p ) { return GET_BE16( p ); }
 inline blargg_ulong get_be( BOOST::uint32_t* p ) { return GET_BE32( p ); }
 
 #endif

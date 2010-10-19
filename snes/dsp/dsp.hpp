@@ -1,7 +1,7 @@
 class DSP : public Processor {
 public:
   enum{ Threaded = true };
-  alwaysinline void step(unsigned clocks);
+  alwaysinline void step(uint64_t clocks);
   alwaysinline void synchronize_smp();
 
   uint8 read(uint8 addr);
@@ -121,7 +121,7 @@ private:
   static const uint16 counter_rate[32];
   static const uint16 counter_offset[32];
   void counter_tick();
-  bool counter_poll(unsigned rate);
+  bool counter_poll(uint64_t rate);
 
   //envelope
   void envelope_run(voice_t &v);

@@ -23,14 +23,14 @@
   col += !!(d7 & mask) << 7; \
   *dest++ = col
 
-template<unsigned color_depth>
+template<uint64_t color_depth>
 void PPU::render_bg_tile(uint16 tile_num) {
   uint8 col, d0, d1, d2, d3, d4, d5, d6, d7;
 
   if(color_depth == COLORDEPTH_4) {
     uint8 *dest = (uint8*)bg_tiledata[TILE_2BIT] + tile_num * 64;
-    unsigned pos = tile_num * 16;
-    unsigned y = 8;
+    uint64_t pos = tile_num * 16;
+    uint64_t y = 8;
     while(y--) {
       d0 = memory::vram[pos    ];
       d1 = memory::vram[pos + 1];
@@ -49,8 +49,8 @@ void PPU::render_bg_tile(uint16 tile_num) {
 
   if(color_depth == COLORDEPTH_16) {
     uint8 *dest = (uint8*)bg_tiledata[TILE_4BIT] + tile_num * 64;
-    unsigned pos = tile_num * 32;
-    unsigned y = 8;
+    uint64_t pos = tile_num * 32;
+    uint64_t y = 8;
     while(y--) {
       d0 = memory::vram[pos     ];
       d1 = memory::vram[pos +  1];
@@ -71,8 +71,8 @@ void PPU::render_bg_tile(uint16 tile_num) {
 
   if(color_depth == COLORDEPTH_256) {
     uint8 *dest = (uint8*)bg_tiledata[TILE_8BIT] + tile_num * 64;
-    unsigned pos = tile_num * 64;
-    unsigned y = 8;
+    uint64_t pos = tile_num * 64;
+    uint64_t y = 8;
     while(y--) {
       d0 = memory::vram[pos     ];
       d1 = memory::vram[pos +  1];
@@ -106,7 +106,7 @@ void PPU::flush_pixel_cache() {
               ? main
               : regs.color_rgb;
 
-  unsigned i = 255;
+  uint64_t i = 255;
   do {
     pixel_cache[i].src_main = main;
     pixel_cache[i].src_sub  = sub;
@@ -130,9 +130,9 @@ void PPU::alloc_tiledata_cache() {
 
 //marks all tiledata cache entries as dirty
 void PPU::flush_tiledata_cache() {
-  for(unsigned i = 0; i < 4096; i++) bg_tiledata_state[TILE_2BIT][i] = 1;
-  for(unsigned i = 0; i < 2048; i++) bg_tiledata_state[TILE_4BIT][i] = 1;
-  for(unsigned i = 0; i < 1024; i++) bg_tiledata_state[TILE_8BIT][i] = 1;
+  for(uint64_t i = 0; i < 4096; i++) bg_tiledata_state[TILE_2BIT][i] = 1;
+  for(uint64_t i = 0; i < 2048; i++) bg_tiledata_state[TILE_4BIT][i] = 1;
+  for(uint64_t i = 0; i < 1024; i++) bg_tiledata_state[TILE_8BIT][i] = 1;
 }
 
 void PPU::free_tiledata_cache() {

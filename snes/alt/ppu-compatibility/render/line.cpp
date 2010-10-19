@@ -1,7 +1,7 @@
 #ifdef PPU_CPP
 
 inline uint16 PPU::get_palette(uint8 index) {
-  const unsigned addr = index << 1;
+  const uint64_t addr = index << 1;
   return memory::cgram[addr] + (memory::cgram[addr + 1] << 8);
 }
 
@@ -90,12 +90,12 @@ inline void PPU::render_line_output() {
   uint16 curr, prev;
 
   if(!regs.pseudo_hires && regs.bg_mode != 5 && regs.bg_mode != 6) {
-    for(unsigned x = 0; x < 256; x++) {
+    for(uint64_t x = 0; x < 256; x++) {
       curr = luma[get_pixel_normal(x)];
       *ptr++ = curr;
     }
   } else {
-    for(unsigned x = 0, prev = 0; x < 256; x++) {
+    for(uint64_t x = 0, prev = 0; x < 256; x++) {
       curr = luma[get_pixel_swap(x)];
       *ptr++ = (prev + curr - ((prev ^ curr) & 0x0421)) >> 1;
       prev = curr;

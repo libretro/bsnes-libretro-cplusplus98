@@ -31,10 +31,10 @@ void PPU::Sprite::scanline() {
   if(t.y >= (!self.regs.overscan ? 224 : 239)) return;
 
   memset(oam_item, 0xff, 32);  //default to invalid
-  for(unsigned i = 0; i < 34; i++) oam_tile[i].x = 0xffff;  //default to invalid
+  for(uint64_t i = 0; i < 34; i++) oam_tile[i].x = 0xffff;  //default to invalid
 
-  for(unsigned i = 0; i < 128; i++) {
-    unsigned sprite = (regs.first_sprite + i) & 127;
+  for(uint64_t i = 0; i < 128; i++) {
+    uint64_t sprite = (regs.first_sprite + i) & 127;
     if(on_scanline(list[sprite]) == false) continue;
     if(t.item_count++ >= 32) break;
     oam_item[t.item_count - 1] = sprite;
@@ -58,18 +58,18 @@ void PPU::Sprite::run() {
   output.sub.priority = 0;
 
   typeof(&t.tile[0][0]) oam_tile = t.tile[!t.active];
-  unsigned priority_table[] = { regs.priority0, regs.priority1, regs.priority2, regs.priority3 };
-  unsigned x = t.x++;
+  uint64_t priority_table[] = { regs.priority0, regs.priority1, regs.priority2, regs.priority3 };
+  uint64_t x = t.x++;
 
-  for(unsigned n = 0; n < 34; n++) {
+  for(uint64_t n = 0; n < 34; n++) {
     typeof(oam_tile[0]) tile = oam_tile[n];
     if(tile.x == 0xffff) break;
 
     int px = x - sclip<9>(tile.x);
     if(px & ~7) continue;
 
-    unsigned mask = 0x80 >> (tile.hflip == false ? px : 7 - px);
-    unsigned color;
+    uint64_t mask = 0x80 >> (tile.hflip == false ? px : 7 - px);
+    uint64_t color;
     color  = ((bool)(tile.d0 & mask)) << 0;
     color |= ((bool)(tile.d1 & mask)) << 1;
     color |= ((bool)(tile.d2 & mask)) << 2;
@@ -97,7 +97,7 @@ void PPU::Sprite::tilefetch() {
     if(oam_item[i] == 0xff) continue;
     typeof(list[oam_item[0]]) sprite = list[oam_item[i]];
 
-    unsigned tile_width = sprite.width() >> 3;
+    uint64_t tile_width = sprite.width() >> 3;
     signed x = sprite.x;
     signed y = (t.y - sprite.y) & 0xff;
     if(regs.interlace) y <<= 1;
@@ -129,19 +129,19 @@ void PPU::Sprite::tilefetch() {
     chry  &= 15;
     chry <<= 4;
 
-    for(unsigned tx = 0; tx < tile_width; tx++) {
-      unsigned sx = (x + (tx << 3)) & 511;
+    for(uint64_t tx = 0; tx < tile_width; tx++) {
+      uint64_t sx = (x + (tx << 3)) & 511;
       if(x != 256 && sx >= 256 && (sx + 7) < 512) continue;
       if(t.tile_count++ >= 34) break;
 
-      unsigned n = t.tile_count - 1;
+      uint64_t n = t.tile_count - 1;
       oam_tile[n].x = sx;
       oam_tile[n].priority = sprite.priority;
       oam_tile[n].palette = 128 + (sprite.palette << 4);
       oam_tile[n].hflip = sprite.hflip;
 
-      unsigned mx = (sprite.hflip == false) ? tx : ((tile_width - 1) - tx);
-      unsigned pos = tiledata_addr + ((chry + ((chrx + mx) & 15)) << 5);
+      uint64_t mx = (sprite.hflip == false) ? tx : ((tile_width - 1) - tx);
+      uint64_t pos = tiledata_addr + ((chry + ((chrx + mx) & 15)) << 5);
       uint16 addr = (pos & 0xffe0) + ((y & 7) * 2);
 
       oam_tile[n].d0 = memory::vram[addr +  0];
@@ -160,7 +160,7 @@ void PPU::Sprite::tilefetch() {
 }
 
 void PPU::Sprite::reset() {
-  for(unsigned i = 0; i < 128; i++) {
+  for(uint64_t i = 0; i < 128; i++) {
     list[i].x = 0;
     list[i].y = 0;
     list[i].character = 0;
@@ -179,9 +179,9 @@ void PPU::Sprite::reset() {
   t.tile_count = 0;
 
   t.active = 0;
-  for(unsigned n = 0; n < 2; n++) {
+  for(uint64_t n = 0; n < 2; n++) {
     memset(t.item[n], 0, 32);
-    for(unsigned i = 0; i < 34; i++) {
+    for(uint64_t i = 0; i < 34; i++) {
       t.tile[n][i].x = 0;
       t.tile[n][i].priority = 0;
       t.tile[n][i].palette = 0;

@@ -88,7 +88,7 @@ void Cx4::transfer_data() {
   }
 }
 
-void Cx4::write(unsigned addr, uint8 data) {
+void Cx4::write(uint64_t addr, uint8 data) {
   addr &= 0x1fff;
 
   if(addr < 0x0c00) {
@@ -170,7 +170,7 @@ void Cx4::writel(uint16 addr, uint32 data) {
   write(addr + 2, data >> 16);
 }
 
-uint8 Cx4::read(unsigned addr) {
+uint8 Cx4::read(uint64_t addr) {
   addr &= 0x1fff;
 
   if(addr < 0x0c00) {

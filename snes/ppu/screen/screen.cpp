@@ -27,9 +27,9 @@ uint16 PPU::Screen::get_pixel(bool swap) {
   //main screen
   //===========
 
-  unsigned priority_main = 0;
-  unsigned color_main;
-  unsigned source_main;
+  uint64_t priority_main = 0;
+  uint64_t color_main;
+  uint64_t source_main;
 
   if(self.bg1.output.main.priority) {
     priority_main = self.bg1.output.main.priority;
@@ -69,9 +69,9 @@ uint16 PPU::Screen::get_pixel(bool swap) {
   //sub screen
   //==========
 
-  unsigned priority_sub = 0;
-  unsigned color_sub;
-  unsigned source_sub;
+  uint64_t priority_sub = 0;
+  uint64_t color_sub;
+  uint64_t source_sub;
 
   if(self.bg1.output.sub.priority) {
     priority_sub = self.bg1.output.sub.priority;
@@ -150,18 +150,18 @@ uint16 PPU::Screen::get_pixel(bool swap) {
   return output;
 }
 
-uint16 PPU::Screen::addsub(unsigned x, unsigned y, bool halve) {
+uint16 PPU::Screen::addsub(uint64_t x, uint64_t y, bool halve) {
   if(!regs.color_mode) {
     if(!halve) {
-      unsigned sum = x + y;
-      unsigned carry = (sum - ((x ^ y) & 0x0421)) & 0x8420;
+      uint64_t sum = x + y;
+      uint64_t carry = (sum - ((x ^ y) & 0x0421)) & 0x8420;
       return (sum - carry) | (carry - (carry >> 5));
     } else {
       return (x + y - ((x ^ y) & 0x0421)) >> 1;
     }
   } else {
-    unsigned diff = x - y + 0x8420;
-    unsigned borrow = (diff - ((x ^ y) & 0x8420)) & 0x8420;
+    uint64_t diff = x - y + 0x8420;
+    uint64_t borrow = (diff - ((x ^ y) & 0x8420)) & 0x8420;
     if(!halve) {
       return   (diff - borrow) & (borrow - (borrow >> 5));
     } else {
@@ -170,13 +170,13 @@ uint16 PPU::Screen::addsub(unsigned x, unsigned y, bool halve) {
   }
 }
 
-uint16 PPU::Screen::get_color(unsigned palette) {
+uint16 PPU::Screen::get_color(uint64_t palette) {
   palette <<= 1;
   self.regs.cgram_iaddr = palette;
   return memory::cgram[palette + 0] + (memory::cgram[palette + 1] << 8);
 }
 
-uint16 PPU::Screen::get_direct_color(unsigned palette, unsigned tile) {
+uint16 PPU::Screen::get_direct_color(uint64_t palette, uint64_t tile) {
   //palette = -------- BBGGGRRR
   //tile    = ---bgr-- --------
   //output  = 0BBb00GG Gg0RRRr0
@@ -202,14 +202,14 @@ void PPU::Screen::reset() {
 }
 
 PPU::Screen::Screen(PPU &self) : self(self) {
-  for(unsigned l = 0; l < 16; l++) {
-    for(unsigned r = 0; r < 32; r++) {
-      for(unsigned g = 0; g < 32; g++) {
-        for(unsigned b = 0; b < 32; b++) {
+  for(uint64_t l = 0; l < 16; l++) {
+    for(uint64_t r = 0; r < 32; r++) {
+      for(uint64_t g = 0; g < 32; g++) {
+        for(uint64_t b = 0; b < 32; b++) {
           double luma = (double)l / 15.0;
-          unsigned ar = static_cast<unsigned>(luma * r + 0.5);
-          unsigned ag = static_cast<unsigned>(luma * g + 0.5);
-          unsigned ab = static_cast<unsigned>(luma * b + 0.5);
+          uint64_t ar = static_cast<uint64_t>(luma * r + 0.5);
+          uint64_t ag = static_cast<uint64_t>(luma * g + 0.5);
+          uint64_t ab = static_cast<uint64_t>(luma * b + 0.5);
           light_table[l][(r << 10) + (g << 5) + b] = (ab << 10) + (ag << 5) + ar;
         }
       }

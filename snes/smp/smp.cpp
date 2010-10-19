@@ -15,7 +15,7 @@ namespace SNES {
 #include "memory/memory.cpp"
 #include "timing/timing.cpp"
 
-void SMP::step(unsigned clocks) {
+void SMP::step(uint64_t clocks) {
   clock += clocks * (uint64)cpu.frequency;
   dsp.clock -= clocks;
 }
@@ -71,7 +71,7 @@ void SMP::reset() {
   regs.sp = 0xef;
   regs.p = 0x02;
 
-  for(unsigned i = 0; i < memory::apuram.size(); i++) {
+  for(uint64_t i = 0; i < memory::apuram.size(); i++) {
     memory::apuram.write(i, 0x00);
   }
 

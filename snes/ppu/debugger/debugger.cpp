@@ -1,7 +1,7 @@
 #ifdef PPU_CPP
 
-bool PPUDebugger::property(unsigned id, string &name, string &value) {
-  unsigned n = 0;
+bool PPUDebugger::property(uint64_t id, string &name, string &value) {
+  uint64_t n = 0;
 
   #define item(name_, value_) \
   if(id == n++) { \

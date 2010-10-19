@@ -1,12 +1,12 @@
 #ifdef PPU_CPP
 
-uint8* PPU::Cache::tile_2bpp(unsigned tile) {
+uint8* PPU::Cache::tile_2bpp(uint64_t tile) {
   if(tilevalid[0][tile] == 0) {
     tilevalid[0][tile] = 1;
     uint8 *output = (uint8*)tiledata[0] + (tile << 6);
-    unsigned offset = tile << 4;
-    unsigned y = 8;
-    unsigned color, d0, d1;
+    uint64_t offset = tile << 4;
+    uint64_t y = 8;
+    uint64_t color, d0, d1;
     while(y--) {
       d0 = memory::vram[offset +  0];
       d1 = memory::vram[offset +  1];
@@ -29,13 +29,13 @@ uint8* PPU::Cache::tile_2bpp(unsigned tile) {
   return tiledata[0] + (tile << 6);
 }
 
-uint8* PPU::Cache::tile_4bpp(unsigned tile) {
+uint8* PPU::Cache::tile_4bpp(uint64_t tile) {
   if(tilevalid[1][tile] == 0) {
     tilevalid[1][tile] = 1;
     uint8 *output = (uint8*)tiledata[1] + (tile << 6);
-    unsigned offset = tile << 5;
-    unsigned y = 8;
-    unsigned color, d0, d1, d2, d3;
+    uint64_t offset = tile << 5;
+    uint64_t y = 8;
+    uint64_t color, d0, d1, d2, d3;
     while(y--) {
       d0 = memory::vram[offset +  0];
       d1 = memory::vram[offset +  1];
@@ -62,13 +62,13 @@ uint8* PPU::Cache::tile_4bpp(unsigned tile) {
   return tiledata[1] + (tile << 6);
 }
 
-uint8* PPU::Cache::tile_8bpp(unsigned tile) {
+uint8* PPU::Cache::tile_8bpp(uint64_t tile) {
   if(tilevalid[2][tile] == 0) {
     tilevalid[2][tile] = 1;
     uint8 *output = (uint8*)tiledata[2] + (tile << 6);
-    unsigned offset = tile << 6;
-    unsigned y = 8;
-    unsigned color, d0, d1, d2, d3, d4, d5, d6, d7;
+    uint64_t offset = tile << 6;
+    uint64_t y = 8;
+    uint64_t color, d0, d1, d2, d3, d4, d5, d6, d7;
     while(y--) {
       d0 = memory::vram[offset +  0];
       d1 = memory::vram[offset +  1];
@@ -103,7 +103,7 @@ uint8* PPU::Cache::tile_8bpp(unsigned tile) {
   return tiledata[2] + (tile << 6);
 }
 
-uint8* PPU::Cache::tile(unsigned bpp, unsigned tile) {
+uint8* PPU::Cache::tile(uint64_t bpp, uint64_t tile) {
   switch(bpp) {
     case 0: return tile_2bpp(tile);
     case 1: return tile_4bpp(tile);

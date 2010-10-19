@@ -47,7 +47,7 @@ void DSP::serialize(serializer &s) {
   s.integer(state.t_echo_in [0]);
   s.integer(state.t_echo_in [1]);
 
-  for(unsigned n = 0; n < 8; n++) {
+  for(uint64_t n = 0; n < 8; n++) {
     voice[n].buffer.serialize(s);
     s.integer(voice[n].buf_pos);
     s.integer(voice[n].interp_pos);

@@ -133,7 +133,7 @@ void SA1::reset() {
   create(SA1::Enter, system.cpu_frequency());
 
   memory::cc1bwram.dma = false;
-  for(unsigned addr = 0; addr < memory::iram.size(); addr++) {
+  for(uint64_t addr = 0; addr < memory::iram.size(); addr++) {
     memory::iram.write(addr, 0x00);
   }
 
@@ -278,7 +278,7 @@ void SA1::reset() {
   mmio.bbf = 0;
 
   //$2240-$224f BRF
-  for(unsigned i = 0; i < 16; i++) {
+  for(uint64_t i = 0; i < 16; i++) {
     mmio.brf[i] = 0x00;
   }
 

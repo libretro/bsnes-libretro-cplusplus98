@@ -12,18 +12,18 @@ namespace nall {
   class serial {
   public:
     //-1 on error, otherwise return bytes read
-    int read(uint8_t *data, unsigned length) {
+    int read(uint8_t *data, uint64_t length) {
       if(port_open == false) return -1;
       return ::read(port, (void*)data, length);
     }
 
     //-1 on error, otherwise return bytes written
-    int write(const uint8_t *data, unsigned length) {
+    int write(const uint8_t *data, uint64_t length) {
       if(port_open == false) return -1;
       return ::write(port, (void*)data, length);
     }
 
-    bool open(const char *portname, unsigned rate, bool flowcontrol) {
+    bool open(const char *portname, uint64_t rate, bool flowcontrol) {
       close();
 
       port = ::open(portname, O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK);

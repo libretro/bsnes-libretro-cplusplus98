@@ -25,9 +25,9 @@ class Screen {
 
   uint16 light_table[16][32768];
   uint16 get_pixel(bool swap);
-  uint16 addsub(unsigned x, unsigned y, bool halve);
-  uint16 get_color(unsigned palette);
-  uint16 get_direct_color(unsigned palette, unsigned tile);
+  uint16 addsub(uint64_t x, uint64_t y, bool halve);
+  uint16 get_color(uint64_t palette);
+  uint16 get_direct_color(uint64_t palette, uint64_t tile);
 
   void serialize(serializer&);
   Screen(PPU &self);

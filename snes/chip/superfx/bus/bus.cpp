@@ -20,11 +20,11 @@ void SuperFXBus::init() {
 
 //ROM / RAM access from the SuperFX CPU
 
-unsigned SuperFXGSUROM::size() const {
+uint64_t SuperFXGSUROM::size() const {
   return memory::cartrom.size();
 }
 
-uint8 SuperFXGSUROM::read(unsigned addr) {
+uint8 SuperFXGSUROM::read(uint64_t addr) {
   while(!superfx.regs.scmr.ron && scheduler.sync.i != Scheduler::SynchronizeMode::All) {
     superfx.add_clocks(6);
     superfx.synchronize_cpu();
@@ -32,7 +32,7 @@ uint8 SuperFXGSUROM::read(unsigned addr) {
   return memory::cartrom.read(addr);
 }
 
-void SuperFXGSUROM::write(unsigned addr, uint8 data) {
+void SuperFXGSUROM::write(uint64_t addr, uint8 data) {
   while(!superfx.regs.scmr.ron && scheduler.sync.i != Scheduler::SynchronizeMode::All) {
     superfx.add_clocks(6);
     superfx.synchronize_cpu();
@@ -40,11 +40,11 @@ void SuperFXGSUROM::write(unsigned addr, uint8 data) {
   memory::cartrom.write(addr, data);
 }
 
-unsigned SuperFXGSURAM::size() const {
+uint64_t SuperFXGSURAM::size() const {
   return memory::cartram.size();
 }
 
-uint8 SuperFXGSURAM::read(unsigned addr) {
+uint8 SuperFXGSURAM::read(uint64_t addr) {
   while(!superfx.regs.scmr.ran && scheduler.sync.i != Scheduler::SynchronizeMode::All) {
     superfx.add_clocks(6);
     superfx.synchronize_cpu();
@@ -52,7 +52,7 @@ uint8 SuperFXGSURAM::read(unsigned addr) {
   return memory::cartram.read(addr);
 }
 
-void SuperFXGSURAM::write(unsigned addr, uint8 data) {
+void SuperFXGSURAM::write(uint64_t addr, uint8 data) {
   while(!superfx.regs.scmr.ran && scheduler.sync.i != Scheduler::SynchronizeMode::All) {
     superfx.add_clocks(6);
     superfx.synchronize_cpu();
@@ -62,11 +62,11 @@ void SuperFXGSURAM::write(unsigned addr, uint8 data) {
 
 //ROM / RAM access from the S-CPU
 
-unsigned SuperFXCPUROM::size() const {
+uint64_t SuperFXCPUROM::size() const {
   return memory::cartrom.size();
 }
 
-uint8 SuperFXCPUROM::read(unsigned addr) {
+uint8 SuperFXCPUROM::read(uint64_t addr) {
   if(superfx.regs.sfr.g && superfx.regs.scmr.ron) {
     static const uint8_t data[16] = {
       0x00, 0x01, 0x00, 0x01, 0x04, 0x01, 0x00, 0x01,
@@ -77,20 +77,20 @@ uint8 SuperFXCPUROM::read(unsigned addr) {
   return memory::cartrom.read(addr);
 }
 
-void SuperFXCPUROM::write(unsigned addr, uint8 data) {
+void SuperFXCPUROM::write(uint64_t addr, uint8 data) {
   memory::cartrom.write(addr, data);
 }
 
-unsigned SuperFXCPURAM::size() const {
+uint64_t SuperFXCPURAM::size() const {
   return memory::cartram.size();
 }
 
-uint8 SuperFXCPURAM::read(unsigned addr) {
+uint8 SuperFXCPURAM::read(uint64_t addr) {
   if(superfx.regs.sfr.g && superfx.regs.scmr.ran) return cpu.regs.mdr;
   return memory::cartram.read(addr);
 }
 
-void SuperFXCPURAM::write(unsigned addr, uint8 data) {
+void SuperFXCPURAM::write(uint64_t addr, uint8 data) {
   memory::cartram.write(addr, data);
 }
 
