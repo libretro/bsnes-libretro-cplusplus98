@@ -5,7 +5,7 @@ namespace nall {
 
 string& string::replace(const char *key, const char *token) {
   int i, z, ksl = strlen(key), tsl = strlen(token), ssl = length();
-  uint64_t replace_count = 0, size = ssl;
+  unsigned int replace_count = 0, size = ssl;
   char *buffer;
 
   if(ksl <= ssl) {
@@ -41,7 +41,7 @@ string& string::replace(const char *key, const char *token) {
 
 string& string::qreplace(const char *key, const char *token) {
   int i, l, z, ksl = strlen(key), tsl = strlen(token), ssl = length();
-  uint64_t replace_count = 0, size = ssl;
+  unsigned int replace_count = 0, size = ssl;
   uint8_t x;
   char *buffer;
 

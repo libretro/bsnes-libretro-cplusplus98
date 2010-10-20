@@ -13,7 +13,7 @@
 class PPUcounter {
 public:
   alwaysinline void tick();
-  alwaysinline void tick(uint64_t clocks);
+  alwaysinline void tick(unsigned clocks);
 
   alwaysinline bool   field   () const;
   alwaysinline uint16 vcounter() const;
@@ -21,9 +21,9 @@ public:
   inline uint16 hdot() const;
   inline uint16 lineclocks() const;
 
-  alwaysinline bool   field   (uint64_t offset) const;
-  alwaysinline uint16 vcounter(uint64_t offset) const;
-  alwaysinline uint16 hcounter(uint64_t offset) const;
+  alwaysinline bool   field   (unsigned offset) const;
+  alwaysinline uint16 vcounter(unsigned offset) const;
+  alwaysinline uint16 hcounter(unsigned offset) const;
 
   inline void reset();
   function<void ()> scanline;

@@ -1,10 +1,8 @@
-#include <stdint.h>
-
 namespace SNES {
   namespace Info {
     static const char Name[] = "bsnes";
     static const char Version[] = "070";
-    static const uint64_t SerializerVersion = 13;
+    static const unsigned SerializerVersion = 13;
   }
 }
 
@@ -59,10 +57,10 @@ namespace SNES {
 
   struct Processor {
     cothread_t thread;
-    uint64_t frequency;
+    unsigned frequency;
     int64 clock;
 
-    inline void create(void (*entrypoint_)(), uint64_t frequency_) {
+    inline void create(void (*entrypoint_)(), unsigned frequency_) {
       //printf("Calling create()\n");
       if(thread) 
       {
@@ -84,7 +82,7 @@ namespace SNES {
   };
 
   struct ChipDebugger {
-    virtual bool property(uint64_t id, string &name, string &value) = 0;
+    virtual bool property(unsigned id, string &name, string &value) = 0;
   };
 
   #include <memory/memory.hpp>

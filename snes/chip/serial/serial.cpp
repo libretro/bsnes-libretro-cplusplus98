@@ -7,7 +7,7 @@ Serial serial;
 
 #include "serialization.cpp"
 
-static void snesserial_tick(uint64_t clocks) { serial.add_clocks(clocks * 8); }
+static void snesserial_tick(unsigned clocks) { serial.add_clocks(clocks * 8); }
 static uint8 snesserial_read() { return serial.read(); }
 static void snesserial_write(uint8 data) { serial.write(data); }
 
@@ -22,7 +22,7 @@ void Serial::enter() {
   while(true) add_clocks(frequency);  //snesserial_main() fallback
 }
 
-void Serial::add_clocks(uint64_t clocks) {
+void Serial::add_clocks(unsigned clocks) {
   step(clocks);
   synchronize_cpu();
 }
@@ -33,7 +33,7 @@ uint8 Serial::read() {
   add_clocks(4);
 
   uint8 data = 0;
-  for(uint64_t i = 0; i < 8; i++) {
+  for(unsigned i = 0; i < 8; i++) {
     add_clocks(8);
     data = (cpu.joylatch() << 7) | (data >> 1);
   }
@@ -48,7 +48,7 @@ void Serial::write(uint8 data) {
   data1 = 1;
   add_clocks(8);
 
-  for(uint64_t i = 0; i < 8; i++) {
+  for(unsigned i = 0; i < 8; i++) {
     data1 = (data & 1) ^ 1;
     data >>= 1;
     add_clocks(8);
@@ -58,7 +58,7 @@ void Serial::write(uint8 data) {
   add_clocks(8);
 }
 
-uint8 Serial::mmio_read(uint64_t addr) {
+uint8 Serial::mmio_read(unsigned addr) {
   cpu.synchronize_coprocessor();
   switch(addr & 1) { default:
     case 0: return r4016->mmio_read(addr);
@@ -66,7 +66,7 @@ uint8 Serial::mmio_read(uint64_t addr) {
   }
 }
 
-void Serial::mmio_write(uint64_t addr, uint8 data) {
+void Serial::mmio_write(unsigned addr, uint8 data) {
   cpu.synchronize_coprocessor();
   switch(addr & 1) { default:
     case 0: r4016->mmio_write(addr, data); break;

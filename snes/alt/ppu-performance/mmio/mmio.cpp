@@ -21,13 +21,13 @@ uint16 PPU::get_vram_addr() {
   return (addr << 1);
 }
 
-uint8 PPU::vram_read(uint64_t addr) {
+uint8 PPU::vram_read(unsigned addr) {
   if(regs.display_disable) return memory::vram[addr];
   if(cpu.vcounter() >= display.height) return memory::vram[addr];
   return 0x00;
 }
 
-void PPU::vram_write(uint64_t addr, uint8 data) {
+void PPU::vram_write(unsigned addr, uint8 data) {
   if(regs.display_disable || cpu.vcounter() >= display.height) {
     memory::vram[addr] = data;
     cache.tilevalid[0][addr >> 4] = false;
@@ -37,25 +37,25 @@ void PPU::vram_write(uint64_t addr, uint8 data) {
   }
 }
 
-uint8 PPU::oam_read(uint64_t addr) {
+uint8 PPU::oam_read(unsigned addr) {
   if(addr & 0x0200) addr &= 0x021f;
   if(regs.display_disable) return memory::oam[addr];
   if(cpu.vcounter() >= display.height) return memory::oam[addr];
   return memory::oam[0x0218];
 }
 
-void PPU::oam_write(uint64_t addr, uint8 data) {
+void PPU::oam_write(unsigned addr, uint8 data) {
   if(addr & 0x0200) addr &= 0x021f;
   if(!regs.display_disable && cpu.vcounter() < display.height) addr = 0x0218;
   memory::oam[addr] = data;
   oam.update_list(addr, data);
 }
 
-uint8 PPU::cgram_read(uint64_t addr) {
+uint8 PPU::cgram_read(unsigned addr) {
   return memory::cgram[addr];
 }
 
-void PPU::cgram_write(uint64_t addr, uint8 data) {
+void PPU::cgram_write(unsigned addr, uint8 data) {
   memory::cgram[addr] = data;
 }
 
@@ -157,7 +157,7 @@ void PPU::mmio_update_video_mode() {
   }
 }
 
-uint8 PPU::mmio_read(uint64_t addr) {
+uint8 PPU::mmio_read(unsigned addr) {
   cpu.synchronize_ppu();
 
   switch(addr & 0xffff) {
@@ -168,19 +168,19 @@ uint8 PPU::mmio_read(uint64_t addr) {
     }
 
     case 0x2134: {  //MPYL
-      uint64_t result = ((int16)regs.m7a * (int8)(regs.m7b >> 8));
+      unsigned result = ((int16)regs.m7a * (int8)(regs.m7b >> 8));
       regs.ppu1_mdr = result >>  0;
       return regs.ppu1_mdr;
     }
 
     case 0x2135: {  //MPYM
-      uint64_t result = ((int16)regs.m7a * (int8)(regs.m7b >> 8));
+      unsigned result = ((int16)regs.m7a * (int8)(regs.m7b >> 8));
       regs.ppu1_mdr = result >>  8;
       return regs.ppu1_mdr;
     }
 
     case 0x2136: {  //MPYH
-      uint64_t result = ((int16)regs.m7a * (int8)(regs.m7b >> 8));
+      unsigned result = ((int16)regs.m7a * (int8)(regs.m7b >> 8));
       regs.ppu1_mdr = result >> 16;
       return regs.ppu1_mdr;
     }
@@ -278,7 +278,7 @@ uint8 PPU::mmio_read(uint64_t addr) {
   return cpu.regs.mdr;
 }
 
-void PPU::mmio_write(uint64_t addr, uint8 data) {
+void PPU::mmio_write(unsigned addr, uint8 data) {
   cpu.synchronize_ppu();
 
   switch(addr & 0xffff) {
@@ -335,7 +335,7 @@ void PPU::mmio_write(uint64_t addr, uint8 data) {
     }
 
     case 0x2106: {  //MOSAIC
-      uint64_t mosaic_size = (data >> 4) & 15;
+      unsigned mosaic_size = (data >> 4) & 15;
       bg4.regs.mosaic = (data & 0x08 ? mosaic_size : 0);
       bg3.regs.mosaic = (data & 0x04 ? mosaic_size : 0);
       bg2.regs.mosaic = (data & 0x02 ? mosaic_size : 0);

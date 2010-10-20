@@ -23,16 +23,16 @@ public:
   readwrite<string> basename;
 
   readonly<bool> loaded;
-  readonly<uint64_t> crc32;
+  readonly<unsigned> crc32;
   readonly<string> sha256;
 
   Mode mode;
   Region region;
-  readonly<uint64_t> ram_size;
-  readonly<uint64_t> spc7110_data_rom_offset;
+  readonly<unsigned> ram_size;
+  readonly<unsigned> spc7110_data_rom_offset;
   SuperGameBoyVersion supergameboy_version;
-  readonly<uint64_t> supergameboy_ram_size;
-  readonly<uint64_t> supergameboy_rtc_size;
+  readonly<unsigned> supergameboy_ram_size;
+  readonly<unsigned> supergameboy_rtc_size;
 
   readonly<bool> has_bsx_slot;
   readonly<bool> has_superfx;
@@ -57,12 +57,12 @@ public:
     Memory *memory;
     MMIO *mmio;
     Bus::MapMode mode;
-    uint64_t banklo;
-    uint64_t bankhi;
-    uint64_t addrlo;
-    uint64_t addrhi;
-    uint64_t offset;
-    uint64_t size;
+    unsigned banklo;
+    unsigned bankhi;
+    unsigned addrlo;
+    unsigned addrhi;
+    unsigned offset;
+    unsigned size;
 
     Mapping();
     Mapping(Memory&);

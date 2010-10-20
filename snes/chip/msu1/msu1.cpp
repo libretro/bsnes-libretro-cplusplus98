@@ -73,7 +73,7 @@ void MSU1::reset() {
   mmio.audio_play   = false;
 }
 
-uint8 MSU1::mmio_read(uint64_t addr) {
+uint8 MSU1::mmio_read(unsigned addr) {
   addr &= 0xffff;
 
   if(addr == 0x2000) {
@@ -101,7 +101,7 @@ uint8 MSU1::mmio_read(uint64_t addr) {
   return 0x00;
 }
 
-void MSU1::mmio_write(uint64_t addr, uint8 data) {
+void MSU1::mmio_write(unsigned addr, uint8 data) {
   addr &= 0xffff;
 
   if(addr == 0x2000) {

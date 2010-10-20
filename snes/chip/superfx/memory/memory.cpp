@@ -4,9 +4,9 @@ uint8 SuperFX::op_read(uint16 addr) {
   uint16 offset = addr - regs.cbr;
   if(offset < 512) {
     if(cache.valid[offset >> 4] == false) {
-      uint64_t dp = offset & 0xfff0;
-      uint64_t sp = (regs.pbr << 16) + ((regs.cbr + dp) & 0xfff0);
-      for(uint64_t n = 0; n < 16; n++) {
+      unsigned dp = offset & 0xfff0;
+      unsigned sp = (regs.pbr << 16) + ((regs.cbr + dp) & 0xfff0);
+      for(unsigned n = 0; n < 16; n++) {
         add_clocks(memory_access_speed);
         cache.buffer[dp++] = superfxbus.read(sp++);
       }
@@ -45,7 +45,7 @@ uint8 SuperFX::pipe() {
 }
 
 void SuperFX::cache_flush() {
-  for(uint64_t n = 0; n < 32; n++) cache.valid[n] = false;
+  for(unsigned n = 0; n < 32; n++) cache.valid[n] = false;
 }
 
 uint8 SuperFX::cache_mmio_read(uint16 addr) {
@@ -60,9 +60,9 @@ void SuperFX::cache_mmio_write(uint16 addr, uint8 data) {
 }
 
 void SuperFX::memory_reset() {
-  for(uint64_t n = 0; n < 512; n++) cache.buffer[n] = 0x00;
-  for(uint64_t n = 0; n < 32; n++) cache.valid[n] = false;
-  for(uint64_t n = 0; n < 2; n++) {
+  for(unsigned n = 0; n < 512; n++) cache.buffer[n] = 0x00;
+  for(unsigned n = 0; n < 32; n++) cache.valid[n] = false;
+  for(unsigned n = 0; n < 2; n++) {
     pixelcache[n].offset = ~0;
     pixelcache[n].bitpend = 0x00;
   }

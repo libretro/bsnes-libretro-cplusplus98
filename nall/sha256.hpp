@@ -42,7 +42,7 @@ namespace nall {
 
   struct sha256_ctx {
     uint8_t in[64];
-    uint64_t inlen;
+    unsigned inlen;
 
     uint32_t w[64];
     uint32_t h[8];
@@ -55,7 +55,7 @@ namespace nall {
   }
 
   static void sha256_block(sha256_ctx *p) {
-    uint64_t i;
+    unsigned i;
     uint32_t s0, s1;
     uint32_t a, b, c, d, e, f, g, h;
     uint32_t t1, t2, maj, ch;
@@ -90,8 +90,8 @@ namespace nall {
     p->inlen = 0;
   }
 
-  void sha256_chunk(sha256_ctx *p, const uint8_t *s, uint64_t len) {
-    uint64_t l;
+  void sha256_chunk(sha256_ctx *p, const uint8_t *s, unsigned len) {
+    unsigned l;
     p->len += len;
 
     while(len) {
@@ -126,7 +126,7 @@ namespace nall {
 
   void sha256_hash(sha256_ctx *p, uint8_t *s) {
     uint32_t *t = (uint32_t*)s;
-    for(uint64_t i = 0; i < 8; i++) ST32BE(t++, p->h[i]);
+    for(unsigned i = 0; i < 8; i++) ST32BE(t++, p->h[i]);
   }
 
   #undef PTR

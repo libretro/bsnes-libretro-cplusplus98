@@ -6,7 +6,7 @@ namespace nall {
 //this is needed, as C++0x does not support explicit template specialization inside classes
 template<> inline string to_string<bool>         (const bool& v)          { return v ? "true" : "false"; }
 template<> inline string to_string<signed int>   (const signed int& v)    { return strsigned(v); }
-template<> inline string to_string<uint64_t> (const uint64_t& v)  { return struint64_t(v); }
+template<> inline string to_string<unsigned int> (const unsigned int& v)  { return strunsigned(v); }
 template<> inline string to_string<double>       (const double& v)        { return strdouble(v); }
 template<> inline string to_string<char*>        (char * const & v)   { return v; }
 template<> inline string to_string<string>      (const string& v)        { return v; }

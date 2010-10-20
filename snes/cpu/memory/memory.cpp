@@ -28,7 +28,7 @@ void CPU::op_write(uint32 addr, uint8 data) {
   bus.write(addr, regs.mdr = data);
 }
 
-uint64_t CPU::speed(uint64_t addr) const {
+unsigned CPU::speed(unsigned addr) const {
   if(addr & 0x408000) {
     if(addr & 0x800000) return status.rom_speed;
     return 8;

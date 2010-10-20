@@ -9,9 +9,9 @@ public:
 private:
   bool coprocessor;
   uint32 dsp_buffer[32768], cop_buffer[32768];
-  uint64_t dsp_rdoffset, cop_rdoffset;
-  uint64_t dsp_wroffset, cop_wroffset;
-  uint64_t dsp_length, cop_length;
+  unsigned dsp_rdoffset, cop_rdoffset;
+  unsigned dsp_wroffset, cop_wroffset;
+  unsigned dsp_length, cop_length;
 
   double r_step, r_frac;
   int r_sum_l, r_sum_r;

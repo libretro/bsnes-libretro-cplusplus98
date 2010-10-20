@@ -86,7 +86,7 @@ void CPU::serialize(serializer &s) {
   s.integer(alu.divctr);
   s.integer(alu.shift);
 
-  for(uint64_t i = 0; i < 8; i++) {
+  for(unsigned i = 0; i < 8; i++) {
     s.integer(channel[i].dma_enabled);
     s.integer(channel[i].hdma_enabled);
     s.integer(channel[i].direction);

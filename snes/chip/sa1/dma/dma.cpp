@@ -67,29 +67,29 @@ void SA1::dma_cc1() {
   }
 }
 
-uint8 SA1::dma_cc1_read(uint64_t addr) {
+uint8 SA1::dma_cc1_read(unsigned addr) {
   //16 bytes/char (2bpp); 32 bytes/char (4bpp); 64 bytes/char (8bpp)
-  uint64_t charmask = (1 << (6 - mmio.dmacb)) - 1;
+  unsigned charmask = (1 << (6 - mmio.dmacb)) - 1;
 
   if((addr & charmask) == 0) {
     //buffer next character to I-RAM
-    uint64_t bpp = 2 << (2 - mmio.dmacb);
-    uint64_t bpl = (8 << mmio.dmasize) >> mmio.dmacb;
-    uint64_t bwmask = memory::cartram.size() - 1;
-    uint64_t tile = ((addr - mmio.dsa) & bwmask) >> (6 - mmio.dmacb);
-    uint64_t ty = (tile >> mmio.dmasize);
-    uint64_t tx = tile & ((1 << mmio.dmasize) - 1);
-    uint64_t bwaddr = mmio.dsa + ty * 8 * bpl + tx * bpp;
+    unsigned bpp = 2 << (2 - mmio.dmacb);
+    unsigned bpl = (8 << mmio.dmasize) >> mmio.dmacb;
+    unsigned bwmask = memory::cartram.size() - 1;
+    unsigned tile = ((addr - mmio.dsa) & bwmask) >> (6 - mmio.dmacb);
+    unsigned ty = (tile >> mmio.dmasize);
+    unsigned tx = tile & ((1 << mmio.dmasize) - 1);
+    unsigned bwaddr = mmio.dsa + ty * 8 * bpl + tx * bpp;
 
-    for(uint64_t y = 0; y < 8; y++) {
+    for(unsigned y = 0; y < 8; y++) {
       uint64 data = 0;
-      for(uint64_t byte = 0; byte < bpp; byte++) {
+      for(unsigned byte = 0; byte < bpp; byte++) {
         data |= (uint64)memory::cartram.read((bwaddr + byte) & bwmask) << (byte << 3);
       }
       bwaddr += bpl;
 
       uint8 out[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-      for(uint64_t x = 0; x < 8; x++) {
+      for(unsigned x = 0; x < 8; x++) {
         out[0] |= (data & 1) << (7 - x); data >>= 1;
         out[1] |= (data & 1) << (7 - x); data >>= 1;
         if(mmio.dmacb == 2) continue;
@@ -102,8 +102,8 @@ uint8 SA1::dma_cc1_read(uint64_t addr) {
         out[7] |= (data & 1) << (7 - x); data >>= 1;
       }
 
-      for(uint64_t byte = 0; byte < bpp; byte++) {
-        uint64_t p = mmio.dda + (y << 1) + ((byte & 6) << 3) + (byte & 1);
+      for(unsigned byte = 0; byte < bpp; byte++) {
+        unsigned p = mmio.dda + (y << 1) + ((byte & 6) << 3) + (byte & 1);
         memory::iram.write(p & 0x07ff, out[byte]);
       }
     }
@@ -119,15 +119,15 @@ uint8 SA1::dma_cc1_read(uint64_t addr) {
 void SA1::dma_cc2() {
   //select register file index (0-7 or 8-15)
   const uint8 *brf = &mmio.brf[(dma.line & 1) << 3];
-  uint64_t bpp = 2 << (2 - mmio.dmacb);
-  uint64_t addr = mmio.dda & 0x07ff;
+  unsigned bpp = 2 << (2 - mmio.dmacb);
+  unsigned addr = mmio.dda & 0x07ff;
   addr &= ~((1 << (7 - mmio.dmacb)) - 1);
   addr += (dma.line & 8) * bpp;
   addr += (dma.line & 7) * 2;
 
-  for(uint64_t byte = 0; byte < bpp; byte++) {
+  for(unsigned byte = 0; byte < bpp; byte++) {
     uint8 output = 0;
-    for(uint64_t bit = 0; bit < 8; bit++) {
+    for(unsigned bit = 0; bit < 8; bit++) {
       output |= ((brf[bit] >> byte) & 1) << (7 - bit);
     }
     memory::iram.write(addr + ((byte & 6) << 3) + (byte & 1), output);

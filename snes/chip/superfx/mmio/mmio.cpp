@@ -1,6 +1,6 @@
 #ifdef SUPERFX_CPP
 
-uint8 SuperFX::mmio_read(uint64_t addr) {
+uint8 SuperFX::mmio_read(unsigned addr) {
   cpu.synchronize_coprocessor();
   addr &= 0xffff;
 
@@ -52,7 +52,7 @@ uint8 SuperFX::mmio_read(uint64_t addr) {
   return 0x00;
 }
 
-void SuperFX::mmio_write(uint64_t addr, uint8 data) {
+void SuperFX::mmio_write(unsigned addr, uint8 data) {
   cpu.synchronize_coprocessor();
   addr &= 0xffff;
 
@@ -61,7 +61,7 @@ void SuperFX::mmio_write(uint64_t addr, uint8 data) {
   }
 
   if(addr >= 0x3000 && addr <= 0x301f) {
-    uint64_t n = (addr >> 1) & 15;
+    unsigned n = (addr >> 1) & 15;
     if((addr & 1) == 0) {
       regs.r[n] = (regs.r[n] & 0xff00) | data;
     } else {

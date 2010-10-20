@@ -2,7 +2,7 @@ class CPU : public Processor, public CPUcore, public PPUcounter, public MMIO {
 public:
   enum{ Threaded = true };
   array<Processor*> coprocessors;
-  alwaysinline void step(uint64_t clocks);
+  alwaysinline void step(unsigned clocks);
   alwaysinline void synchronize_smp();
   void synchronize_ppu();
   void synchronize_coprocessor();
@@ -34,19 +34,19 @@ private:
     bool interrupt_pending;
     uint16 interrupt_vector;
 
-    uint64_t clock_count;
-    uint64_t line_clocks;
+    unsigned clock_count;
+    unsigned line_clocks;
 
     //timing
     bool irq_lock;
 
-    uint64_t dram_refresh_position;
+    unsigned dram_refresh_position;
     bool dram_refreshed;
 
-    uint64_t hdma_init_position;
+    unsigned hdma_init_position;
     bool hdma_init_triggered;
 
-    uint64_t hdma_position;
+    unsigned hdma_position;
     bool hdma_triggered;
 
     bool nmi_valid;
@@ -65,8 +65,8 @@ private:
 
     //DMA
     bool dma_active;
-    uint64_t dma_counter;
-    uint64_t dma_clocks;
+    unsigned dma_counter;
+    unsigned dma_clocks;
     bool dma_pending;
     bool hdma_pending;
     bool hdma_mode;  //0 = init, 1 = run
@@ -104,7 +104,7 @@ private:
     uint10 virq_pos;
 
     //$420d
-    uint64_t rom_speed;
+    unsigned rom_speed;
 
     //$4214-$4217
     uint16 rddiv;
@@ -118,9 +118,9 @@ private:
   } status;
 
   struct ALU {
-    uint64_t mpyctr;
-    uint64_t divctr;
-    uint64_t shift;
+    unsigned mpyctr;
+    unsigned divctr;
+    unsigned shift;
   } alu;
 
   static void Enter();

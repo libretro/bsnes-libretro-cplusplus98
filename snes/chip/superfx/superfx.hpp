@@ -17,8 +17,8 @@ public:
   void serialize(serializer&);
 
 private:
-  uint64_t clockmode;
-  uint64_t instruction_counter;
+  unsigned clockmode;
+  unsigned instruction_counter;
 };
 
 extern SuperFX superfx;

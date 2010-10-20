@@ -17,8 +17,8 @@ void PPU::Background::run_mode7() {
   signed voffset = sclip<13>(self.regs.mode7_voffset);
 
   if(Background::x++ & ~255) return;
-  uint64_t x = mosaic_hoffset;
-  uint64_t y = self.bg1.mosaic_voffset;  //BG2 vertical mosaic uses BG1 mosaic size
+  unsigned x = mosaic_hoffset;
+  unsigned y = self.bg1.mosaic_voffset;  //BG2 vertical mosaic uses BG1 mosaic size
 
   if(--mosaic_hcounter == 0) {
     mosaic_hcounter = regs.mosaic + 1;
@@ -38,8 +38,8 @@ void PPU::Background::run_mode7() {
   px >>= 8;
   py >>= 8;
 
-  uint64_t tile;
-  uint64_t palette;
+  unsigned tile;
+  unsigned palette;
   switch(self.regs.mode7_repeat) {
     //screen repetition outside of screen area
     case 0:
@@ -78,7 +78,7 @@ void PPU::Background::run_mode7() {
     }
   }
 
-  uint64_t priority;
+  unsigned priority;
   if(id == ID::BG1) {
     priority = regs.priority0;
   } else if(id == ID::BG2) {

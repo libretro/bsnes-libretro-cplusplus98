@@ -1,7 +1,7 @@
 #ifdef SA1_CPP
 
 //BS-X flash carts, when present, are mapped to 0x400000+
-Memory& SA1::mmio_access(uint64_t &addr) {
+Memory& SA1::mmio_access(unsigned &addr) {
   if(!memory::bsxflash.data()) return memory::vsprom;
   if(addr < 0x400000) return memory::vsprom;
   addr &= 0x3fffff;
@@ -152,7 +152,7 @@ void SA1::mmio_w2220(uint8 data) {
   mmio.cbmode = (data & 0x80);
   mmio.cb     = (data & 0x07);
 
-  uint64_t addr = mmio.cb << 20;
+  unsigned addr = mmio.cb << 20;
   Memory &access = mmio_access(addr);
 
   if(mmio.cbmode == 0) {
@@ -172,7 +172,7 @@ void SA1::mmio_w2221(uint8 data) {
   mmio.dbmode = (data & 0x80);
   mmio.db     = (data & 0x07);
 
-  uint64_t addr = mmio.db << 20;
+  unsigned addr = mmio.db << 20;
   Memory &access = mmio_access(addr);
 
   if(mmio.dbmode == 0) {
@@ -192,7 +192,7 @@ void SA1::mmio_w2222(uint8 data) {
   mmio.ebmode = (data & 0x80);
   mmio.eb     = (data & 0x07);
 
-  uint64_t addr = mmio.eb << 20;
+  unsigned addr = mmio.eb << 20;
   Memory &access = mmio_access(addr);
 
   if(mmio.ebmode == 0) {
@@ -212,7 +212,7 @@ void SA1::mmio_w2223(uint8 data) {
   mmio.fbmode = (data & 0x80);
   mmio.fb     = (data & 0x07);
 
-  uint64_t addr = mmio.fb << 20;
+  unsigned addr = mmio.fb << 20;
   Memory &access = mmio_access(addr);
 
   if(mmio.fbmode == 0) {
@@ -406,7 +406,7 @@ void SA1::mmio_w2254(uint8 data) {
       mmio.mr = (int16)mmio.ma * (int16)mmio.mb;
       mmio.mb = 0;
     } else {
-      //uint64_t division
+      //unsigned division
       if(mmio.mb == 0) {
         mmio.mr = 0;
       } else {
@@ -520,7 +520,7 @@ uint8 SA1::mmio_r230e() {
   return 0x01;  //true value unknown
 }
 
-uint8 SA1::mmio_read(uint64_t addr) {
+uint8 SA1::mmio_read(unsigned addr) {
   (co_active() == cpu.thread ? cpu.synchronize_coprocessor() : synchronize_cpu());
   addr &= 0xffff;
 
@@ -545,7 +545,7 @@ uint8 SA1::mmio_read(uint64_t addr) {
   return 0x00;
 }
 
-void SA1::mmio_write(uint64_t addr, uint8 data) {
+void SA1::mmio_write(unsigned addr, uint8 data) {
   (co_active() == cpu.thread ? cpu.synchronize_coprocessor() : synchronize_cpu());
   addr &= 0xffff;
 

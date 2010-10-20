@@ -8,7 +8,7 @@ namespace nall {
 
 inline string bsv_decode(const char *input) {
   string output;
-  uint64_t offset = 0;
+  unsigned offset = 0;
   while(*input) {
     //illegal characters
     if(*input == '}' ) return "";
@@ -32,7 +32,7 @@ inline string bsv_decode(const char *input) {
 
 inline string bsv_encode(const char *input) {
   string output;
-  uint64_t offset = 0;
+  unsigned offset = 0;
   while(*input) {
     //illegal characters
     if(*input == '\r') return "";

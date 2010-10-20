@@ -8,18 +8,18 @@
 namespace nall {
   class lzss {
   public:
-    static bool encode(uint8_t *&output, uint64_t &outlength, const uint8_t *input, uint64_t inlength) {
+    static bool encode(uint8_t *&output, unsigned &outlength, const uint8_t *input, unsigned inlength) {
       output = new(zeromemory) uint8_t[inlength * 9 / 8 + 9];
 
-      uint64_t i = 0, o = 0;
+      unsigned i = 0, o = 0;
       while(i < inlength) {
-        uint64_t flagoffset = o++;
+        unsigned flagoffset = o++;
         uint8_t flag = 0x00;
 
-        for(uint64_t b = 0; b < 8 && i < inlength; b++) {
-          uint64_t longest = 0, pointer;
-          for(uint64_t index = 1; index < 4096; index++) {
-            uint64_t count = 0;
+        for(unsigned b = 0; b < 8 && i < inlength; b++) {
+          unsigned longest = 0, pointer;
+          for(unsigned index = 1; index < 4096; index++) {
+            unsigned count = 0;
             while(true) {
               if(count >= 15 + 3) break;                               //verify pattern match is not longer than max length
               if(i + count >= inlength) break;                         //verify pattern match does not read past end of input
@@ -51,21 +51,21 @@ namespace nall {
       return true;
     }
 
-    static bool decode(uint8_t *&output, const uint8_t *input, uint64_t length) {
+    static bool decode(uint8_t *&output, const uint8_t *input, unsigned length) {
       output = new(zeromemory) uint8_t[length];
 
-      uint64_t i = 0, o = 0;
+      unsigned i = 0, o = 0;
       while(o < length) {
         uint8_t flag = input[i++];
 
-        for(uint64_t b = 0; b < 8 && o < length; b++) {
+        for(unsigned b = 0; b < 8 && o < length; b++) {
           if(!(flag & (1 << b))) output[o++] = input[i++];
           else {
             uint16_t offset = input[i++];
             offset += input[i++] << 8;
             uint16_t lookuplength = (offset >> 12) + 3;
             offset &= 4095;
-            for(uint64_t index = 0; index < lookuplength && o + index < length; index++) {
+            for(unsigned index = 0; index < lookuplength && o + index < length; index++) {
               output[o + index] = output[o + index - offset];
             }
             o += lookuplength;

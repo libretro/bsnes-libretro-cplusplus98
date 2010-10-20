@@ -5,16 +5,16 @@ public:
   void power();
   void reset();
 
-  uint8 read(uint64_t addr);
-  void write(uint64_t addr, uint8 data);
+  uint8 read(unsigned addr);
+  void write(unsigned addr, uint8 data);
 
   void serialize(serializer&);
   OBC1();
   ~OBC1();
 
 private:
-  uint8 ram_read(uint64_t addr);
-  void ram_write(uint64_t addr, uint8 data);
+  uint8 ram_read(unsigned addr);
+  void ram_write(unsigned addr, uint8 data);
 
   struct {
     uint16 address;

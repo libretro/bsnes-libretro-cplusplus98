@@ -41,8 +41,8 @@ SMPDebugger::~SMPDebugger() {
   delete[] usage;
 }
 
-bool SMPDebugger::property(uint64_t id, string &name, string &value) {
-  uint64_t n = 0;
+bool SMPDebugger::property(unsigned id, string &name, string &value) {
+  unsigned n = 0;
 
   #define item(name_, value_) \
   if(id == n++) { \
@@ -53,7 +53,7 @@ bool SMPDebugger::property(uint64_t id, string &name, string &value) {
 
   //$00f0
   item("$00f0", "");
-  item("Clock Speed", (uint64_t)status.clock_speed);
+  item("Clock Speed", (unsigned)status.clock_speed);
   item("Timers Enable", status.timers_enabled);
   item("RAM Disable", status.ram_disabled);
   item("RAM Writable", status.ram_writable);

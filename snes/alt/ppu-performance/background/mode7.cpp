@@ -27,8 +27,8 @@ void PPU::Background::render_mode7() {
     mosaic_y = mosaic_table[self.bg1.regs.mosaic];
   }
 
-  uint64_t priority0 = (priority0_enable ? regs.priority0 : 0);
-  uint64_t priority1 = (priority1_enable ? regs.priority1 : 0);
+  unsigned priority0 = (priority0_enable ? regs.priority0 : 0);
+  unsigned priority1 = (priority1_enable ? regs.priority1 : 0);
   if(priority0 + priority1 == 0) return;
 
   signed psx = ((a * Clip(hofs - cx)) & ~63) + ((b * Clip(vofs - cy)) & ~63) + ((b * mosaic_y[y]) & ~63) + (cx << 8);
@@ -77,7 +77,7 @@ void PPU::Background::render_mode7() {
       }
     }
 
-    uint64_t priority;
+    unsigned priority;
     if(id == ID::BG1) {
       priority = priority0;
     } else {
@@ -86,9 +86,9 @@ void PPU::Background::render_mode7() {
     }
 
     if(palette == 0) continue;
-    uint64_t plot_x = (self.regs.mode7_hflip == false ? x : 255 - x);
+    unsigned plot_x = (self.regs.mode7_hflip == false ? x : 255 - x);
 
-    uint64_t color;
+    unsigned color;
     if(self.screen.regs.direct_color && id == ID::BG1) {
       color = self.screen.get_direct_color(0, palette);
     } else {

@@ -7,14 +7,14 @@ class snes_information {
 public:
   string xml_memory_map;
 
-  inline snes_information(const uint8_t *data, uint64_t size);
+  inline snes_information(const uint8_t *data, unsigned size);
 
 private:
-  inline void read_header(const uint8_t *data, uint64_t size);
-  inline uint64_t find_header(const uint8_t *data, uint64_t size);
-  inline uint64_t score_header(const uint8_t *data, uint64_t size, uint64_t addr);
-  inline uint64_t gameboy_ram_size(const uint8_t *data, uint64_t size);
-  inline bool gameboy_has_rtc(const uint8_t *data, uint64_t size);
+  inline void read_header(const uint8_t *data, unsigned size);
+  inline unsigned find_header(const uint8_t *data, unsigned size);
+  inline unsigned score_header(const uint8_t *data, unsigned size, unsigned addr);
+  inline unsigned gameboy_ram_size(const uint8_t *data, unsigned size);
+  inline bool gameboy_has_rtc(const uint8_t *data, unsigned size);
 
   enum HeaderField {
     CartName    = 0x00,
@@ -78,9 +78,9 @@ private:
   };
 
   bool loaded;        //is a base cartridge inserted?
-  uint64_t crc32;     //crc32 of all cartridges (base+slot(s))
-  uint64_t rom_size;
-  uint64_t ram_size;
+  unsigned crc32;     //crc32 of all cartridges (base+slot(s))
+  unsigned rom_size;
+  unsigned ram_size;
 
   Mode mode;
   Type type;
@@ -106,7 +106,7 @@ private:
   bool has_st018;
 };
 
-snes_information::snes_information(const uint8_t *data, uint64_t size) {
+snes_information::snes_information(const uint8_t *data, unsigned size) {
   read_header(data, size);
 
   string xml = "<?xml version='1.0' encoding='UTF-8'?>\n";
@@ -521,7 +521,7 @@ snes_information::snes_information(const uint8_t *data, uint64_t size) {
   xml_memory_map = xml;
 }
 
-void snes_information::read_header(const uint8_t *data, uint64_t size) {
+void snes_information::read_header(const uint8_t *data, unsigned size) {
   type        = TypeUnknown;
   mapper      = LoROM;
   dsp1_mapper = DSP1Unmapped;
@@ -558,7 +558,7 @@ void snes_information::read_header(const uint8_t *data, uint64_t size) {
     }
   }
 
-  const uint64_t index = find_header(data, size);
+  const unsigned index = find_header(data, size);
   const uint8_t mapperid = data[index + Mapper];
   const uint8_t rom_type = data[index + RomType];
   const uint8_t rom_size = data[index + RomSize];
@@ -744,10 +744,10 @@ void snes_information::read_header(const uint8_t *data, uint64_t size) {
   }
 }
 
-uint64_t snes_information::find_header(const uint8_t *data, uint64_t size) {
-  uint64_t score_lo = score_header(data, size, 0x007fc0);
-  uint64_t score_hi = score_header(data, size, 0x00ffc0);
-  uint64_t score_ex = score_header(data, size, 0x40ffc0);
+unsigned snes_information::find_header(const uint8_t *data, unsigned size) {
+  unsigned score_lo = score_header(data, size, 0x007fc0);
+  unsigned score_hi = score_header(data, size, 0x00ffc0);
+  unsigned score_ex = score_header(data, size, 0x40ffc0);
   if(score_ex) score_ex += 4;  //favor ExHiROM on images > 32mbits
 
   if(score_lo >= score_hi && score_lo >= score_ex) {
@@ -759,7 +759,7 @@ uint64_t snes_information::find_header(const uint8_t *data, uint64_t size) {
   }
 }
 
-uint64_t snes_information::score_header(const uint8_t *data, uint64_t size, uint64_t addr) {
+unsigned snes_information::score_header(const uint8_t *data, unsigned size, unsigned addr) {
   if(size < addr + 64) return 0;  //image too small to contain header at this location?
   int score = 0;
 
@@ -840,7 +840,7 @@ uint64_t snes_information::score_header(const uint8_t *data, uint64_t size, uint
   return score;
 }
 
-uint64_t snes_information::gameboy_ram_size(const uint8_t *data, uint64_t size) {
+unsigned snes_information::gameboy_ram_size(const uint8_t *data, unsigned size) {
   if(size < 512) return 0;
   switch(data[0x0149]) {
     case 0x00: return   0 * 1024;
@@ -853,7 +853,7 @@ uint64_t snes_information::gameboy_ram_size(const uint8_t *data, uint64_t size) 
   }
 }
 
-bool snes_information::gameboy_has_rtc(const uint8_t *data, uint64_t size) {
+bool snes_information::gameboy_has_rtc(const uint8_t *data, unsigned size) {
   if(size < 512) return false;
   if(data[0x0147] == 0x0f ||data[0x0147] == 0x10) return true;
   return false;

@@ -23,7 +23,7 @@ namespace nall {
       output_crc32_invalid,
     };
 
-    ups::result create(const char *patch_fn, const uint8_t *x_data, uint64_t x_size, const uint8_t *y_data, uint64_t y_size) {
+    ups::result create(const char *patch_fn, const uint8_t *x_data, unsigned x_size, const uint8_t *y_data, unsigned y_size) {
       if(!fp.open(patch_fn, file::mode_write)) return patch_unwritable;
 
       crc32 = ~0;
@@ -39,9 +39,9 @@ namespace nall {
       encptr(y_size);
 
       //body
-      uint64_t max_size = max(x_size, y_size);
-      uint64_t relative = 0;
-      for(uint64_t i = 0; i < max_size;) {
+      unsigned max_size = max(x_size, y_size);
+      unsigned relative = 0;
+      for(unsigned i = 0; i < max_size;) {
         uint8_t x = i < x_size ? x_data[i] : 0x00;
         uint8_t y = i < y_size ? y_data[i] : 0x00;
 
@@ -70,16 +70,16 @@ namespace nall {
       }
 
       //footer
-      for(uint64_t i = 0; i < 4; i++) write(x_crc32 >> (i << 3));
-      for(uint64_t i = 0; i < 4; i++) write(y_crc32 >> (i << 3));
+      for(unsigned i = 0; i < 4; i++) write(x_crc32 >> (i << 3));
+      for(unsigned i = 0; i < 4; i++) write(y_crc32 >> (i << 3));
       uint32_t p_crc32 = ~crc32;
-      for(uint64_t i = 0; i < 4; i++) write(p_crc32 >> (i << 3));
+      for(unsigned i = 0; i < 4; i++) write(p_crc32 >> (i << 3));
 
       fp.close();
       return ok;
     }
 
-    ups::result apply(const uint8_t *p_data, uint64_t p_size, const uint8_t *x_data, uint64_t x_size, uint8_t *&y_data, uint64_t &y_size) {
+    ups::result apply(const uint8_t *p_data, unsigned p_size, const uint8_t *x_data, unsigned x_size, uint8_t *&y_data, unsigned &y_size) {
       if(p_size < 18) return patch_invalid;
       p_buffer = p_data;
 
@@ -91,19 +91,19 @@ namespace nall {
       if(read() != 'S') return patch_invalid;
       if(read() != '1') return patch_invalid;
 
-      uint64_t px_size = decptr();
-      uint64_t py_size = decptr();
+      unsigned px_size = decptr();
+      unsigned py_size = decptr();
 
       //mirror
       if(x_size != px_size && x_size != py_size) return input_invalid;
       y_size = (x_size == px_size) ? py_size : px_size;
       y_data = new uint8_t[y_size]();
 
-      for(uint64_t i = 0; i < x_size && i < y_size; i++) y_data[i] = x_data[i];
-      for(uint64_t i = x_size; i < y_size; i++) y_data[i] = 0x00;
+      for(unsigned i = 0; i < x_size && i < y_size; i++) y_data[i] = x_data[i];
+      for(unsigned i = x_size; i < y_size; i++) y_data[i] = 0x00;
 
       //body
-      uint64_t relative = 0;
+      unsigned relative = 0;
       while(p_buffer < p_data + p_size - 12) {
         relative += decptr();
 
@@ -119,11 +119,11 @@ namespace nall {
       }
 
       //footer
-      uint64_t px_crc32 = 0, py_crc32 = 0, pp_crc32 = 0;
-      for(uint64_t i = 0; i < 4; i++) px_crc32 |= read() << (i << 3);
-      for(uint64_t i = 0; i < 4; i++) py_crc32 |= read() << (i << 3);
+      unsigned px_crc32 = 0, py_crc32 = 0, pp_crc32 = 0;
+      for(unsigned i = 0; i < 4; i++) px_crc32 |= read() << (i << 3);
+      for(unsigned i = 0; i < 4; i++) py_crc32 |= read() << (i << 3);
       uint32_t p_crc32 = ~crc32;
-      for(uint64_t i = 0; i < 4; i++) pp_crc32 |= read() << (i << 3);
+      for(unsigned i = 0; i < 4; i++) pp_crc32 |= read() << (i << 3);
 
       uint32_t x_crc32 = crc32_calculate(x_data, x_size);
       uint32_t y_crc32 = crc32_calculate(y_data, y_size);

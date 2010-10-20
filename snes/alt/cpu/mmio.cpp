@@ -1,6 +1,6 @@
 #ifdef CPU_CPP
 
-uint8 CPU::mmio_read(uint64_t addr) {
+uint8 CPU::mmio_read(unsigned addr) {
   if((addr & 0xffc0) == 0x2140) {
     synchronize_smp();
     return smp.port_read(addr & 3);
@@ -42,7 +42,7 @@ uint8 CPU::mmio_read(uint64_t addr) {
 
     case 0x4212: {
       uint8 result = (regs.mdr & 0x3e);
-      uint64_t vbstart = ppu.overscan() == false ? 225 : 240;
+      unsigned vbstart = ppu.overscan() == false ? 225 : 240;
 
       if(vcounter() >= vbstart && vcounter() <= vbstart + 2) result |= 0x01;
       if(hcounter() <= 2 || hcounter() >= 1096) result |= 0x40;
@@ -69,7 +69,7 @@ uint8 CPU::mmio_read(uint64_t addr) {
   }
 
   if((addr & 0xff80) == 0x4300) {
-    uint64_t i = (addr >> 4) & 7;
+    unsigned i = (addr >> 4) & 7;
     switch(addr & 0xff8f) {
       case 0x4300: {
         return (channel[i].direction << 7)
@@ -97,7 +97,7 @@ uint8 CPU::mmio_read(uint64_t addr) {
   return regs.mdr;
 }
 
-void CPU::mmio_write(uint64_t addr, uint8 data) {
+void CPU::mmio_write(unsigned addr, uint8 data) {
   if((addr & 0xffc0) == 0x2140) {
     synchronize_smp();
     port_write(addr & 3, data);
@@ -215,13 +215,13 @@ void CPU::mmio_write(uint64_t addr, uint8 data) {
     }
 
     case 0x420b: {
-      for(uint64_t i = 0; i < 8; i++) channel[i].dma_enabled = data & (1 << i);
+      for(unsigned i = 0; i < 8; i++) channel[i].dma_enabled = data & (1 << i);
       if(data) dma_run();
       return;
     }
 
     case 0x420c: {
-      for(uint64_t i = 0; i < 8; i++) channel[i].hdma_enabled = data & (1 << i);
+      for(unsigned i = 0; i < 8; i++) channel[i].hdma_enabled = data & (1 << i);
       return;
     }
 
@@ -232,7 +232,7 @@ void CPU::mmio_write(uint64_t addr, uint8 data) {
   }
 
   if((addr & 0xff80) == 0x4300) {
-    uint64_t i = (addr >> 4) & 7;
+    unsigned i = (addr >> 4) & 7;
     switch(addr & 0xff8f) {
       case 0x4300: {
         channel[i].direction = data & 0x80;

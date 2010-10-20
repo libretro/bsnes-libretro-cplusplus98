@@ -16,7 +16,7 @@ struct {
 
   //$2100  INIDISP
   bool display_disable;
-  uint64_t display_brightness;
+  unsigned display_brightness;
 
   //$2102  OAMADDL
   //$2103  OAMADDH
@@ -83,8 +83,8 @@ struct {
 } regs;
 
 uint16 get_vram_address();
-uint8 vram_read(uint64_t addr);
-void vram_write(uint64_t addr, uint8 data);
+uint8 vram_read(unsigned addr);
+void vram_write(unsigned addr, uint8 data);
 
 void mmio_update_video_mode();
 
@@ -154,5 +154,5 @@ uint8 mmio_r213e();  //STAT77
 uint8 mmio_r213f();  //STAT78
 
 void mmio_reset();
-uint8 mmio_read(uint64_t addr);
-void mmio_write(uint64_t addr, uint8 data);
+uint8 mmio_read(unsigned addr);
+void mmio_write(unsigned addr, uint8 data);

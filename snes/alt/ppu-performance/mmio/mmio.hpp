@@ -15,7 +15,7 @@ struct Regs {
 
   //$2100
   bool display_disable;
-  uint64_t display_brightness;
+  unsigned display_brightness;
 
   //$2102-$2103
   uint16 oam_baseaddr;
@@ -24,7 +24,7 @@ struct Regs {
 
   //$2105
   bool bg3_priority;
-  uint64_t bgmode;
+  unsigned bgmode;
 
   //$210d
   uint16 mode7_hoffset;
@@ -34,14 +34,14 @@ struct Regs {
 
   //$2115
   bool vram_incmode;
-  uint64_t vram_mapping;
-  uint64_t vram_incsize;
+  unsigned vram_mapping;
+  unsigned vram_incsize;
 
   //$2116-$2117
   uint16 vram_addr;
 
   //$211a
-  uint64_t mode7_repeat;
+  unsigned mode7_repeat;
   bool mode7_vflip;
   bool mode7_hflip;
 
@@ -57,10 +57,10 @@ struct Regs {
   uint16 cgram_addr;
 
   //$2126-$212a
-  uint64_t window_one_left;
-  uint64_t window_one_right;
-  uint64_t window_two_left;
-  uint64_t window_two_right;
+  unsigned window_one_left;
+  unsigned window_one_right;
+  unsigned window_two_left;
+  unsigned window_two_right;
 
   //$2133
   bool mode7_extbg;
@@ -76,16 +76,16 @@ struct Regs {
 } regs;
 
 uint16 get_vram_addr();
-uint8 vram_read(uint64_t addr);
-void vram_write(uint64_t addr, uint8 data);
+uint8 vram_read(unsigned addr);
+void vram_write(unsigned addr, uint8 data);
 
-uint8 oam_read(uint64_t addr);
-void oam_write(uint64_t addr, uint8 data);
+uint8 oam_read(unsigned addr);
+void oam_write(unsigned addr, uint8 data);
 
-uint8 cgram_read(uint64_t addr);
-void cgram_write(uint64_t addr, uint8 data);
+uint8 cgram_read(unsigned addr);
+void cgram_write(unsigned addr, uint8 data);
 
 void mmio_update_video_mode();
-uint8 mmio_read(uint64_t addr);
-void mmio_write(uint64_t addr, uint8 data);
+uint8 mmio_read(unsigned addr);
+void mmio_write(unsigned addr, uint8 data);
 void mmio_reset();

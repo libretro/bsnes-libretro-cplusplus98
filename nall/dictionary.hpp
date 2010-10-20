@@ -9,13 +9,13 @@ namespace nall {
   class dictionary {
   public:
     string operator[](const char *input) {
-      for(uint64_t i = 0; i < index_input.size(); i++) {
+      for(unsigned i = 0; i < index_input.size(); i++) {
         if(index_input[i] == input) return index_output[i];
       }
 
       //no match, use input; remove input identifier, if one exists
       if(strbegin(input, "{{")) {
-        if(optional<uint64_t> pos = strpos(input, "}}")) {
+        if(optional<unsigned> pos = strpos(input, "}}")) {
           string temp = substr(input, pos() + 2);
           return temp;
         }
@@ -32,7 +32,7 @@ namespace nall {
 
       lstring line;
       line.split("\n", data);
-      for(uint64_t i = 0; i < line.size(); i++) {
+      for(unsigned i = 0; i < line.size(); i++) {
         lstring part;
         //format: "Input" = "Output"
         part.qsplit("=", line[i]);
@@ -46,7 +46,7 @@ namespace nall {
         part[0].trim_once("\"");
         part[1].trim_once("\"");
 
-        uint64_t n = index_input.size();
+        unsigned n = index_input.size();
         index_input[n]  = part[0];
         index_output[n] = part[1];
       }

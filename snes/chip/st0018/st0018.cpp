@@ -5,14 +5,14 @@ namespace SNES {
 
 ST0018 st0018;
 
-uint8 ST0018::mmio_read(uint64_t addr) {
+uint8 ST0018::mmio_read(unsigned addr) {
   addr &= 0xffff;
   if(addr == 0x3800) return regs.r3800;
   if(addr == 0x3804) return regs.r3804;
   return cpu.regs.mdr;
 }
 
-void ST0018::mmio_write(uint64_t addr, uint8 data) {
+void ST0018::mmio_write(unsigned addr, uint8 data) {
   addr &= 0xffff;
 
   if(addr == 0x3802) {
@@ -60,7 +60,7 @@ void ST0018::reset() {
   regs.r3800 = 0x00;
   regs.r3804 = 0x85;
   regs.w3804 = 0;
-  for(uint64_t i = 0; i < 97; i++) board[i] = 0;
+  for(unsigned i = 0; i < 97; i++) board[i] = 0;
 }
 
 //===============
@@ -80,13 +80,13 @@ void ST0018::op_board_upload(uint8 data) {
   if(regs.counter >= 97) {
     regs.mode = Waiting;
     #if 0
-    for(uint64_t y = 0; y < 9; y++) {
-      for(uint64_t x = 0; x < 9; x++) {
+    for(unsigned y = 0; y < 9; y++) {
+      for(unsigned x = 0; x < 9; x++) {
         fprintf(stdout, "%.2x ", board[y * 9 + x]);
       }
       fprintf(stdout, "\n");
     }
-    for(uint64_t n = 0; n < 16; n++) fprintf(stdout, "%.2x ", board[81 + n]);
+    for(unsigned n = 0; n < 16; n++) fprintf(stdout, "%.2x ", board[81 + n]);
     fprintf(stdout, "\n\n");
     #endif
   }

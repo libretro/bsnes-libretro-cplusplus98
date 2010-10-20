@@ -3,30 +3,30 @@ struct reg16_t {
   uint16 data;
   function<void (uint16)> on_modify;
 
-  inline operator uint64_t() const { return data; }
+  inline operator unsigned() const { return data; }
   inline uint16 assign(uint16 i) {
     if(on_modify) on_modify(i);
     else data = i;
     return data;
   }
 
-  inline uint64_t operator++() { return assign(data + 1); }
-  inline uint64_t operator--() { return assign(data - 1); }
-  inline uint64_t operator++(int) { uint64_t r = data; assign(data + 1); return r; }
-  inline uint64_t operator--(int) { uint64_t r = data; assign(data - 1); return r; }
-  inline uint64_t operator   = (uint64_t i) { return assign(i); }
-  inline uint64_t operator  |= (uint64_t i) { return assign(data | i); }
-  inline uint64_t operator  ^= (uint64_t i) { return assign(data ^ i); }
-  inline uint64_t operator  &= (uint64_t i) { return assign(data & i); }
-  inline uint64_t operator <<= (uint64_t i) { return assign(data << i); }
-  inline uint64_t operator >>= (uint64_t i) { return assign(data >> i); }
-  inline uint64_t operator  += (uint64_t i) { return assign(data + i); }
-  inline uint64_t operator  -= (uint64_t i) { return assign(data - i); }
-  inline uint64_t operator  *= (uint64_t i) { return assign(data * i); }
-  inline uint64_t operator  /= (uint64_t i) { return assign(data / i); }
-  inline uint64_t operator  %= (uint64_t i) { return assign(data % i); }
+  inline unsigned operator++() { return assign(data + 1); }
+  inline unsigned operator--() { return assign(data - 1); }
+  inline unsigned operator++(int) { unsigned r = data; assign(data + 1); return r; }
+  inline unsigned operator--(int) { unsigned r = data; assign(data - 1); return r; }
+  inline unsigned operator   = (unsigned i) { return assign(i); }
+  inline unsigned operator  |= (unsigned i) { return assign(data | i); }
+  inline unsigned operator  ^= (unsigned i) { return assign(data ^ i); }
+  inline unsigned operator  &= (unsigned i) { return assign(data & i); }
+  inline unsigned operator <<= (unsigned i) { return assign(data << i); }
+  inline unsigned operator >>= (unsigned i) { return assign(data >> i); }
+  inline unsigned operator  += (unsigned i) { return assign(data + i); }
+  inline unsigned operator  -= (unsigned i) { return assign(data - i); }
+  inline unsigned operator  *= (unsigned i) { return assign(data * i); }
+  inline unsigned operator  /= (unsigned i) { return assign(data / i); }
+  inline unsigned operator  %= (unsigned i) { return assign(data % i); }
 
-  inline uint64_t operator   = (const reg16_t& i) { return assign(i); }
+  inline unsigned operator   = (const reg16_t& i) { return assign(i); }
 
   reg16_t() : data(0) {}
   reg16_t(const reg16_t&) : data(0) {}
@@ -46,7 +46,7 @@ struct sfr_t {
   bool cy;    //carry flag
   bool z;     //zero flag
 
-  operator uint64_t() const {
+  operator unsigned() const {
     return (irq << 15) | (b << 12) | (ih << 11) | (il << 10) | (alt2 << 9) | (alt1 << 8)
          | (r << 6) | (g << 5) | (ov << 4) | (s << 3) | (cy << 2) | (z << 1);
   }
@@ -69,12 +69,12 @@ struct sfr_t {
 };
 
 struct scmr_t {
-  uint64_t ht;
+  unsigned ht;
   bool ron;
   bool ran;
-  uint64_t md;
+  unsigned md;
 
-  operator uint64_t() const {
+  operator unsigned() const {
     return ((ht >> 1) << 5) | (ron << 4) | (ran << 3) | ((ht & 1) << 2) | (md);
   }
 
@@ -95,7 +95,7 @@ struct por_t {
   bool dither;
   bool transparent;
 
-  operator uint64_t() const {
+  operator unsigned() const {
     return (obj << 4) | (freezehigh << 3) | (highnibble << 2) | (dither << 1) | (transparent);
   }
 
@@ -113,7 +113,7 @@ struct cfgr_t {
   bool irq;
   bool ms0;
 
-  operator uint64_t() const {
+  operator unsigned() const {
     return (irq << 7) | (ms0 << 5);
   }
 
@@ -143,14 +143,14 @@ struct regs_t {
   cfgr_t cfgr;      //config register
   bool clsr;        //clock select register
 
-  uint64_t romcl;   //clock ticks until romdr is valid
+  unsigned romcl;   //clock ticks until romdr is valid
   uint8 romdr;      //ROM buffer data register
 
-  uint64_t ramcl;   //clock ticks until ramdr is valid
+  unsigned ramcl;   //clock ticks until ramdr is valid
   uint16 ramar;     //RAM buffer address register
   uint8 ramdr;      //RAM buffer data register
 
-  uint64_t sreg, dreg;
+  unsigned sreg, dreg;
   reg16_t& sr() { return r[sreg]; }  //source register (from)
   reg16_t& dr() { return r[dreg]; }  //destination register (to)
 

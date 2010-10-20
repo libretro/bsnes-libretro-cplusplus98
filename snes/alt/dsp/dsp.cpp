@@ -8,7 +8,7 @@ DSP dsp;
 #include "serialization.cpp"
 #include "SPC_DSP.cpp"
 
-void DSP::step(uint64_t clocks) {
+void DSP::step(unsigned clocks) {
   clock += clocks;
 }
 
@@ -26,7 +26,7 @@ void DSP::enter() {
 
   signed count = spc_dsp.sample_count();
   if(count > 0) {
-    for(uint64_t n = 0; n < count; n += 2) audio.sample(samplebuffer[n + 0], samplebuffer[n + 1]);
+    for(unsigned n = 0; n < count; n += 2) audio.sample(samplebuffer[n + 0], samplebuffer[n + 1]);
     spc_dsp.set_output(samplebuffer, 8192);
   }
 }
@@ -50,17 +50,17 @@ void DSP::reset() {
   spc_dsp.set_output(samplebuffer, 8192);
 }
 
-void DSP::channel_enable(uint64_t channel, bool enable) {
+void DSP::channel_enable(unsigned channel, bool enable) {
   channel_enabled[channel & 7] = enable;
-  uint64_t mask = 0;
-  for(uint64_t i = 0; i < 8; i++) {
+  unsigned mask = 0;
+  for(unsigned i = 0; i < 8; i++) {
     if(channel_enabled[i] == false) mask |= 1 << i;
   }
   spc_dsp.mute_voices(mask);
 }
 
 DSP::DSP() {
-  for(uint64_t i = 0; i < 8; i++) channel_enabled[i] = true;
+  for(unsigned i = 0; i < 8; i++) channel_enabled[i] = true;
 }
 
 }

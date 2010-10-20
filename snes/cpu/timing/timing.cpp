@@ -3,13 +3,13 @@
 #include "irq.cpp"
 #include "joypad.cpp"
 
-uint64_t CPU::dma_counter() {
+unsigned CPU::dma_counter() {
   return (status.dma_counter + hcounter()) & 7;
 }
 
-void CPU::add_clocks(uint64_t clocks) {
+void CPU::add_clocks(unsigned clocks) {
   status.irq_lock = false;
-  uint64_t ticks = clocks >> 1;
+  unsigned ticks = clocks >> 1;
   while(ticks--) {
     tick();
     if(hcounter() & 2) {

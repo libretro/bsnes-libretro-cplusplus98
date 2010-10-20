@@ -16,13 +16,13 @@ private:
 };
 
 class DSP1DR : public Memory {
-  uint8 read(uint64_t addr);
-  void write(uint64_t addr, uint8 data);
+  uint8 read(unsigned addr);
+  void write(unsigned addr, uint8 data);
 };
 
 class DSP1SR : public Memory {
-  uint8 read(uint64_t addr);
-  void write(uint64_t addr, uint8 data);
+  uint8 read(unsigned addr);
+  void write(unsigned addr, uint8 data);
 };
 
 extern DSP1 dsp1;

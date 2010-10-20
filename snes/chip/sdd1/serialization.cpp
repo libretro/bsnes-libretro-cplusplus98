@@ -5,7 +5,7 @@ void SDD1::serialize(serializer &s) {
   s.integer(xfer_enable);
   s.array(mmc);
 
-  for(uint64_t n = 0; n < 8; n++) {
+  for(unsigned n = 0; n < 8; n++) {
     s.integer(dma[n].addr);
     s.integer(dma[n].size);
   }

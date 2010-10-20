@@ -67,11 +67,11 @@ void ST0010::reset() {
 
 //
 
-uint8 ST0010::read(uint64_t addr) {
+uint8 ST0010::read(unsigned addr) {
   return readb(addr);
 }
 
-void ST0010::write(uint64_t addr, uint8 data) {
+void ST0010::write(unsigned addr, uint8 data) {
   writeb(addr, data);
 
   if((addr & 0xfff) == 0x0021 && (data & 0x80)) {

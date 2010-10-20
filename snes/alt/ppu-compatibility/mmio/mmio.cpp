@@ -570,7 +570,7 @@ uint8 r = 0x00;
   return regs.ppu2_mdr;
 }
 
-uint8 PPU::mmio_read(uint64_t addr) {
+uint8 PPU::mmio_read(unsigned addr) {
   cpu.synchronize_ppu();
 
   switch(addr & 0xffff) {
@@ -609,7 +609,7 @@ uint8 PPU::mmio_read(uint64_t addr) {
   return cpu.regs.mdr;
 }
 
-void PPU::mmio_write(uint64_t addr, uint8 data) {
+void PPU::mmio_write(unsigned addr, uint8 data) {
   cpu.synchronize_ppu();
 
   switch(addr & 0xffff) {

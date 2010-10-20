@@ -6,10 +6,10 @@ namespace nall {
 //strlcpy, strlcat based on OpenBSD implementation by Todd C. Miller
 
 //return = strlen(src)
-uint64_t strlcpy(char *dest, const char *src, uint64_t length) {
+unsigned strlcpy(char *dest, const char *src, unsigned length) {
   char *d = dest;
   const char *s = src;
-  uint64_t n = length;
+  unsigned n = length;
 
   if(n) {
     while(--n && (*d++ = *s++)); //copy as many bytes as possible, or until null terminator reached
@@ -24,13 +24,13 @@ uint64_t strlcpy(char *dest, const char *src, uint64_t length) {
 }
 
 //return = strlen(src) + min(length, strlen(dest))
-uint64_t strlcat(char *dest, const char *src, uint64_t length) {
+unsigned strlcat(char *dest, const char *src, unsigned length) {
   char *d = dest;
   const char *s = src;
-  uint64_t n = length;
+  unsigned n = length;
 
   while(n-- && *d) d++; //find end of dest
-  uint64_t dlength = d - dest;
+  unsigned dlength = d - dest;
   n = length - dlength; //subtract length of dest from maximum string length
 
   if(!n) return dlength + strlen(s);

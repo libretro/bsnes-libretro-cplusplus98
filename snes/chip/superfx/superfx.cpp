@@ -56,7 +56,7 @@ void SuperFX::reset() {
   superfxbus.init();
   instruction_counter = 0;
 
-  for(uint64_t n = 0; n < 16; n++) regs.r[n] = 0x0000;
+  for(unsigned n = 0; n < 16; n++) regs.r[n] = 0x0000;
   regs.sfr   = 0x0000;
   regs.pbr   = 0x00;
   regs.rombr = 0x00;

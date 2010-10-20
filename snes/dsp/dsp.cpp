@@ -25,7 +25,7 @@ namespace SNES {
 
 /* timing */
 
-void DSP::step(uint64_t clocks) {
+void DSP::step(unsigned clocks) {
   clock += clocks;
 }
 
@@ -261,7 +261,7 @@ void DSP::power() {
   state.t_echo_out[0] = state.t_echo_out[1] = 0;
   state.t_echo_in[0] = state.t_echo_in[1] = 0;
 
-  for(uint64_t i = 0; i < 8; i++) {
+  for(unsigned i = 0; i < 8; i++) {
     voice[i].buf_pos = 0;
     voice[i].interp_pos = 0;
     voice[i].brr_addr = 0;

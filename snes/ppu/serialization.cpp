@@ -134,7 +134,7 @@ void PPU::Background::serialize(serializer &s) {
 }
 
 void PPU::Sprite::serialize(serializer &s) {
-  for(uint64_t i = 0; i < 128; i++) {
+  for(unsigned i = 0; i < 128; i++) {
     s.integer(list[i].x);
     s.integer(list[i].y);
     s.integer(list[i].character);
@@ -153,9 +153,9 @@ void PPU::Sprite::serialize(serializer &s) {
   s.integer(t.tile_count);
 
   s.integer(t.active);
-  for(uint64_t n = 0; n < 2; n++) {
+  for(unsigned n = 0; n < 2; n++) {
     s.array(t.item[n]);
-    for(uint64_t i = 0; i < 34; i++) {
+    for(unsigned i = 0; i < 34; i++) {
       s.integer(t.tile[n][i].x);
       s.integer(t.tile[n][i].priority);
       s.integer(t.tile[n][i].palette);

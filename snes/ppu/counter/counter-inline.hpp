@@ -15,7 +15,7 @@ void PPUcounter::tick() {
 
 //this should only be called by PPU::PPUcounter::tick(n);
 //allows stepping by more than the smallest unit of time
-void PPUcounter::tick(uint64_t clocks) {
+void PPUcounter::tick(unsigned clocks) {
   status.hcounter += clocks;
   if(status.hcounter >= lineclocks()) {
     status.hcounter -= lineclocks();
@@ -44,9 +44,9 @@ bool   PPUcounter::field   () const { return status.field; }
 uint16 PPUcounter::vcounter() const { return status.vcounter; }
 uint16 PPUcounter::hcounter() const { return status.hcounter; }
 
-bool   PPUcounter::field   (uint64_t offset) const { return history.field   [(history.index - (offset >> 1)) & 2047]; }
-uint16 PPUcounter::vcounter(uint64_t offset) const { return history.vcounter[(history.index - (offset >> 1)) & 2047]; }
-uint16 PPUcounter::hcounter(uint64_t offset) const { return history.hcounter[(history.index - (offset >> 1)) & 2047]; }
+bool   PPUcounter::field   (unsigned offset) const { return history.field   [(history.index - (offset >> 1)) & 2047]; }
+uint16 PPUcounter::vcounter(unsigned offset) const { return history.vcounter[(history.index - (offset >> 1)) & 2047]; }
+uint16 PPUcounter::hcounter(unsigned offset) const { return history.hcounter[(history.index - (offset >> 1)) & 2047]; }
 
 //one PPU dot = 4 CPU clocks
 //
@@ -77,7 +77,7 @@ void PPUcounter::reset() {
   status.hcounter  = 0;
   history.index    = 0;
 
-  for(uint64_t i = 0; i < 2048; i++) {
+  for(unsigned i = 0; i < 2048; i++) {
     history.field   [i] = 0;
     history.vcounter[i] = 0;
     history.hcounter[i] = 0;

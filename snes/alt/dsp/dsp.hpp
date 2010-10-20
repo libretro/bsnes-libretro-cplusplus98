@@ -3,7 +3,7 @@
 class DSP : public Processor, public ChipDebugger {
 public:
   enum{ Threaded = false };
-  alwaysinline void step(uint64_t clocks);
+  alwaysinline void step(unsigned clocks);
   alwaysinline void synchronize_smp();
 
   uint8 read(uint8 addr);
@@ -13,10 +13,10 @@ public:
   void power();
   void reset();
 
-  void channel_enable(uint64_t channel, bool enable);
+  void channel_enable(unsigned channel, bool enable);
 
   void serialize(serializer&);
-  bool property(uint64_t id, string &name, string &value) { return false; }
+  bool property(unsigned id, string &name, string &value) { return false; }
   DSP();
 
 private:

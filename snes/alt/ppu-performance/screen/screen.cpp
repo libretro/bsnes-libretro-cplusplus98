@@ -1,6 +1,6 @@
 #ifdef PPU_CPP
 
-uint64_t PPU::Screen::get_palette(uint64_t color) {
+unsigned PPU::Screen::get_palette(unsigned color) {
   #if defined(ARCH_LSB)
   static uint16 *cgram = (uint16*)memory::cgram.data();
   return cgram[color];
@@ -10,24 +10,24 @@ uint64_t PPU::Screen::get_palette(uint64_t color) {
   #endif
 }
 
-uint64_t PPU::Screen::get_direct_color(uint64_t p, uint64_t t) {
+unsigned PPU::Screen::get_direct_color(unsigned p, unsigned t) {
   return ((t & 7) << 2) | ((p & 1) << 1) |
          (((t >> 3) & 7) << 7) | (((p >> 1) & 1) << 6) |
          ((t >> 6) << 13) | ((p >> 2) << 12);
 }
 
-uint16 PPU::Screen::addsub(uint64_t x, uint64_t y, bool halve) {
+uint16 PPU::Screen::addsub(unsigned x, unsigned y, bool halve) {
   if(!regs.color_mode) {
     if(!halve) {
-      uint64_t sum = x + y;
-      uint64_t carry = (sum - ((x ^ y) & 0x0421)) & 0x8420;
+      unsigned sum = x + y;
+      unsigned carry = (sum - ((x ^ y) & 0x0421)) & 0x8420;
       return (sum - carry) | (carry - (carry >> 5));
     } else {
       return (x + y - ((x ^ y) & 0x0421)) >> 1;
     }
   } else {
-    uint64_t diff = x - y + 0x8420;
-    uint64_t borrow = (diff - ((x ^ y) & 0x8420)) & 0x8420;
+    unsigned diff = x - y + 0x8420;
+    unsigned borrow = (diff - ((x ^ y) & 0x8420)) & 0x8420;
     if(!halve) {
       return (diff - borrow) & (borrow - (borrow >> 5));
     } else {
@@ -37,11 +37,11 @@ uint16 PPU::Screen::addsub(uint64_t x, uint64_t y, bool halve) {
 }
 
 void PPU::Screen::scanline() {
-  uint64_t main_color = get_palette(0);
-  uint64_t sub_color = (self.regs.pseudo_hires == false && self.regs.bgmode != 5 && self.regs.bgmode != 6)
+  unsigned main_color = get_palette(0);
+  unsigned sub_color = (self.regs.pseudo_hires == false && self.regs.bgmode != 5 && self.regs.bgmode != 6)
                      ? regs.color : main_color;
 
-  for(uint64_t x = 0; x < 256; x++) {
+  for(unsigned x = 0; x < 256; x++) {
     output.main[x].color = main_color;
     output.main[x].priority = 0;
     output.main[x].source = 6;
@@ -61,7 +61,7 @@ void PPU::Screen::render_black() {
   memset(data, 0, self.display.width << 1);
 }
 
-uint16 PPU::Screen::get_pixel_main(uint64_t x) {
+uint16 PPU::Screen::get_pixel_main(unsigned x) {
   typeof(output.main[0]) main = output.main[x];
   typeof(output.sub[0]) sub = output.sub[x];
 
@@ -88,7 +88,7 @@ uint16 PPU::Screen::get_pixel_main(uint64_t x) {
   return main.color;
 }
 
-uint16 PPU::Screen::get_pixel_sub(uint64_t x) {
+uint16 PPU::Screen::get_pixel_sub(unsigned x) {
   typeof(output.sub[0]) main = output.sub[x];
   typeof(output.main[0]) sub = output.main[x];
 
@@ -140,9 +140,9 @@ PPU::Screen::Screen(PPU &self) : self(self) {
       for(uint64_t g = 0; g < 32; g++) {
         for(uint64_t b = 0; b < 32; b++) {
           double luma = (double)l / 15.0;
-          uint64_t ar = static_cast<uint64_t>(luma * r + 0.5);
-          uint64_t ag = static_cast<uint64_t>(luma * g + 0.5);
-          uint64_t ab = static_cast<uint64_t>(luma * b + 0.5);
+          uint64_t ar = static_cast<unsigned>(luma * r + 0.5);
+          uint64_t ag = static_cast<unsigned>(luma * g + 0.5);
+          uint64_t ab = static_cast<unsigned>(luma * b + 0.5);
           light_table[l][(r << 10) + (g << 5) + (b << 0)] = (ab << 10) + (ag << 5) + (ar << 0);
         }
       }
@@ -155,7 +155,7 @@ PPU::Screen::~Screen() {
   free(light_table);
 }
 
-void PPU::Screen::Output::plot_main(uint64_t x, uint64_t color, uint64_t priority, uint64_t source) {
+void PPU::Screen::Output::plot_main(unsigned x, unsigned color, unsigned priority, unsigned source) {
   if(priority > main[x].priority) {
     main[x].color = color;
     main[x].priority = priority;
@@ -163,7 +163,7 @@ void PPU::Screen::Output::plot_main(uint64_t x, uint64_t color, uint64_t priorit
   }
 }
 
-void PPU::Screen::Output::plot_sub(uint64_t x, uint64_t color, uint64_t priority, uint64_t source) {
+void PPU::Screen::Output::plot_sub(unsigned x, unsigned color, unsigned priority, unsigned source) {
   if(priority > sub[x].priority) {
     sub[x].color = color;
     sub[x].priority = priority;

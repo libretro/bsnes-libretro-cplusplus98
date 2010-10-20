@@ -1,8 +1,8 @@
 #ifndef __UCONTEXT_H
 #define __UCONTEXT_H
 
-typedef uint64_t long ulong;
-typedef uint64_t uint;
+typedef unsigned long ulong;
+typedef unsigned int uint;
 #include <stdint.h>
 
 #define	setcontext(u)	_setmcontext(&(u)->mc)

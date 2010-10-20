@@ -204,7 +204,7 @@ inline void SPC_DSP::run_counters()
 		m.counter = simple_counter_range - 1;
 }
 
-inline uint64_t SPC_DSP::read_counter( uint64_t rate )
+inline unsigned SPC_DSP::read_counter( int rate )
 {
 	return ((unsigned) m.counter + counter_offsets [rate]) % counter_rates [rate];
 }

@@ -5,18 +5,18 @@
 #include <nall/static.hpp>
 
 namespace nall {
-  template<uint64_t bits> class uint_t {
+  template<unsigned bits> class uint_t {
   private:
     enum { bytes = (bits + 7) >> 3 };  //minimum number of bytes needed to store value
     typedef typename static_if<
       sizeof(int) >= bytes,
-      uint64_t,
+      unsigned int,
       typename static_if<
         sizeof(long) >= bytes,
-        uint64_t long,
+        unsigned long,
         typename static_if<
           sizeof(long long) >= bytes,
-          uint64_t long long,
+          unsigned long long,
           void
         >::type
       >::type
@@ -45,7 +45,7 @@ namespace nall {
     inline uint_t(const T i) : data(uclip<bits>(i)) {}
   };
 
-  template<uint64_t bits> class int_t {
+  template<unsigned bits> class int_t {
   private:
     enum { bytes = (bits + 7) >> 3 };  //minimum number of bytes needed to store value
     typedef typename static_if<

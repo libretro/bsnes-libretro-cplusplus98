@@ -2,8 +2,8 @@
 
 Debugger debugger;
 
-void Debugger::breakpoint_test(Debugger::Breakpoint::Source::e source, Debugger::Breakpoint::Mode::e mode, uint64_t addr, uint8 data) {
-  for(uint64_t i = 0; i < Breakpoints; i++) {
+void Debugger::breakpoint_test(Debugger::Breakpoint::Source::e source, Debugger::Breakpoint::Mode::e mode, unsigned addr, uint8 data) {
+  for(unsigned i = 0; i < Breakpoints; i++) {
     if(breakpoint[i].enabled == false) continue;
 
     bool source_wram = ((breakpoint[i].addr & 0x40e000) == 0x000000) || ((breakpoint[i].addr & 0xffe000) == 0x7e0000);
@@ -28,7 +28,7 @@ void Debugger::breakpoint_test(Debugger::Breakpoint::Source::e source, Debugger:
   }
 }
 
-uint8 Debugger::read(Debugger::MemorySource::e source, uint64_t addr) {
+uint8 Debugger::read(Debugger::MemorySource::e source, unsigned addr) {
   switch(source) {
     case MemorySource::CPUBus: {
       //do not read from memory-mapped registers that could affect program behavior
@@ -57,7 +57,7 @@ uint8 Debugger::read(Debugger::MemorySource::e source, uint64_t addr) {
   return 0x00;
 }
 
-void Debugger::write(Debugger::MemorySource::e source, uint64_t addr, uint8 data) {
+void Debugger::write(Debugger::MemorySource::e source, unsigned addr, uint8 data) {
   switch(source) {
     case MemorySource::CPUBus: {
       //do not write to memory-mapped registers that could affect program behavior
@@ -89,7 +89,7 @@ void Debugger::write(Debugger::MemorySource::e source, uint64_t addr, uint8 data
 Debugger::Debugger() {
   break_event.i = BreakEvent::None;
 
-  for(uint64_t n = 0; n < Breakpoints; n++) {
+  for(unsigned n = 0; n < Breakpoints; n++) {
     breakpoint[n].enabled = false;
     breakpoint[n].addr = 0;
     breakpoint[n].data = -1;

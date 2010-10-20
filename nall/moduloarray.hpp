@@ -14,7 +14,7 @@ namespace nall {
       return buffer[size + index];
     }
 
-    inline void write(uint64_t index, const T value) {
+    inline void write(unsigned index, const T value) {
       buffer[index] =
       buffer[index + size] =
       buffer[index + size + size] = value;

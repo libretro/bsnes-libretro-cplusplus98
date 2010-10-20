@@ -130,9 +130,9 @@ public:
 #endif
 
 #if UINT_MAX < 0xFFFFFFFF || ULONG_MAX == 0xFFFFFFFF
-	typedef uint64_t long blargg_ulong;
+	typedef unsigned long blargg_ulong;
 #else
-	typedef uint64_t blargg_ulong;
+	typedef unsigned blargg_ulong;
 #endif
 
 // BOOST::int8_t etc.
@@ -170,10 +170,10 @@ public:
 		
 		#if ULONG_MAX == 0xFFFFFFFF
 			typedef long            int32_t;
-			typedef uint64_t long   uint32_t;
+			typedef unsigned long   uint32_t;
 		#elif UINT_MAX == 0xFFFFFFFF
 			typedef int             int32_t;
-			typedef uint64_t    uint32_t;
+			typedef unsigned int    uint32_t;
 		#else
 			// No suitable 32-bit type available
 			typedef struct see_blargg_common_h int32_t;

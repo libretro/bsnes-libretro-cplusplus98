@@ -244,7 +244,7 @@ int const stack_align = 256;
 static thread_local cothread_t co_active_handle = 0;
 static int co_flags;
 
-static uint32_t* co_create_( uint64_t size )
+static uint32_t* co_create_( unsigned size )
 {
    SNES_DBG("co_create_()\n");
 	uint32_t* t = (uint32_t*) memalign(128, size);
@@ -259,7 +259,7 @@ static uint32_t* co_create_( uint64_t size )
 	return t;
 }
 
-cothread_t co_create( uint64_t size, void (*entry_)( void ) )
+cothread_t co_create( unsigned int size, void (*entry_)( void ) )
 {
    SNES_DBG("co_create()\n");
 	uint32_t* t = NULL;

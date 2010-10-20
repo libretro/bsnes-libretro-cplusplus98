@@ -24,12 +24,12 @@ void SPC7110Decomp::write(uint8 data) {
 }
 
 uint8 SPC7110Decomp::dataread() {
-  uint64_t size = memory::cartrom.size() - cartridge.spc7110_data_rom_offset();
+  unsigned size = memory::cartrom.size() - cartridge.spc7110_data_rom_offset();
   while(decomp_offset >= size) decomp_offset -= size;
   return memory::cartrom.read(cartridge.spc7110_data_rom_offset() + decomp_offset++);
 }
 
-void SPC7110Decomp::init(uint64_t mode, uint64_t offset, uint64_t index) {
+void SPC7110Decomp::init(unsigned mode, unsigned offset, unsigned index) {
   decomp_mode = mode;
   decomp_offset = offset;
 
@@ -38,7 +38,7 @@ void SPC7110Decomp::init(uint64_t mode, uint64_t offset, uint64_t index) {
   decomp_buffer_length   = 0;
 
   //reset context states
-  for(uint64_t i = 0; i < 32; i++) {
+  for(unsigned i = 0; i < 32; i++) {
     context[i].index  = 0;
     context[i].invert = 0;
   }
@@ -69,18 +69,18 @@ void SPC7110Decomp::mode0(bool init) {
   }
 
   while(decomp_buffer_length < (decomp_buffer_size >> 1)) {
-    for(uint64_t bit = 0; bit < 8; bit++) {
+    for(unsigned bit = 0; bit < 8; bit++) {
       //get context
       uint8 mask = (1 << (bit & 3)) - 1;
       uint8 con = mask + ((inverts & mask) ^ (lps & mask));
       if(bit > 3) con += 15;
 
       //get prob and mps
-      uint64_t prob = probability(con);
-      uint64_t mps = (((out >> 15) & 1) ^ context[con].invert);
+      unsigned prob = probability(con);
+      unsigned mps = (((out >> 15) & 1) ^ context[con].invert);
 
       //get bit
-      uint64_t flag_lps;
+      unsigned flag_lps;
       if(val <= span - prob) { //mps
         span = span - prob;
         out = (out << 1) + mps;
@@ -93,7 +93,7 @@ void SPC7110Decomp::mode0(bool init) {
       }
 
       //renormalize
-      uint64_t shift = 0;
+      unsigned shift = 0;
       while(span < 0x7f) {
         shift++;
 
@@ -128,7 +128,7 @@ void SPC7110Decomp::mode1(bool init) {
   static int out, inverts, lps, in_count;
 
   if(init == true) {
-    for(uint64_t i = 0; i < 4; i++) pixelorder[i] = i;
+    for(unsigned i = 0; i < 4; i++) pixelorder[i] = i;
     out = inverts = lps = 0;
     span = 0xff;
     val = dataread();
@@ -138,15 +138,15 @@ void SPC7110Decomp::mode1(bool init) {
   }
 
   while(decomp_buffer_length < (decomp_buffer_size >> 1)) {
-    for(uint64_t pixel = 0; pixel < 8; pixel++) {
+    for(unsigned pixel = 0; pixel < 8; pixel++) {
       //get first symbol context
-      uint64_t a = ((out >> (1 * 2)) & 3);
-      uint64_t b = ((out >> (7 * 2)) & 3);
-      uint64_t c = ((out >> (8 * 2)) & 3);
-      uint64_t con = (a == b) ? (b != c) : (b == c) ? 2 : 4 - (a == c);
+      unsigned a = ((out >> (1 * 2)) & 3);
+      unsigned b = ((out >> (7 * 2)) & 3);
+      unsigned c = ((out >> (8 * 2)) & 3);
+      unsigned con = (a == b) ? (b != c) : (b == c) ? 2 : 4 - (a == c);
 
       //update pixel order
-      uint64_t m, n;
+      unsigned m, n;
       for(m = 0; m < 4; m++) if(pixelorder[m] == a) break;
       for(n = m; n > 0; n--) pixelorder[n] = pixelorder[n - 1];
       pixelorder[0] = a;
@@ -170,12 +170,12 @@ void SPC7110Decomp::mode1(bool init) {
       realorder[0] = a;
 
       //get 2 symbols
-      for(uint64_t bit = 0; bit < 2; bit++) {
+      for(unsigned bit = 0; bit < 2; bit++) {
         //get prob
-        uint64_t prob = probability(con);
+        unsigned prob = probability(con);
 
         //get symbol
-        uint64_t flag_lps;
+        unsigned flag_lps;
         if(val <= span - prob) { //mps
           span = span - prob;
           flag_lps = 0;
@@ -186,7 +186,7 @@ void SPC7110Decomp::mode1(bool init) {
         }
 
         //renormalize
-        uint64_t shift = 0;
+        unsigned shift = 0;
         while(span < 0x7f) {
           shift++;
 
@@ -219,7 +219,7 @@ void SPC7110Decomp::mode1(bool init) {
     }
 
     //turn pixel data into bitplanes
-    uint64_t data = morton_2x8(out);
+    unsigned data = morton_2x8(out);
     write(data >> 8);
     write(data >> 0);
   }
@@ -232,7 +232,7 @@ void SPC7110Decomp::mode2(bool init) {
   static int out0, out1, inverts, lps, in_count;
 
   if(init == true) {
-    for(uint64_t i = 0; i < 16; i++) pixelorder[i] = i;
+    for(unsigned i = 0; i < 16; i++) pixelorder[i] = i;
     buffer_index = 0;
     out0 = out1 = inverts = lps = 0;
     span = 0xff;
@@ -243,16 +243,16 @@ void SPC7110Decomp::mode2(bool init) {
   }
 
   while(decomp_buffer_length < (decomp_buffer_size >> 1)) {
-    for(uint64_t pixel = 0; pixel < 8; pixel++) {
+    for(unsigned pixel = 0; pixel < 8; pixel++) {
       //get first symbol context
-      uint64_t a = ((out0 >> (0 * 4)) & 15);
-      uint64_t b = ((out0 >> (7 * 4)) & 15);
-      uint64_t c = ((out1 >> (0 * 4)) & 15);
-      uint64_t con = 0;
-      uint64_t refcon = (a == b) ? (b != c) : (b == c) ? 2 : 4 - (a == c);
+      unsigned a = ((out0 >> (0 * 4)) & 15);
+      unsigned b = ((out0 >> (7 * 4)) & 15);
+      unsigned c = ((out1 >> (0 * 4)) & 15);
+      unsigned con = 0;
+      unsigned refcon = (a == b) ? (b != c) : (b == c) ? 2 : 4 - (a == c);
 
       //update pixel order
-      uint64_t m, n;
+      unsigned m, n;
       for(m = 0; m < 16; m++) if(pixelorder[m] == a) break;
       for(n = m; n >  0; n--) pixelorder[n] = pixelorder[n - 1];
       pixelorder[0] = a;
@@ -276,12 +276,12 @@ void SPC7110Decomp::mode2(bool init) {
       realorder[0] = a;
 
       //get 4 symbols
-      for(uint64_t bit = 0; bit < 4; bit++) {
+      for(unsigned bit = 0; bit < 4; bit++) {
         //get prob
-        uint64_t prob = probability(con);
+        unsigned prob = probability(con);
 
         //get symbol
-        uint64_t flag_lps;
+        unsigned flag_lps;
         if(val <= span - prob) { //mps
           span = span - prob;
           flag_lps = 0;
@@ -292,7 +292,7 @@ void SPC7110Decomp::mode2(bool init) {
         }
 
         //renormalize
-        uint64_t shift = 0;
+        unsigned shift = 0;
         while(span < 0x7f) {
           shift++;
 
@@ -308,7 +308,7 @@ void SPC7110Decomp::mode2(bool init) {
 
         //update processing info
         lps = (lps << 1) + flag_lps;
-        uint64_t invertbit = context[con].invert;
+        unsigned invertbit = context[con].invert;
         inverts = (inverts << 1) + invertbit;
 
         //update context state
@@ -327,14 +327,14 @@ void SPC7110Decomp::mode2(bool init) {
     }
 
     //convert pixel data into bitplanes
-    uint64_t data = morton_4x8(out0);
+    unsigned data = morton_4x8(out0);
     write(data >> 24);
     write(data >> 16);
     bitplanebuffer[buffer_index++] = data >> 8;
     bitplanebuffer[buffer_index++] = data >> 0;
 
     if(buffer_index == 16) {
-      for(uint64_t i = 0; i < 16; i++) write(bitplanebuffer[i]);
+      for(unsigned i = 0; i < 16; i++) write(bitplanebuffer[i]);
       buffer_index = 0;
     }
   }
@@ -445,19 +445,19 @@ const uint8 SPC7110Decomp::mode2_context_table[32][2] = {
   { 31, 31 },
 };
 
-uint8 SPC7110Decomp::probability  (uint64_t n) { return evolution_table[context[n].index][0]; }
-uint8 SPC7110Decomp::next_lps     (uint64_t n) { return evolution_table[context[n].index][1]; }
-uint8 SPC7110Decomp::next_mps     (uint64_t n) { return evolution_table[context[n].index][2]; }
-bool  SPC7110Decomp::toggle_invert(uint64_t n) { return evolution_table[context[n].index][3]; }
+uint8 SPC7110Decomp::probability  (unsigned n) { return evolution_table[context[n].index][0]; }
+uint8 SPC7110Decomp::next_lps     (unsigned n) { return evolution_table[context[n].index][1]; }
+uint8 SPC7110Decomp::next_mps     (unsigned n) { return evolution_table[context[n].index][2]; }
+bool  SPC7110Decomp::toggle_invert(unsigned n) { return evolution_table[context[n].index][3]; }
 
-uint64_t SPC7110Decomp::morton_2x8(uint64_t data) {
+unsigned SPC7110Decomp::morton_2x8(unsigned data) {
   //reverse morton lookup: de-interleave two 8-bit values
   //15, 13, 11,  9,  7,  5,  3,  1 -> 15- 8
   //14, 12, 10,  8,  6,  4,  2,  0 ->  7- 0
   return morton16[0][(data >>  0) & 255] + morton16[1][(data >>  8) & 255];
 }
 
-uint64_t SPC7110Decomp::morton_4x8(uint64_t data) {
+unsigned SPC7110Decomp::morton_4x8(unsigned data) {
   //reverse morton lookup: de-interleave four 8-bit values
   //31, 27, 23, 19, 15, 11,  7,  3 -> 31-24
   //30, 26, 22, 18, 14, 10,  6,  2 -> 23-16
@@ -484,7 +484,7 @@ SPC7110Decomp::SPC7110Decomp() {
   reset();
 
   //initialize reverse morton lookup tables
-  for(uint64_t i = 0; i < 256; i++) {
+  for(unsigned i = 0; i < 256; i++) {
     #define map(x, y) (((i >> x) & 1) << y)
     //2x8-bit
     morton16[1][i] = map(7, 15) + map(6,  7) + map(5, 14) + map(4,  6)

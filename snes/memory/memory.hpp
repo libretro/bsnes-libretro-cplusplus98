@@ -1,67 +1,67 @@
 struct Memory {
-  virtual inline uint64_t size() const;
-  virtual uint8 read(uint64_t addr) = 0;
-  virtual void write(uint64_t addr, uint8 data) = 0;
+  virtual inline unsigned size() const;
+  virtual uint8 read(unsigned addr) = 0;
+  virtual void write(unsigned addr, uint8 data) = 0;
 };
 
 struct MMIO {
-  virtual uint8 mmio_read(uint64_t addr) = 0;
-  virtual void mmio_write(uint64_t addr, uint8 data) = 0;
+  virtual uint8 mmio_read(unsigned addr) = 0;
+  virtual void mmio_write(unsigned addr, uint8 data) = 0;
 };
 
 struct UnmappedMemory : Memory {
-  uint64_t size() const;
-  uint8 read(uint64_t);
-  void write(uint64_t, uint8);
+  unsigned size() const;
+  uint8 read(unsigned);
+  void write(unsigned, uint8);
 };
 
 struct UnmappedMMIO : MMIO {
-  uint8 mmio_read(uint64_t);
-  void mmio_write(uint64_t, uint8);
+  uint8 mmio_read(unsigned);
+  void mmio_write(unsigned, uint8);
 };
 
 struct StaticRAM : Memory {
   inline uint8* data();
-  inline uint64_t size() const;
+  inline unsigned size() const;
 
-  inline uint8 read(uint64_t addr);
-  inline void write(uint64_t addr, uint8 n);
-  inline uint8& operator[](uint64_t addr);
-  inline const uint8& operator[](uint64_t addr) const;
+  inline uint8 read(unsigned addr);
+  inline void write(unsigned addr, uint8 n);
+  inline uint8& operator[](unsigned addr);
+  inline const uint8& operator[](unsigned addr) const;
 
-  inline StaticRAM(uint64_t size);
+  inline StaticRAM(unsigned size);
   inline ~StaticRAM();
 
 private:
   uint8 *data_;
-  uint64_t size_;
+  unsigned size_;
 };
 
 struct MappedRAM : Memory {
   inline void reset();
-  inline void map(uint8*, uint64_t);
-  inline void copy(const uint8*, uint64_t);
+  inline void map(uint8*, unsigned);
+  inline void copy(const uint8*, unsigned);
 
   inline void write_protect(bool status);
   inline uint8* data();
-  inline uint64_t size() const;
+  inline unsigned size() const;
 
-  inline uint8 read(uint64_t addr);
-  inline void write(uint64_t addr, uint8 n);
-  inline const uint8& operator[](uint64_t addr) const;
+  inline uint8 read(unsigned addr);
+  inline void write(unsigned addr, uint8 n);
+  inline const uint8& operator[](unsigned addr) const;
   inline MappedRAM();
 
 private:
   uint8 *data_;
-  uint64_t size_;
+  unsigned size_;
   bool write_protect_;
 };
 
 struct MMIOAccess : Memory {
-  MMIO* handle(uint64_t addr);
-  void map(uint64_t addr, MMIO &access);
-  uint8 read(uint64_t addr);
-  void write(uint64_t addr, uint8 data);
+  MMIO* handle(unsigned addr);
+  void map(unsigned addr, MMIO &access);
+  uint8 read(unsigned addr);
+  void write(unsigned addr, uint8 data);
   MMIOAccess();
 
 private:
@@ -69,13 +69,13 @@ private:
 };
 
 struct Bus {
-  uint64_t mirror(uint64_t addr, uint64_t size);
-  void map(uint64_t addr, Memory &access, uint64_t offset);
+  unsigned mirror(unsigned addr, unsigned size);
+  void map(unsigned addr, Memory &access, unsigned offset);
   struct MapMode{ enum e{ Direct, Linear, Shadow } i; };
   void map(MapMode::e mode,
     uint8  bank_lo, uint8  bank_hi,
     uint16 addr_lo, uint16 addr_hi,
-    Memory &access, uint64_t offset = 0, uint64_t size = 0);
+    Memory &access, unsigned offset = 0, unsigned size = 0);
 
   alwaysinline uint8 read(uint24 addr);
   alwaysinline void write(uint24 addr, uint8 data);
@@ -88,7 +88,7 @@ struct Bus {
 
   struct Page {
     Memory *access;
-    uint64_t offset;
+    unsigned offset;
   } page[65536];
 
   void serialize(serializer&);

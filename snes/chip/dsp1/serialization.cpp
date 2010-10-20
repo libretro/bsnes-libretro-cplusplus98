@@ -5,7 +5,7 @@ void DSP1::serialize(serializer &s) {
 }
 
 void Dsp1::serialize(serializer &s) {
-  for(uint64_t i = 0; i < 3; i++) {
+  for(unsigned i = 0; i < 3; i++) {
     s.array(shared.MatrixA[i]);
     s.array(shared.MatrixB[i]);
     s.array(shared.MatrixC[i]);

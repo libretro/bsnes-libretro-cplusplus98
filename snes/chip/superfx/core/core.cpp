@@ -51,20 +51,20 @@ uint8 SuperFX::rpix(uint8 x, uint8 y) {
   pixelcache_flush(pixelcache[1]);
   pixelcache_flush(pixelcache[0]);
 
-  uint64_t cn;  //character number
+  unsigned cn;  //character number
   switch(regs.por.obj ? 3 : regs.scmr.ht) {
     case 0: cn = ((x & 0xf8) << 1) + ((y & 0xf8) >> 3); break;
     case 1: cn = ((x & 0xf8) << 1) + ((x & 0xf8) >> 1) + ((y & 0xf8) >> 3); break;
     case 2: cn = ((x & 0xf8) << 1) + ((x & 0xf8) << 0) + ((y & 0xf8) >> 3); break;
     case 3: cn = ((y & 0x80) << 2) + ((x & 0x80) << 1) + ((y & 0x78) << 1) + ((x & 0x78) >> 3); break;
   }
-  uint64_t bpp = 2 << (regs.scmr.md - (regs.scmr.md >> 1));  // = [regs.scmr.md]{ 2, 4, 4, 8 };
-  uint64_t addr = 0x700000 + (cn * (bpp << 3)) + (regs.scbr << 10) + ((y & 0x07) * 2);
+  unsigned bpp = 2 << (regs.scmr.md - (regs.scmr.md >> 1));  // = [regs.scmr.md]{ 2, 4, 4, 8 };
+  unsigned addr = 0x700000 + (cn * (bpp << 3)) + (regs.scbr << 10) + ((y & 0x07) * 2);
   uint8 data = 0x00;
   x = (x & 7) ^ 7;
 
-  for(uint64_t n = 0; n < bpp; n++) {
-    uint64_t byte = ((n >> 1) << 4) + (n & 1);  // = [n]{ 0, 1, 16, 17, 32, 33, 48, 49 };
+  for(unsigned n = 0; n < bpp; n++) {
+    unsigned byte = ((n >> 1) << 4) + (n & 1);  // = [n]{ 0, 1, 16, 17, 32, 33, 48, 49 };
     add_clocks(memory_access_speed);
     data |= ((superfxbus.read(addr + byte) >> x) & 1) << n;
   }
@@ -78,20 +78,20 @@ void SuperFX::pixelcache_flush(pixelcache_t &cache) {
   uint8 x = cache.offset << 3;
   uint8 y = cache.offset >> 5;
 
-  uint64_t cn;  //character number
+  unsigned cn;  //character number
   switch(regs.por.obj ? 3 : regs.scmr.ht) {
     case 0: cn = ((x & 0xf8) << 1) + ((y & 0xf8) >> 3); break;
     case 1: cn = ((x & 0xf8) << 1) + ((x & 0xf8) >> 1) + ((y & 0xf8) >> 3); break;
     case 2: cn = ((x & 0xf8) << 1) + ((x & 0xf8) << 0) + ((y & 0xf8) >> 3); break;
     case 3: cn = ((y & 0x80) << 2) + ((x & 0x80) << 1) + ((y & 0x78) << 1) + ((x & 0x78) >> 3); break;
   }
-  uint64_t bpp = 2 << (regs.scmr.md - (regs.scmr.md >> 1));  // = [regs.scmr.md]{ 2, 4, 4, 8 };
-  uint64_t addr = 0x700000 + (cn * (bpp << 3)) + (regs.scbr << 10) + ((y & 0x07) * 2);
+  unsigned bpp = 2 << (regs.scmr.md - (regs.scmr.md >> 1));  // = [regs.scmr.md]{ 2, 4, 4, 8 };
+  unsigned addr = 0x700000 + (cn * (bpp << 3)) + (regs.scbr << 10) + ((y & 0x07) * 2);
 
-  for(uint64_t n = 0; n < bpp; n++) {
-    uint64_t byte = ((n >> 1) << 4) + (n & 1);  // = [n]{ 0, 1, 16, 17, 32, 33, 48, 49 };
+  for(unsigned n = 0; n < bpp; n++) {
+    unsigned byte = ((n >> 1) << 4) + (n & 1);  // = [n]{ 0, 1, 16, 17, 32, 33, 48, 49 };
     uint8 data = 0x00;
-    for(uint64_t x = 0; x < 8; x++) data |= ((cache.data[x] >> n) & 1) << x;
+    for(unsigned x = 0; x < 8; x++) data |= ((cache.data[x] >> n) & 1) << x;
     if(cache.bitpend != 0xff) {
       add_clocks(memory_access_speed);
       data &= cache.bitpend;

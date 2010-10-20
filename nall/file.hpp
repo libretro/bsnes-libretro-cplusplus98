@@ -37,7 +37,7 @@ namespace nall {
       return buffer[(file_offset++) & buffer_mask];
     }
 
-    uintmax_t readl(uint64_t length = 1) {
+    uintmax_t readl(unsigned length = 1) {
       uintmax_t data = 0;
       for(int i = 0; i < length; i++) {
         data |= (uintmax_t)read() << (i << 3);
@@ -45,7 +45,7 @@ namespace nall {
       return data;
     }
 
-    uintmax_t readm(uint64_t length = 1) {
+    uintmax_t readm(unsigned length = 1) {
       uintmax_t data = 0;
       while(length--) {
         data <<= 8;
@@ -54,7 +54,7 @@ namespace nall {
       return data;
     }
 
-    void read(uint8_t *buffer, uint64_t length) {
+    void read(uint8_t *buffer, unsigned length) {
       while(length--) *buffer++ = read();
     }
 
@@ -67,20 +67,20 @@ namespace nall {
       if(file_offset > file_size) file_size = file_offset;
     }
 
-    void writel(uintmax_t data, uint64_t length = 1) {
+    void writel(uintmax_t data, unsigned length = 1) {
       while(length--) {
         write(data);
         data >>= 8;
       }
     }
 
-    void writem(uintmax_t data, uint64_t length = 1) {
+    void writem(uintmax_t data, unsigned length = 1) {
       for(int i = length - 1; i >= 0; i--) {
         write(data >> (i << 3));
       }
     }
 
-    void write(const uint8_t *buffer, uint64_t length) {
+    void write(const uint8_t *buffer, unsigned length) {
       while(length--) write(*buffer++);
     }
 
@@ -196,7 +196,7 @@ namespace nall {
       return file_size;
     }
 
-    bool truncate(uint64_t size) {
+    bool truncate(unsigned size) {
       if(!fp) return false;  //file not open
       #if !defined(_WIN32)
       return ftruncate(fileno(fp), size) == 0;
@@ -223,13 +223,13 @@ namespace nall {
       return false;
     }
 
-    static uint64_t size(const char *fn) {
+    static unsigned size(const char *fn) {
       #if !defined(_WIN32)
       FILE *fp = fopen(fn, "rb");
       #else
       FILE *fp = _wfopen(utf16_t(fn), L"rb");
       #endif
-      uint64_t filesize = 0;
+      unsigned filesize = 0;
       if(fp) {
         fseek(fp, 0, SEEK_END);
         filesize = ftell(fp);
@@ -314,8 +314,8 @@ namespace nall {
     int buffer_offset;
     bool buffer_dirty;
     FILE *fp;
-    uint64_t file_offset;
-    uint64_t file_size;
+    unsigned file_offset;
+    unsigned file_size;
     FileMode file_mode;
 
     void buffer_sync() {
@@ -324,8 +324,8 @@ namespace nall {
         buffer_flush();
         buffer_offset = file_offset & ~buffer_mask;
         fseek(fp, buffer_offset, SEEK_SET);
-        uint64_t length = (buffer_offset + buffer_size) <= file_size ? buffer_size : (file_size & buffer_mask);
-        if(length) uint64_t unused = fread(buffer, 1, length, fp);
+        unsigned length = (buffer_offset + buffer_size) <= file_size ? buffer_size : (file_size & buffer_mask);
+        if(length) unsigned unused = fread(buffer, 1, length, fp);
       }
     }
 
@@ -335,8 +335,8 @@ namespace nall {
       if(buffer_offset < 0) return;       //buffer unused
       if(buffer_dirty == false) return;   //buffer unmodified since read
       fseek(fp, buffer_offset, SEEK_SET);
-      uint64_t length = (buffer_offset + buffer_size) <= file_size ? buffer_size : (file_size & buffer_mask);
-      if(length) uint64_t unused = fwrite(buffer, 1, length, fp);
+      unsigned length = (buffer_offset + buffer_size) <= file_size ? buffer_size : (file_size & buffer_mask);
+      if(length) unsigned unused = fwrite(buffer, 1, length, fp);
       buffer_offset = -1;                 //invalidate buffer
       buffer_dirty = false;
     }

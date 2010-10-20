@@ -20,11 +20,11 @@ void BSXFlash::reset() {
   memory::bsxflash.write_protect(!regs.write_enable);
 }
 
-uint64_t BSXFlash::size() const {
+unsigned BSXFlash::size() const {
   return memory::bsxflash.size();
 }
 
-uint8 BSXFlash::read(uint64_t addr) {
+uint8 BSXFlash::read(unsigned addr) {
   if(addr == 0x0002) {
     if(regs.flash_enable) return 0x80;
   }
@@ -51,7 +51,7 @@ uint8 BSXFlash::read(uint64_t addr) {
   return memory::bsxflash.read(addr);
 }
 
-void BSXFlash::write(uint64_t addr, uint8 data) {
+void BSXFlash::write(unsigned addr, uint8 data) {
   //there exist both read-only and read-write BS-X flash cartridges ...
   //unfortunately, the vendor info is not stored inside memory dumps
   //of BS-X flashcarts, so it is impossible to determine whether a

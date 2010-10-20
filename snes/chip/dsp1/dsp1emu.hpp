@@ -41,8 +41,8 @@ class Dsp1
 
       struct Command {
          void (Dsp1::*callback)(int16 *, int16 *);
-         uint64_t reads;
-         uint64_t writes;
+         unsigned int reads;
+         unsigned int writes;
       };
 
       static const Command mCommandTable[];
@@ -74,7 +74,7 @@ class Dsp1
       uint8 mSr;            // status register
       int mSrLowByteAccess;
       uint16 mDr;           // "internal" representation of the data register
-      uint64_t mFsmMajorState;     // current major state of the FSM
+      unsigned mFsmMajorState;     // current major state of the FSM
       uint8 mCommand;                  // current command processed by the FSM
       uint8 mDataCounter;                 // #uint16 read/writes counter used by the FSM
       int16 mReadBuffer[MAX_READS];

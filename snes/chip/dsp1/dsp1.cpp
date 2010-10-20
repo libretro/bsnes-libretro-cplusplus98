@@ -24,10 +24,10 @@ void DSP1::reset() {
   dsp1.reset();
 }
 
-uint8 DSP1DR::read(uint64_t addr) { return dsp1.dsp1.getDr(); }
-void DSP1DR::write(uint64_t addr, uint8 data) { dsp1.dsp1.setDr(data); }
+uint8 DSP1DR::read(unsigned addr) { return dsp1.dsp1.getDr(); }
+void DSP1DR::write(unsigned addr, uint8 data) { dsp1.dsp1.setDr(data); }
 
-uint8 DSP1SR::read(uint64_t addr) { return dsp1.dsp1.getSr(); }
-void DSP1SR::write(uint64_t addr, uint8 data) {}
+uint8 DSP1SR::read(unsigned addr) { return dsp1.dsp1.getSr(); }
+void DSP1SR::write(unsigned addr, uint8 data) {}
 
 }

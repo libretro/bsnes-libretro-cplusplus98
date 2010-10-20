@@ -24,18 +24,18 @@ void CPU::op_io() {
   add_clocks(6);
 }
 
-uint8 CPU::op_read(uint64_t addr) {
+uint8 CPU::op_read(unsigned addr) {
   regs.mdr = bus.read(addr);
   add_clocks(speed(addr));
   return regs.mdr;
 }
 
-void CPU::op_write(uint64_t addr, uint8 data) {
+void CPU::op_write(unsigned addr, uint8 data) {
   add_clocks(speed(addr));
   bus.write(addr, regs.mdr = data);
 }
 
-uint64_t CPU::speed(uint64_t addr) const {
+unsigned CPU::speed(unsigned addr) const {
   if(addr & 0x408000) {
     if(addr & 0x800000) return status.rom_speed;
     return 8;

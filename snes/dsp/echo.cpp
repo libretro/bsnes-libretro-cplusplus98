@@ -12,7 +12,7 @@ int DSP::echo_output(bool channel) {
 }
 
 void DSP::echo_read(bool channel) {
-  uint64_t addr = state.t_echo_ptr + channel * 2;
+  unsigned addr = state.t_echo_ptr + channel * 2;
   uint8 lo = memory::apuram[(uint16)(addr + 0)];
   uint8 hi = memory::apuram[(uint16)(addr + 1)];
   int s = (int16)((hi << 8) + lo);
@@ -21,7 +21,7 @@ void DSP::echo_read(bool channel) {
 
 void DSP::echo_write(bool channel) {
   if(!(state.t_echo_disabled & 0x20)) {
-    uint64_t addr = state.t_echo_ptr + channel * 2;
+    unsigned addr = state.t_echo_ptr + channel * 2;
     int s = state.t_echo_out[channel];
     memory::apuram[(uint16)(addr + 0)] = s;
     memory::apuram[(uint16)(addr + 1)] = s >> 8;

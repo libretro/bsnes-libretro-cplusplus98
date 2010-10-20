@@ -54,9 +54,9 @@ namespace nall {
     return ((crc32 >> 8) & 0x00ffffff) ^ crc32_table[(crc32 ^ input) & 0xff];
   }
 
-  inline uint32_t crc32_calculate(const uint8_t *data, uint64_t length) {
+  inline uint32_t crc32_calculate(const uint8_t *data, unsigned length) {
     uint32_t crc32 = ~0;
-    for(uint64_t i = 0; i < length; i++) {
+    for(unsigned i = 0; i < length; i++) {
       crc32 = crc32_adjust(crc32, data[i]);
     }
     return ~crc32;

@@ -11,7 +11,7 @@
 namespace nall {
 
 struct Keyboard;
-Keyboard& keyboard(uint64_t = 0);
+Keyboard& keyboard(unsigned = 0);
 
 static const char KeyboardScancodeName[][64] = {
   "Escape", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12",
@@ -31,7 +31,7 @@ static const char KeyboardScancodeName[][64] = {
 };
 
 struct Keyboard {
-  const uint64_t ID;
+  const unsigned ID;
   enum { Base = 1 };
   enum { Count = 8, Size = 128 };
 
@@ -54,35 +54,35 @@ struct Keyboard {
   };
 
   static signed numberDecode(uint16_t scancode) {
-    for(uint64_t i = 0; i < Count; i++) {
+    for(unsigned i = 0; i < Count; i++) {
       if(keyboard(i).belongsTo(scancode)) return i;
     }
     return -1;
   }
 
   static signed keyDecode(uint16_t scancode) {
-    for(uint64_t i = 0; i < Count; i++) {
+    for(unsigned i = 0; i < Count; i++) {
       if(keyboard(i).isKey(scancode)) return scancode - keyboard(i).key(Escape);
     }
     return -1;
   }
 
   static signed modifierDecode(uint16_t scancode) {
-    for(uint64_t i = 0; i < Count; i++) {
+    for(unsigned i = 0; i < Count; i++) {
       if(keyboard(i).isModifier(scancode)) return scancode - keyboard(i).key(Shift);
     }
     return -1;
   }
 
   static bool isAnyKey(uint16_t scancode) {
-    for(uint64_t i = 0; i < Count; i++) {
+    for(unsigned i = 0; i < Count; i++) {
       if(keyboard(i).isKey(scancode)) return true;
     }
     return false;
   }
 
   static bool isAnyModifier(uint16_t scancode) {
-    for(uint64_t i = 0; i < Count; i++) {
+    for(unsigned i = 0; i < Count; i++) {
       if(keyboard(i).isModifier(scancode)) return true;
     }
     return false;
@@ -92,19 +92,19 @@ struct Keyboard {
     string s(name);
     if(!strbegin(name, "KB")) return 0;
     s.ltrim("KB");
-    uint64_t id = struint64_t(s);
-    optional<uint64_t> pos = strpos(s, "::");
+    unsigned id = strunsigned(s);
+    optional<unsigned> pos = strpos(s, "::");
     if(!pos) return 0;
     s = substr(s, pos() + 2);
-    for(uint64_t i = 0; i < Limit; i++) {
+    for(unsigned i = 0; i < Limit; i++) {
       if(s == KeyboardScancodeName[i]) return Base + Size * id + i;
     }
     return 0;
   }
 
   string encode(uint16_t code) const {
-    uint64_t index = 0;
-    for(uint64_t i = 0; i < Count; i++) {
+    unsigned index = 0;
+    for(unsigned i = 0; i < Count; i++) {
       if(code >= Base + Size * i && code < Base + Size * (i + 1)) {
         index = code - (Base + Size * i);
         break;
@@ -114,15 +114,15 @@ struct Keyboard {
   }
 
   uint16_t operator[](Scancode code) const { return Base + ID * Size + code; }
-  uint16_t key(uint64_t id) const { return Base + Size * ID + id; }
-  bool isKey(uint64_t id) const { return id >= key(Escape) && id <= key(Menu); }
-  bool isModifier(uint64_t id) const { return id >= key(Shift) && id <= key(Super); }
+  uint16_t key(unsigned id) const { return Base + Size * ID + id; }
+  bool isKey(unsigned id) const { return id >= key(Escape) && id <= key(Menu); }
+  bool isModifier(unsigned id) const { return id >= key(Shift) && id <= key(Super); }
   bool belongsTo(uint16_t scancode) const { return isKey(scancode) || isModifier(scancode); }
 
-  Keyboard(uint64_t ID_) : ID(ID_) {}
+  Keyboard(unsigned ID_) : ID(ID_) {}
 };
 
-inline Keyboard& keyboard(uint64_t id) {
+inline Keyboard& keyboard(unsigned id) {
   static Keyboard kb0(0), kb1(1), kb2(2), kb3(3), kb4(4), kb5(5), kb6(6), kb7(7);
   switch(id) { default:
     case 0: return kb0; case 1: return kb1; case 2: return kb2; case 3: return kb3;
@@ -136,10 +136,10 @@ static const char MouseScancodeName[][64] = {
 };
 
 struct Mouse;
-Mouse& mouse(uint64_t = 0);
+Mouse& mouse(unsigned = 0);
 
 struct Mouse {
-  const uint64_t ID;
+  const unsigned ID;
   enum { Base = Keyboard::Base + Keyboard::Size * Keyboard::Count };
   enum { Count = 8, Size = 16 };
   enum { Axes = 3, Buttons = 8 };
@@ -151,35 +151,35 @@ struct Mouse {
   };
 
   static signed numberDecode(uint16_t scancode) {
-    for(uint64_t i = 0; i < Count; i++) {
+    for(unsigned i = 0; i < Count; i++) {
       if(mouse(i).belongsTo(scancode)) return i;
     }
     return -1;
   }
 
   static signed axisDecode(uint16_t scancode) {
-    for(uint64_t i = 0; i < Count; i++) {
+    for(unsigned i = 0; i < Count; i++) {
       if(mouse(i).isAxis(scancode)) return scancode - mouse(i).axis(0);
     }
     return -1;
   }
 
   static signed buttonDecode(uint16_t scancode) {
-    for(uint64_t i = 0; i < Count; i++) {
+    for(unsigned i = 0; i < Count; i++) {
       if(mouse(i).isButton(scancode)) return scancode - mouse(i).button(0);
     }
     return -1;
   }
 
   static bool isAnyAxis(uint16_t scancode) {
-    for(uint64_t i = 0; i < Count; i++) {
+    for(unsigned i = 0; i < Count; i++) {
       if(mouse(i).isAxis(scancode)) return true;
     }
     return false;
   }
 
   static bool isAnyButton(uint16_t scancode) {
-    for(uint64_t i = 0; i < Count; i++) {
+    for(unsigned i = 0; i < Count; i++) {
       if(mouse(i).isButton(scancode)) return true;
     }
     return false;
@@ -189,19 +189,19 @@ struct Mouse {
     string s(name);
     if(!strbegin(name, "MS")) return 0;
     s.ltrim("MS");
-    uint64_t id = struint64_t(s);
-    optional<uint64_t> pos = strpos(s, "::");
+    unsigned id = strunsigned(s);
+    optional<unsigned> pos = strpos(s, "::");
     if(!pos) return 0;
     s = substr(s, pos() + 2);
-    for(uint64_t i = 0; i < Limit; i++) {
+    for(unsigned i = 0; i < Limit; i++) {
       if(s == MouseScancodeName[i]) return Base + Size * id + i;
     }
     return 0;
   }
 
   string encode(uint16_t code) const {
-    uint64_t index = 0;
-    for(uint64_t i = 0; i < Count; i++) {
+    unsigned index = 0;
+    for(unsigned i = 0; i < Count; i++) {
       if(code >= Base + Size * i && code < Base + Size * (i + 1)) {
         index = code - (Base + Size * i);
         break;
@@ -211,16 +211,16 @@ struct Mouse {
   }
 
   uint16_t operator[](Scancode code) const { return Base + ID * Size + code; }
-  uint16_t axis(uint64_t id) const { return Base + Size * ID + Xaxis + id; }
-  uint16_t button(uint64_t id) const { return Base + Size * ID + Button0 + id; }
-  bool isAxis(uint64_t id) const { return id >= axis(0) && id <= axis(2); }
-  bool isButton(uint64_t id) const { return id >= button(0) && id <= button(7); }
+  uint16_t axis(unsigned id) const { return Base + Size * ID + Xaxis + id; }
+  uint16_t button(unsigned id) const { return Base + Size * ID + Button0 + id; }
+  bool isAxis(unsigned id) const { return id >= axis(0) && id <= axis(2); }
+  bool isButton(unsigned id) const { return id >= button(0) && id <= button(7); }
   bool belongsTo(uint16_t scancode) const { return isAxis(scancode) || isButton(scancode); }
 
-  Mouse(uint64_t ID_) : ID(ID_) {}
+  Mouse(unsigned ID_) : ID(ID_) {}
 };
 
-inline Mouse& mouse(uint64_t id) {
+inline Mouse& mouse(unsigned id) {
   static Mouse ms0(0), ms1(1), ms2(2), ms3(3), ms4(4), ms5(5), ms6(6), ms7(7);
   switch(id) { default:
     case 0: return ms0; case 1: return ms1; case 2: return ms2; case 3: return ms3;
@@ -239,10 +239,10 @@ static const char JoypadScancodeName[][64] = {
 };
 
 struct Joypad;
-Joypad& joypad(uint64_t = 0);
+Joypad& joypad(unsigned = 0);
 
 struct Joypad {
-  const uint64_t ID;
+  const unsigned ID;
   enum { Base = Mouse::Base + Mouse::Size * Mouse::Count };
   enum { Count = 8, Size = 64 };
   enum { Hats = 8, Axes = 16, Buttons = 32 };
@@ -261,49 +261,49 @@ struct Joypad {
   enum Hat { HatCenter = 0, HatUp = 1, HatRight = 2, HatDown = 4, HatLeft = 8 };
 
   static signed numberDecode(uint16_t scancode) {
-    for(uint64_t i = 0; i < Count; i++) {
+    for(unsigned i = 0; i < Count; i++) {
       if(joypad(i).belongsTo(scancode)) return i;
     }
     return -1;
   }
 
   static signed hatDecode(uint16_t scancode) {
-    for(uint64_t i = 0; i < Count; i++) {
+    for(unsigned i = 0; i < Count; i++) {
       if(joypad(i).isHat(scancode)) return scancode - joypad(i).hat(0);
     }
     return -1;
   }
 
   static signed axisDecode(uint16_t scancode) {
-    for(uint64_t i = 0; i < Count; i++) {
+    for(unsigned i = 0; i < Count; i++) {
       if(joypad(i).isAxis(scancode)) return scancode - joypad(i).axis(0);
     }
     return -1;
   }
 
   static signed buttonDecode(uint16_t scancode) {
-    for(uint64_t i = 0; i < Count; i++) {
+    for(unsigned i = 0; i < Count; i++) {
       if(joypad(i).isButton(scancode)) return scancode - joypad(i).button(0);
     }
     return -1;
   }
 
   static bool isAnyHat(uint16_t scancode) {
-    for(uint64_t i = 0; i < Count; i++) {
+    for(unsigned i = 0; i < Count; i++) {
       if(joypad(i).isHat(scancode)) return true;
     }
     return false;
   }
 
   static bool isAnyAxis(uint16_t scancode) {
-    for(uint64_t i = 0; i < Count; i++) {
+    for(unsigned i = 0; i < Count; i++) {
       if(joypad(i).isAxis(scancode)) return true;
     }
     return false;
   }
 
   static bool isAnyButton(uint16_t scancode) {
-    for(uint64_t i = 0; i < Count; i++) {
+    for(unsigned i = 0; i < Count; i++) {
       if(joypad(i).isButton(scancode)) return true;
     }
     return false;
@@ -313,19 +313,19 @@ struct Joypad {
     string s(name);
     if(!strbegin(name, "JP")) return 0;
     s.ltrim("JP");
-    uint64_t id = struint64_t(s);
-    optional<uint64_t> pos = strpos(s, "::");
+    unsigned id = strunsigned(s);
+    optional<unsigned> pos = strpos(s, "::");
     if(!pos) return 0;
     s = substr(s, pos() + 2);
-    for(uint64_t i = 0; i < Limit; i++) {
+    for(unsigned i = 0; i < Limit; i++) {
       if(s == JoypadScancodeName[i]) return Base + Size * id + i;
     }
     return 0;
   }
 
   string encode(uint16_t code) const {
-    uint64_t index = 0;
-    for(uint64_t i = 0; i < Count; i++) {
+    unsigned index = 0;
+    for(unsigned i = 0; i < Count; i++) {
       if(code >= Base + Size * i && code < Base + Size * (i + 1)) {
         index = code - (Base + Size * i);
       }
@@ -334,18 +334,18 @@ struct Joypad {
   }
 
   uint16_t operator[](Scancode code) const { return Base + ID * Size + code; }
-  uint16_t hat(uint64_t id) const { return Base + Size * ID + Hat0 + id; }
-  uint16_t axis(uint64_t id) const { return Base + Size * ID + Axis0 + id; }
-  uint16_t button(uint64_t id) const { return Base + Size * ID + Button0 + id; }
-  bool isHat(uint64_t id) const { return id >= hat(0) && id <= hat(7); }
-  bool isAxis(uint64_t id) const { return id >= axis(0) && id <= axis(15); }
-  bool isButton(uint64_t id) const { return id >= button(0) && id <= button(31); }
+  uint16_t hat(unsigned id) const { return Base + Size * ID + Hat0 + id; }
+  uint16_t axis(unsigned id) const { return Base + Size * ID + Axis0 + id; }
+  uint16_t button(unsigned id) const { return Base + Size * ID + Button0 + id; }
+  bool isHat(unsigned id) const { return id >= hat(0) && id <= hat(7); }
+  bool isAxis(unsigned id) const { return id >= axis(0) && id <= axis(15); }
+  bool isButton(unsigned id) const { return id >= button(0) && id <= button(31); }
   bool belongsTo(uint16_t scancode) const { return isHat(scancode) || isAxis(scancode) || isButton(scancode); }
 
-  Joypad(uint64_t ID_) : ID(ID_) {}
+  Joypad(unsigned ID_) : ID(ID_) {}
 };
 
-inline Joypad& joypad(uint64_t id) {
+inline Joypad& joypad(unsigned id) {
   static Joypad jp0(0), jp1(1), jp2(2), jp3(3), jp4(4), jp5(5), jp6(6), jp7(7);
   switch(id) { default:
     case 0: return jp0; case 1: return jp1; case 2: return jp2; case 3: return jp3;
@@ -368,13 +368,13 @@ struct Scancode {
   }
 
   static string encode(uint16_t code) {
-    for(uint64_t i = 0; i < Keyboard::Count; i++) {
+    for(unsigned i = 0; i < Keyboard::Count; i++) {
       if(keyboard(i).belongsTo(code)) return keyboard(i).encode(code);
     }
-    for(uint64_t i = 0; i < Mouse::Count; i++) {
+    for(unsigned i = 0; i < Mouse::Count; i++) {
       if(mouse(i).belongsTo(code)) return mouse(i).encode(code);
     }
-    for(uint64_t i = 0; i < Joypad::Count; i++) {
+    for(unsigned i = 0; i < Joypad::Count; i++) {
       if(joypad(i).belongsTo(code)) return joypad(i).encode(code);
     }
     return "None";

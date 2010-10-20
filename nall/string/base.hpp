@@ -15,14 +15,14 @@ namespace nall {
 
   class string {
   public:
-    inline void reserve(uint64_t);
-    inline uint64_t length() const;
+    inline void reserve(unsigned);
+    inline unsigned length() const;
 
     inline string& assign(const char*);
     inline string& append(const char*);
     inline string& append(bool);
     inline string& append(signed int value);
-    inline string& append(uint64_t value);
+    inline string& append(unsigned int value);
     inline string& append(double value);
 
     template<typename T> inline string& operator= (const T& value);
@@ -87,7 +87,7 @@ namespace nall {
 
   protected:
     char *data;
-    uint64_t size;
+    unsigned size;
 
   #if defined(QSTRING_H)
   public:
@@ -104,9 +104,9 @@ namespace nall {
   public:
     template<typename T> inline lstring& operator<<(const T& value);
 
-    inline optional<uint64_t> find(const char*);
-    inline void split (const char*, const char*, uint64_t = 0);
-    inline void qsplit(const char*, const char*, uint64_t = 0);
+    inline optional<unsigned> find(const char*);
+    inline void split (const char*, const char*, unsigned = 0);
+    inline void qsplit(const char*, const char*, unsigned = 0);
 
     lstring();
     
@@ -138,7 +138,7 @@ namespace nall {
   inline char* strtr(char *dest, const char *before, const char *after);
   inline uintmax_t strhex     (const char *str);
   inline intmax_t  strsigned  (const char *str);
-  inline uintmax_t struint64_t(const char *str);
+  inline uintmax_t strunsigned(const char *str);
   inline uintmax_t strbin     (const char *str);
   inline double    strdouble  (const char *str);
 
@@ -150,8 +150,8 @@ namespace nall {
   inline bool strmath(const char *str, int &result);
 
   //strl.hpp
-  inline uint64_t strlcpy(char *dest, const char *src, uint64_t length);
-  inline uint64_t strlcat(char *dest, const char *src, uint64_t length);
+  inline unsigned strlcpy(char *dest, const char *src, unsigned length);
+  inline unsigned strlcat(char *dest, const char *src, unsigned length);
 
   //trim.hpp
   inline char* ltrim(char *str, const char *key = " ");
@@ -162,25 +162,25 @@ namespace nall {
   inline char* trim_once (char *str, const char *key = " ");
 
   //utility.hpp
-  inline uint64_t strlcpy(string &dest, const char *src, uint64_t length);
-  inline uint64_t strlcat(string &dest, const char *src, uint64_t length);
-  inline string substr(const char *src, uint64_t start = 0, uint64_t length = 0);
+  inline unsigned strlcpy(string &dest, const char *src, unsigned length);
+  inline unsigned strlcat(string &dest, const char *src, unsigned length);
+  inline string substr(const char *src, unsigned start = 0, unsigned length = 0);
   inline string& strtr(string &dest, const char *before, const char *after);
   
-  template<uint64_t length, char padding> inline string strhex     (uintmax_t value);
-  template<uint64_t length, char padding> inline string strsigned  (intmax_t  value);
-  template<uint64_t length, char padding> inline string struint64_t(uintmax_t value);
-  template<uint64_t length, char padding> inline string strbin     (uintmax_t value);
-  template<uint64_t length>               inline string strhex     (uintmax_t value) { return strhex      <length, '0'> (value); }
-  template<uint64_t length>               inline string strsigned  (intmax_t  value) { return strsigned   <length, '0'> (value); }
-  template<uint64_t length>               inline string struint64_t(uintmax_t value) { return struint64_t <length, '0'> (value); }
-  template<uint64_t length>               inline string strbin     (uintmax_t value) { return strbin      <length, '0'> (value); }
+  template<unsigned length, char padding> inline string strhex     (uintmax_t value);
+  template<unsigned length, char padding> inline string strsigned  (intmax_t  value);
+  template<unsigned length, char padding> inline string strunsigned(uintmax_t value);
+  template<unsigned length, char padding> inline string strbin     (uintmax_t value);
+  template<unsigned length>               inline string strhex     (uintmax_t value) { return strhex      <length, '0'> (value); }
+  template<unsigned length>               inline string strsigned  (intmax_t  value) { return strsigned   <length, '0'> (value); }
+  template<unsigned length>               inline string strunsigned(uintmax_t value) { return strunsigned <length, '0'> (value); }
+  template<unsigned length>               inline string strbin     (uintmax_t value) { return strbin      <length, '0'> (value); }
                                           inline string strhex     (uintmax_t value) { return strhex      <0>           (value); }
                                           inline string strsigned  (intmax_t  value) { return strsigned   <0>           (value); }
-                                          inline string struint64_t(uintmax_t value) { return struint64_t <0>           (value); }
+                                          inline string strunsigned(uintmax_t value) { return strunsigned <0>           (value); }
                                           inline string strbin     (uintmax_t value) { return strbin      <0>           (value); }
   
-  inline uint64_t strdouble(char *str, double value);
+  inline unsigned strdouble(char *str, double value);
   inline string strdouble(double value);
 
   //variadic.hpp

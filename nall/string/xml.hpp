@@ -26,7 +26,7 @@ protected:
 
 inline string xml_attribute::parse() const {
   string data;
-  uint64_t offset = 0;
+  unsigned offset = 0;
 
   const char *source = content;
   while(*source) {
@@ -52,7 +52,7 @@ inline string xml_attribute::parse() const {
 
 inline string xml_element::parse() const {
   string data;
-  uint64_t offset = 0;
+  unsigned offset = 0;
 
   const char *source = content;
   while(*source) {
@@ -65,7 +65,7 @@ inline string xml_element::parse() const {
     }
 
     if(strbegin(source, "<!--")) {
-      if(optional<uint64_t> pos = strpos(source, "-->")) {
+      if(optional<unsigned> pos = strpos(source, "-->")) {
         source += pos() + 3;
         continue;
       } else {
@@ -74,7 +74,7 @@ inline string xml_element::parse() const {
     }
 
     if(strbegin(source, "<![CDATA[")) {
-      if(optional<uint64_t> pos = strpos(source, "]]>")) {
+      if(optional<unsigned> pos = strpos(source, "]]>")) {
         string cdata = substr(source, 9, pos() - 9);
         data << cdata;
         offset += strlen(cdata);
@@ -130,7 +130,7 @@ inline bool xml_element::parse_head(string data) {
   name = part[0];
   //if(name == "") throw "...";
 
-  for(uint64_t i = 1; i < part.size(); i++) {
+  for(unsigned i = 1; i < part.size(); i++) {
     lstring side;
     side.qsplit("=", part[i]);
     //if(side.size() != 2) throw "...";
@@ -157,7 +157,7 @@ inline bool xml_element::parse_body(const char *&data) {
     }
 
     if(strbegin(data, "!--")) {
-      if(optional<uint64_t> offset = strpos(data, "-->")) {
+      if(optional<unsigned> offset = strpos(data, "-->")) {
         data += offset() + 3;
         continue;
       } else {
@@ -166,7 +166,7 @@ inline bool xml_element::parse_body(const char *&data) {
     }
 
     if(strbegin(data, "![CDATA[")) {
-      if(optional<uint64_t> offset = strpos(data, "]]>")) {
+      if(optional<unsigned> offset = strpos(data, "]]>")) {
         data += offset() + 3;
         continue;
       } else {
@@ -174,7 +174,7 @@ inline bool xml_element::parse_body(const char *&data) {
       }
     }
 
-    optional<uint64_t> offset = strpos(data, ">");
+    optional<unsigned> offset = strpos(data, ">");
     //if(!offset) throw "...";
 
     string tag = substr(data, 0, offset());
@@ -195,7 +195,7 @@ inline bool xml_element::parse_body(const char *&data) {
     if(self_terminating) return true;
 
     while(*data) {
-      uint64_t index = element.size();
+      unsigned index = element.size();
       xml_element node;
       if(node.parse_body(data) == false) {
         if(*data == '/') {
@@ -203,7 +203,7 @@ inline bool xml_element::parse_body(const char *&data) {
           if(length > 0) content = substr(content_begin, 0, length);
 
           data++;
-          optional<uint64_t> offset = strpos(data, ">");
+          optional<unsigned> offset = strpos(data, ">");
           //if(!offset) throw "...";
 
           tag = substr(data, 0, offset());
@@ -227,9 +227,9 @@ inline bool xml_element::parse_body(const char *&data) {
 
 //ensure there is only one root element
 inline bool xml_validate(xml_element &document) {
-  uint64_t root_counter = 0;
+  unsigned root_counter = 0;
 
-  for(uint64_t i = 0; i < document.element.size(); i++) {
+  for(unsigned i = 0; i < document.element.size(); i++) {
     string &name = document.element[i].name;
     if(strbegin(name, "?")) continue;
     if(strbegin(name, "!")) continue;

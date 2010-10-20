@@ -1,6 +1,6 @@
 #ifdef SUPERFX_CPP
 
-void SuperFX::add_clocks(uint64_t clocks) {
+void SuperFX::add_clocks(unsigned clocks) {
   if(regs.romcl) {
     regs.romcl -= min(clocks, regs.romcl);
     if(regs.romcl == 0) {

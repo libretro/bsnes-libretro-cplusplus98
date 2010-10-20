@@ -39,7 +39,7 @@ void DSP2::reset() {
   status.op0dinlen       = 0;
 }
 
-uint8 DSP2::read(uint64_t addr) {
+uint8 DSP2::read(unsigned addr) {
   uint8 r = 0xff;
   if(status.out_count) {
     r = status.output[status.out_index++];
@@ -51,7 +51,7 @@ uint8 DSP2::read(uint64_t addr) {
   return r;
 }
 
-void DSP2::write(uint64_t addr, uint8 data) {
+void DSP2::write(unsigned addr, uint8 data) {
   if(status.waiting_for_command) {
     status.command  = data;
     status.in_index = 0;
@@ -144,10 +144,10 @@ void DSP2::write(uint64_t addr, uint8 data) {
 DSP2::DSP2() {}
 DSP2::~DSP2() {}
 
-uint8 DSP2DR::read(uint64_t addr) { return dsp2.read(addr); }
-void DSP2DR::write(uint64_t addr, uint8 data) { dsp2.write(addr, data); }
+uint8 DSP2DR::read(unsigned addr) { return dsp2.read(addr); }
+void DSP2DR::write(unsigned addr, uint8 data) { dsp2.write(addr, data); }
 
-uint8 DSP2SR::read(uint64_t addr) { return 0x00; }
-void DSP2SR::write(uint64_t addr, uint8 data) {}
+uint8 DSP2SR::read(unsigned addr) { return 0x00; }
+void DSP2SR::write(unsigned addr, uint8 data) {}
 
 }

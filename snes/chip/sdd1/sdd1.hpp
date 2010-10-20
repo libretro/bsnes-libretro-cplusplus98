@@ -7,11 +7,11 @@ public:
   void power();
   void reset();
 
-  uint8 mmio_read(uint64_t addr);
-  void mmio_write(uint64_t addr, uint8 data);
+  uint8 mmio_read(unsigned addr);
+  void mmio_write(unsigned addr, uint8 data);
 
-  uint8 read(uint64_t addr);
-  void write(uint64_t addr, uint8 data);
+  uint8 read(unsigned addr);
+  void write(unsigned addr, uint8 data);
 
   void serialize(serializer&);
   SDD1();
@@ -22,10 +22,10 @@ private:
 
   uint8 sdd1_enable;     //channel bit-mask
   uint8 xfer_enable;     //channel bit-mask
-  uint64_t mmc[4];       //memory map controller ROM indices
+  unsigned mmc[4];       //memory map controller ROM indices
 
   struct {
-    uint64_t addr;       //$43x2-$43x4 -- DMA transfer address
+    unsigned addr;       //$43x2-$43x4 -- DMA transfer address
     uint16 size;         //$43x5-$43x6 -- DMA transfer size
   } dma[8];
 
@@ -33,7 +33,7 @@ private:
   struct {
     uint8 data[65536];   //pointer to decompressed S-DD1 data
     uint16 offset;       //read index into S-DD1 decompression buffer
-    uint64_t size;       //length of data buffer; reads decrement counter, set ready to false at 0
+    unsigned size;       //length of data buffer; reads decrement counter, set ready to false at 0
     bool ready;          //true when data[] is valid; false to invoke sdd1emu.decompress()
   } buffer;
 };

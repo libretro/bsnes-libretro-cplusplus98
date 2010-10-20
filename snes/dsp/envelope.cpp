@@ -39,7 +39,7 @@ void DSP::envelope_run(voice_t &v) {
         env -= env >> 8;
       } else { //6, 7: linear increase
         env += 0x20;
-        if(mode > 6 && (uint64_t)v.hidden_env >= 0x600) {
+        if(mode > 6 && (unsigned)v.hidden_env >= 0x600) {
           env += 0x8 - 0x20; //7: two-slope linear increase
         }
       }
@@ -50,8 +50,8 @@ void DSP::envelope_run(voice_t &v) {
   if((env >> 8) == (env_data >> 5) && v.env_mode == env_decay) v.env_mode = env_sustain;
   v.hidden_env = env;
 
-  //uint64_t cast because linear decrease underflowing also triggers this
-  if((uint64_t)env > 0x7ff) {
+  //unsigned cast because linear decrease underflowing also triggers this
+  if((unsigned)env > 0x7ff) {
     env = (env < 0 ? 0 : 0x7ff);
     if(v.env_mode == env_attack) v.env_mode = env_decay;
   }

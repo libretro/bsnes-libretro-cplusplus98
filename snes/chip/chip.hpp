@@ -1,5 +1,5 @@
 struct Coprocessor : Processor {
-  alwaysinline void step(uint64_t clocks);
+  alwaysinline void step(unsigned clocks);
   alwaysinline void synchronize_cpu();
 };
 
@@ -22,7 +22,7 @@ struct Coprocessor : Processor {
 #include <chip/msu1/msu1.hpp>
 #include <chip/serial/serial.hpp>
 
-void Coprocessor::step(uint64_t clocks) {
+void Coprocessor::step(unsigned clocks) {
   clock += clocks * (uint64)cpu.frequency;
 }
 
