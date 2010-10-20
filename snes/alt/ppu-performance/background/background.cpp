@@ -51,21 +51,27 @@ void PPU::Background::scanline() {
   if(self.regs.display_disable) return;
 
   hires = (self.regs.bgmode == 5 || self.regs.bgmode == 6);
-  width = !hires ? 256 : 512;
+  width = 256 << hires;
 
-  tile_height = regs.tile_size ? 4 : 3;
+  tile_height = 3 + regs.tile_size;
   tile_width = hires ? 4 : tile_height;
 
-  mask_x = (tile_height == 4 ? width << 1 : width);
+  //mask_x = (tile_height == 4 ? width << 1 : width);
+  mask_x = width << ((tile_height & 4) >> 2);
   mask_y = mask_x;
-  if(regs.screen_size & 1) mask_x <<= 1;
-  if(regs.screen_size & 2) mask_y <<= 1;
+  //if(regs.screen_size & 1) mask_x <<= 1;
+  //if(regs.screen_size & 2) mask_y <<= 1;
+  mask_x = mask_x << (regs.screen_size & 1);
+  mask_y = mask_y << ((regs.screen_size & 2) >> 1);
   mask_x--;
   mask_y--;
 
-  scx = (regs.screen_size & 1 ? 32 << 5 : 0);
-  scy = (regs.screen_size & 2 ? 32 << 5 : 0);
-  if(regs.screen_size == 3) scy <<= 1;
+  //scx = (regs.screen_size & 1 ? 32 << 5 : 0);
+  //scy = (regs.screen_size & 2 ? 32 << 5 : 0);
+  scx = (regs.screen_size & 1) << 10;
+  scy = (regs.screen_size & 2) << 9;
+  //if(regs.screen_size == 3) scy <<= 1;
+  scy <<= (regs.screen_size == 3);
 }
 
 void PPU::Background::render() {
