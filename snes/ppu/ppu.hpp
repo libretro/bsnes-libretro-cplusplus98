@@ -1,13 +1,13 @@
 class PPU : public Processor, public PPUcounter, public MMIO {
 public:
   enum{ Threaded = true };
-  alwaysinline void step(uint64_t clocks);
+  alwaysinline void step(unsigned clocks);
   alwaysinline void synchronize_cpu();
 
   void latch_counters();
-  uint64_t interlace() const;
-  uint64_t overscan() const;
-  uint64_t hires() const;
+  bool interlace() const;
+  bool overscan() const;
+  bool hires() const;
 
   void enter();
   void power();
@@ -25,8 +25,8 @@ private:
   uint8 ppu2_version;
 
   struct {
-    uint64_t interlace;
-    uint64_t overscan;
+    bool interlace;
+    bool overscan;
   } display;
 
   #include "background/background.hpp"
@@ -44,7 +44,7 @@ private:
   Screen screen;
 
   static void Enter();
-  void add_clocks(uint64_t);
+  void add_clocks(unsigned);
 
   void scanline();
   void frame();

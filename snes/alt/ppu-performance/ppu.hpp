@@ -4,13 +4,13 @@
 class PPU : public Processor, public PPUcounter, public MMIO {
 public:
   enum{ Threaded = true };
-  alwaysinline void step(uint64_t clocks);
+  alwaysinline void step(unsigned clocks);
   alwaysinline void synchronize_cpu();
 
   void latch_counters();
-  uint64_t interlace() const;
-  uint64_t overscan() const;
-  uint64_t hires() const;
+  bool interlace() const;
+  bool overscan() const;
+  bool hires() const;
 
   void enter();
   void power();
@@ -18,8 +18,8 @@ public:
   void scanline();
   void frame();
 
-  void layer_enable(uint64_t layer, uint64_t priority, uint64_t enable);
-  void set_frameskip(uint64_t frameskip);
+  void layer_enable(unsigned layer, unsigned priority, bool enable);
+  void set_frameskip(unsigned frameskip);
 
   void serialize(serializer&);
   PPU();
@@ -52,16 +52,16 @@ private:
   Screen screen;
 
   struct Display {
-    uint64_t interlace;
-    uint64_t overscan;
-    uint64_t width;
-    uint64_t height;
-    uint64_t frameskip;
-    uint64_t framecounter;
+    bool interlace;
+    bool overscan;
+    unsigned width;
+    unsigned height;
+    unsigned frameskip;
+    unsigned framecounter;
   } display;
 
   static void Enter();
-  void add_clocks(uint64_t clocks);
+  void add_clocks(unsigned clocks);
   void render_scanline();
 
 };

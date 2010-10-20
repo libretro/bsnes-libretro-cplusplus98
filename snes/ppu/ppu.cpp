@@ -17,7 +17,7 @@ namespace SNES {
 #include "window/window.cpp"
 #include "serialization.cpp"
 
-void PPU::step(uint64_t clocks) {
+void PPU::step(unsigned clocks) {
   clock += clocks;
 }
 
@@ -41,7 +41,7 @@ void PPU::enter() {
     add_clocks(60);
 
     if(vcounter() <= (!regs.overscan ? 224 : 239)) {
-      for(int64_t pixel = -7; pixel <= 255; pixel++) {
+      for(signed pixel = -7; pixel <= 255; pixel++) {
         bg1.run(1);
         bg2.run(1);
         bg3.run(1);
@@ -70,7 +70,7 @@ void PPU::enter() {
   }
 }
 
-void PPU::add_clocks(uint64_t clocks) {
+void PPU::add_clocks(unsigned clocks) {
   clocks >>= 1;
   while(clocks--) {
     tick(2);
@@ -141,12 +141,12 @@ bg4(*this, Background::ID::BG4),
 oam(*this),
 window(*this),
 screen(*this) {
-  surface = memalign(128, 512*512*sizeof(uint16_t));
+  surface = new uint16[512 * 512];
   output = surface + 16 * 512;
 }
 
 PPU::~PPU() {
-  free(surface);
+  delete[] surface;
 }
 
 }
