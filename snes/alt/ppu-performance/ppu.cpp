@@ -133,7 +133,7 @@ bg3(*this, Background::ID::BG3),
 bg4(*this, Background::ID::BG4),
 oam(*this),
 screen(*this) {
-  surface = new uint16[512 * 512];
+  surface = (uint16_t*)memalign(1024, 512 * 512 * sizeof(uint16_t));
   output = surface + 16 * 512;
   display.width = 256;
   display.height = 224;
@@ -142,7 +142,7 @@ screen(*this) {
 }
 
 PPU::~PPU() {
-  delete[] surface;
+  free(surface);
 }
 
 }

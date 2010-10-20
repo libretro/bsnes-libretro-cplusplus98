@@ -112,12 +112,12 @@ uint8* PPU::Cache::tile(unsigned bpp, unsigned tile) {
 }
 
 PPU::Cache::Cache(PPU &self) : self(self) {
-  tiledata[0] = new uint8[262144]();
-  tiledata[1] = new uint8[131072]();
-  tiledata[2] = new uint8[ 65536]();
-  tilevalid[0] = new uint8[ 4096]();
-  tilevalid[1] = new uint8[ 2048]();
-  tilevalid[2] = new uint8[ 1024]();
+  tiledata[0] = (uint8_t*)memalign(128, 262144);
+  tiledata[1] = (uint8_t*)memalign(128, 131072); 
+  tiledata[2] = (uint8_t*)memalign(128, 65536);
+  tilevalid[0] = (uint8_t*)memalign(128, 4096);
+  tilevalid[1] = (uint8_t*)memalign(128, 2048);
+  tilevalid[2] = (uint8_t*)memalign(128, 1024);
 }
 
 #endif

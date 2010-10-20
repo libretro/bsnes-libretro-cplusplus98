@@ -165,9 +165,9 @@ PPU::Background::Background(PPU &self, unsigned id) : self(self), id(id) {
 
   opt_valid_bit = (id == ID::BG1 ? 0x2000 : id == ID::BG2 ? 0x4000 : 0x0000);
 
-  mosaic_table = new uint16*[16];
+  mosaic_table = (uint16_t**)memalign(1024, 16 * sizeof(uint16_t*));
   for(unsigned m = 0; m < 16; m++) {
-    mosaic_table[m] = new uint16[4096];
+    mosaic_table[m] = (uint16_t*)memalign(1024, 4096 * sizeof(uint16_t));
     for(unsigned x = 0; x < 4096; x++) {
       mosaic_table[m][x] = (x / (m + 1)) * (m + 1);
     }
@@ -175,8 +175,8 @@ PPU::Background::Background(PPU &self, unsigned id) : self(self), id(id) {
 }
 
 PPU::Background::~Background() {
-  for(unsigned m = 0; m < 16; m++) delete[] mosaic_table[m];
-  delete[] mosaic_table;
+  for(unsigned m = 0; m < 16; m++) free(mosaic_table[m]);
+  free(mosaic_table);
 }
 
 #endif
