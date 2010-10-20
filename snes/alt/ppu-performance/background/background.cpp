@@ -93,11 +93,8 @@ void PPU::Background::render() {
   hscroll = regs.hoffset;
   vscroll = regs.voffset;
 
-  unsigned y = Background::y;
-  if(hires) {
-    hscroll <<= 1;
-    if(self.regs.interlace) y = (y << 1) + self.field();
-  }
+  hscroll <<= hires;
+  y = Background::y + ((Background::y << 1) + self.field() - Background::y) * self.regs.interlace;
 
   unsigned tile_pri, tile_num;
   unsigned pal_index, pal_num;
@@ -122,15 +119,16 @@ void PPU::Background::render() {
     pal_num = (tile_num >> 10) & 7;
     pal_index = (bgpal_index + (pal_num << pal_size)) & 0xff;
 
-    if(tile_width  == 4 && (bool)(hoffset & 8) != mirror_x) tile_num +=  1;
-    if(tile_height == 4 && (bool)(voffset & 8) != mirror_y) tile_num += 16;
+    //if(tile_width  == 4 && (bool)(hoffset & 8) != mirror_x) tile_num +=  1;
+    //if(tile_height == 4 && (bool)(voffset & 8) != mirror_y) tile_num += 16;
+    tile_num += (((tile_width >> 2) & 1) & (((hoffset >> 3) & 1) ^ mirror_x)) | (((tile_height & 4) << 2) & (((voffset & 8) << 1) ^ (mirror_y << 4)));
     tile_num = ((tile_num & 0x03ff) + tiledata_index) & tile_mask;
 
-    if(mirror_y) voffset ^= 7;
-    unsigned mirror_xmask = !mirror_x ? 0 : 7;
+    voffset ^= mirror_y * 7;
+    unsigned mirror_xmask = mirror_x * 7;
 
     uint8 *tiledata = self.cache.tile(regs.mode, tile_num);
-    tiledata += ((voffset & 7) * 8);
+    tiledata += ((voffset & 7) << 3);
 
     for(unsigned n = 0; n < 8; n++, x++) {
       if(x & width) continue;
