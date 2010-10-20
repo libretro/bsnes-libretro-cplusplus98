@@ -3,5 +3,6 @@ This repo aims to support building libsnes with C++98 compilers (with some GNU e
 libsnes/bsnes author: byuu
 
 Porters:
-Ver Greeneyes
-Themaister
+Ver Greeneyes - Main C++98 porter
+Themaister - PS3 code
+blargg - libco PPC asm
