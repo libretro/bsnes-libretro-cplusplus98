@@ -1,37 +1,34 @@
-/* Minimal cooperative (non-preemptive) threading library */
+/*
+  libco
+  version: 0.15 (2009-10-12)
+  license: public domain
+*/
+
 #ifndef LIBCO_H
 #define LIBCO_H
 
-#include <stdint.h>
+#ifdef LIBCO_C
+  #ifdef LIBCO_MP
+    #define thread_local __thread
+  #else
+    #define thread_local
+  #endif
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-   /* Reference to a cooperative thread */
-   typedef void* cothread_t;
+typedef void* cothread_t;
 
-   /* Sets size of main stack and stack space for other threads in portable version.
-      Defaults to 64K and 256K, respectively. Must be set before first call to
-      co_create(), otherwise it has no effect. */
-   void co_setmax( unsigned main_size, unsigned total_stack );
-
-   /* Currently active thread. Before first call to co_switch(), returns main thread. */
-   cothread_t co_active( void );
-
-   /* Creates new thread with stack of size bytes and executes entry() when next
-      switched to. Returns pointer to thread, or NULL if it failed. User entry()
-      function must NEVER return. */ 
-   cothread_t co_create( unsigned int size, void (*entry)( void ) );
-
-   /* Switches to thread. Thread must not already be the active one. */
-   void co_switch( cothread_t thread );
-
-   /* Deletes thread. Thread must not be the active one or main thread. */
-   void co_delete( cothread_t thread );
+cothread_t co_active();
+cothread_t co_create(unsigned int, void (*)(void));
+void co_delete(cothread_t);
+void co_switch(cothread_t);
 
 #ifdef __cplusplus
 }
 #endif
 
+/* ifndef LIBCO_H */
 #endif
