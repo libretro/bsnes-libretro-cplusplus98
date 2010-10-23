@@ -18,9 +18,9 @@
 namespace nall {
   struct library {
     bool opened() const { return handle; }
-    bool open(const char*, const char* = "");
-    void* sym(const char*);
-    void close();
+    inline bool open(const char*, const char* = "");
+    inline void* sym(const char*);
+    inline void close();
 
     library() : handle(0) {}
     ~library() { close(); }

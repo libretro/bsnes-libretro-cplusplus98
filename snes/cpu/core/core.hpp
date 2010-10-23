@@ -14,10 +14,10 @@ public:
   virtual void last_cycle() = 0;
   virtual bool interrupt_pending() = 0;
 
-  void op_io_irq();
-  void op_io_cond2();
-  void op_io_cond4(uint16 x, uint16 y);
-  void op_io_cond6(uint16 addr);
+  inline void op_io_irq();
+  inline void op_io_cond2();
+  inline void op_io_cond4(uint16 x, uint16 y);
+  inline void op_io_cond6(uint16 addr);
 
   void op_adc_b();
   void op_adc_w();
