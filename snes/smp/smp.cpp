@@ -7,7 +7,7 @@ namespace SNES {
   #include "debugger/debugger.cpp"
   SMPDebugger smp;
 #else
-  SMP smp;
+  SMP *smp;
 #endif
 
 #include "serialization.cpp"
@@ -36,7 +36,7 @@ void SMP::synchronize_dsp() {
   }
 }
 
-void SMP::Enter() { smp.enter(); }
+void SMP::Enter() { smp->enter(); }
 
 void SMP::enter() {
   while(true) {

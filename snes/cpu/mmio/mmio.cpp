@@ -416,7 +416,7 @@ uint8 CPU::mmio_read(unsigned addr) {
   //APU
   if((addr & 0xffc0) == 0x2140) {  //$2140-$217f
     synchronize_smp();
-    return smp.port_read(addr);
+    return smp->port_read(addr);
   }
 
   //DMA

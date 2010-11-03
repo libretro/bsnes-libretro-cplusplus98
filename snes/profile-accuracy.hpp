@@ -3,6 +3,6 @@ namespace Info {
 }
 
 #include <cpu/cpu->hpp>
-#include <smp/smp.hpp>
+#include <smp/smp->hpp>
 #include <dsp/dsp->hpp>
 #include <ppu/ppu->hpp>

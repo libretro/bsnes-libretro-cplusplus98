@@ -58,5 +58,5 @@ private:
   #include "debugger/debugger.hpp"
   extern SMPDebugger smp;
 #else
-  extern SMP smp;
+  extern SMP *smp;
 #endif

@@ -3,7 +3,7 @@
 uint8 CPU::mmio_read(unsigned addr) {
   if((addr & 0xffc0) == 0x2140) {
     synchronize_smp();
-    return smp.port_read(addr & 3);
+    return smp->port_read(addr & 3);
   }
 
   switch(addr & 0xffff) {

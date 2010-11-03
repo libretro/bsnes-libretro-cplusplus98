@@ -1,7 +1,7 @@
 #ifdef SMPCORE_CPP
 
 uint8 SMPcore::disassemble_read(uint16 addr) {
-  if(addr >= 0xffc0) return smp.iplrom[addr & 0x3f];
+  if(addr >= 0xffc0) return smp->iplrom[addr & 0x3f];
   return memory::apuram[addr];
 }
 

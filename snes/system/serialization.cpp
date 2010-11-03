@@ -53,7 +53,7 @@ void System::serialize_all(serializer &s) {
   cartridge.serialize(s);
   system->serialize(s);
   cpu->serialize(s);
-  smp.serialize(s);
+  smp->serialize(s);
   ppu->serialize(s);
   dsp->serialize(s);
 

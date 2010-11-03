@@ -18,7 +18,7 @@ namespace SNES {
 #include "timing/timing.cpp"
 
 void CPU::step(unsigned clocks) {
-  smp.clock -= clocks * (uint64)smp.frequency;
+  smp->clock -= clocks * (uint64)smp->frequency;
   ppu->clock -= clocks;
   for(unsigned i = 0; i < coprocessors.size(); i++) {
     Processor &chip = *coprocessors[i];
@@ -28,9 +28,9 @@ void CPU::step(unsigned clocks) {
 
 void CPU::synchronize_smp() {
   if(SMP::Threaded == true) {
-    if(smp.clock < 0) co_switch(smp.thread);
+    if(smp->clock < 0) co_switch(smp->thread);
   } else {
-    while(smp.clock < 0) smp.enter();
+    while(smp->clock < 0) smp->enter();
   }
 }
 

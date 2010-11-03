@@ -27,7 +27,7 @@ void SMP::cycle_edge() {
 template<unsigned timer_frequency>
 void SMP::sSMPTimer<timer_frequency>::tick() {
   //stage 0 increment
-  stage0_ticks += smp.status.timer_step;
+  stage0_ticks += smp->status.timer_step;
   if(stage0_ticks < timer_frequency) return;
   stage0_ticks -= timer_frequency;
 
@@ -39,8 +39,8 @@ void SMP::sSMPTimer<timer_frequency>::tick() {
 template<unsigned frequency>
 void SMP::sSMPTimer<frequency>::sync_stage1() {
   bool new_line = stage1_ticks;
-  if(smp.status.timers_enabled == false) new_line = false;
-  if(smp.status.timers_disabled == true) new_line = false;
+  if(smp->status.timers_enabled == false) new_line = false;
+  if(smp->status.timers_disabled == true) new_line = false;
 
   bool old_line = current_line;
   current_line = new_line;

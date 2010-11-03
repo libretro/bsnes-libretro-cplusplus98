@@ -33,7 +33,7 @@ void System::runtosave() {
   }
 
   if(SMP::Threaded == true) {
-    scheduler.thread = smp.thread;
+    scheduler.thread = smp->thread;
     runthreadtosave();
   }
 
@@ -72,6 +72,7 @@ void System::init(Interface *interface_) {
    audio = new Audio;
    dsp = new DSP;
    input = new Input;
+   smp = new SMP;
 
    bus = new Bus;
    memory::mmio = new MMIOAccess;
@@ -112,6 +113,7 @@ void System::term() {
    delete cpu;
    delete video;
    delete audio;
+   delete smp;
    delete dsp;
    delete input;
    delete memory::mmio;
@@ -169,7 +171,7 @@ void System::power() {
    SNES_DBG("#4.0\n");
   cpu->power();
    SNES_DBG("#4.1\n");
-  smp.power();
+  smp->power();
    SNES_DBG("#4.2\n");
   dsp->power();
    SNES_DBG("#4.3\n");
@@ -224,7 +226,7 @@ void System::power() {
 void System::reset() {
   bus->reset();
   cpu->reset();
-  smp.reset();
+  smp->reset();
   dsp->reset();
   ppu->reset();
 
