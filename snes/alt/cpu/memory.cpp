@@ -25,14 +25,14 @@ void CPU::op_io() {
 }
 
 uint8 CPU::op_read(unsigned addr) {
-  regs.mdr = bus.read(addr);
+  regs.mdr = bus->read(addr);
   add_clocks(speed(addr));
   return regs.mdr;
 }
 
 void CPU::op_write(unsigned addr, uint8 data) {
   add_clocks(speed(addr));
-  bus.write(addr, regs.mdr = data);
+  bus->write(addr, regs.mdr = data);
 }
 
 unsigned CPU::speed(unsigned addr) const {

@@ -14,7 +14,7 @@ uint8 CPU::op_read(uint32 addr) {
   status.clock_count = speed(addr);
   dma_edge();
   add_clocks(status.clock_count - 4);
-  regs.mdr = bus.read(addr);
+  regs.mdr = bus->read(addr);
   add_clocks(4);
   alu_edge();
   return regs.mdr;
@@ -25,7 +25,7 @@ void CPU::op_write(uint32 addr, uint8 data) {
   status.clock_count = speed(addr);
   dma_edge();
   add_clocks(status.clock_count);
-  bus.write(addr, regs.mdr = data);
+  bus->write(addr, regs.mdr = data);
 }
 
 unsigned CPU::speed(unsigned addr) const {

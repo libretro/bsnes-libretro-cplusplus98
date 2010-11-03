@@ -3,20 +3,20 @@
 #define MEMORY_CPP
 namespace SNES {
 
-Bus bus;
+Bus *bus;
 
 #include "serialization.cpp"
 
 namespace memory {
-  MMIOAccess mmio;
+  MMIOAccess *mmio;
   StaticRAM wram(128 * 1024);
   StaticRAM apuram(64 * 1024);
   StaticRAM vram(64 * 1024);
   StaticRAM oam(544);
   StaticRAM cgram(512);
 
-  UnmappedMemory memory_unmapped;
-  UnmappedMMIO mmio_unmapped;
+  UnmappedMemory *memory_unmapped;
+  UnmappedMMIO *mmio_unmapped;
 };
 
 unsigned UnmappedMemory::size() const { return 16 * 1024 * 1024; }
@@ -43,7 +43,7 @@ void MMIOAccess::write(unsigned addr, uint8 data) {
 }
 
 MMIOAccess::MMIOAccess() {
-  for(unsigned i = 0; i < 0x8000; i++) mmio[i] = &memory::mmio_unmapped;
+  for(unsigned i = 0; i < 0x8000; i++) mmio[i] = memory::mmio_unmapped;
 }
 
 unsigned Bus::mirror(unsigned addr, unsigned size) {
@@ -134,10 +134,10 @@ void Bus::unload_cart() {
 }
 
 void Bus::map_reset() {
-  map(MapMode::Direct, 0x00, 0xff, 0x0000, 0xffff, memory::memory_unmapped);
-  map(MapMode::Direct, 0x00, 0x3f, 0x2000, 0x5fff, memory::mmio);
-  map(MapMode::Direct, 0x80, 0xbf, 0x2000, 0x5fff, memory::mmio);
-  for(unsigned i = 0x2000; i <= 0x5fff; i++) memory::mmio.map(i, memory::mmio_unmapped);
+  map(MapMode::Direct, 0x00, 0xff, 0x0000, 0xffff, *memory::memory_unmapped);
+  map(MapMode::Direct, 0x00, 0x3f, 0x2000, 0x5fff, *memory::mmio);
+  map(MapMode::Direct, 0x80, 0xbf, 0x2000, 0x5fff, *memory::mmio);
+  for(unsigned i = 0x2000; i <= 0x5fff; i++) memory::mmio->map(i, *memory::mmio_unmapped);
 }
 
 void Bus::map_xml() {
@@ -145,7 +145,7 @@ void Bus::map_xml() {
     if(m.memory) {
       map(m.mode.i, m.banklo, m.bankhi, m.addrlo, m.addrhi, *m.memory, m.offset, m.size);
     } else if(m.mmio) {
-      for(unsigned i = m.addrlo; i <= m.addrhi; i++) memory::mmio.map(i, *m.mmio);
+      for(unsigned i = m.addrlo; i <= m.addrhi; i++) memory::mmio->map(i, *m.mmio);
     }
   }
 }

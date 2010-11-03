@@ -116,8 +116,8 @@ void CPU::reset() {
   regs.wai = false;
   update_table();
 
-  regs.pc.l = bus.read(0xfffc);
-  regs.pc.h = bus.read(0xfffd);
+  regs.pc.l = bus->read(0xfffc);
+  regs.pc.h = bus->read(0xfffd);
   regs.pc.b = 0x00;
 
   status.nmi_valid = false;

@@ -8,7 +8,7 @@ uint8 CPU::mmio_read(unsigned addr) {
 
   switch(addr & 0xffff) {
     case 0x2180: {
-      uint8 result = bus.read(0x7e0000 | status.wram_addr);
+      uint8 result = bus->read(0x7e0000 | status.wram_addr);
       status.wram_addr = (status.wram_addr + 1) & 0x01ffff;
       return result;
     }
@@ -106,7 +106,7 @@ void CPU::mmio_write(unsigned addr, uint8 data) {
 
   switch(addr & 0xffff) {
     case 0x2180: {
-      bus.write(0x7e0000 | status.wram_addr, data);
+      bus->write(0x7e0000 | status.wram_addr, data);
       status.wram_addr = (status.wram_addr + 1) & 0x01ffff;
       return;
     }

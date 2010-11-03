@@ -30,7 +30,7 @@ private:
   } display;
 
   #include "background/background.hpp"
-  #include "mmio/mmio.hpp"
+  #include "mmio/mmio->hpp"
   #include "screen/screen.hpp"
   #include "sprite/sprite.hpp"
   #include "window/window.hpp"

@@ -11,7 +11,7 @@ namespace SNES {
 #endif
 
 #include "background/background.cpp"
-#include "mmio/mmio.cpp"
+#include "mmio/mmio->cpp"
 #include "screen/screen.cpp"
 #include "sprite/sprite.cpp"
 #include "window/window.cpp"

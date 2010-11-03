@@ -20,7 +20,7 @@ namespace memory {
 //these ports.
 //(* eg, memory::cartram is used directly, as memory::sa1bwram syncs to the S-CPU)
 void VBRBus::init() {
-  map(MapMode::Direct, 0x00, 0xff, 0x0000, 0xffff, memory::memory_unmapped);
+  map(MapMode::Direct, 0x00, 0xff, 0x0000, 0xffff, *memory::memory_unmapped);
 
   map(MapMode::Linear, 0x00, 0x3f, 0x0000, 0x07ff, memory::iram);
   map(MapMode::Linear, 0x00, 0x3f, 0x3000, 0x37ff, memory::iram);
@@ -35,17 +35,17 @@ void VBRBus::init() {
 }
 
 void SA1Bus::init() {
-  map(MapMode::Direct, 0x00, 0xff, 0x0000, 0xffff, memory::memory_unmapped);
+  map(MapMode::Direct, 0x00, 0xff, 0x0000, 0xffff, *memory::memory_unmapped);
 
   map(MapMode::Linear, 0x00, 0x3f, 0x0000, 0x07ff, memory::sa1iram);
-  map(MapMode::Direct, 0x00, 0x3f, 0x2200, 0x23ff, memory::mmio);
+  map(MapMode::Direct, 0x00, 0x3f, 0x2200, 0x23ff, *memory::mmio);
   map(MapMode::Linear, 0x00, 0x3f, 0x3000, 0x37ff, memory::sa1iram);
   map(MapMode::Linear, 0x00, 0x3f, 0x6000, 0x7fff, memory::sa1bwram);
   map(MapMode::Linear, 0x00, 0x3f, 0x8000, 0xffff, memory::vsprom);
   map(MapMode::Linear, 0x40, 0x4f, 0x0000, 0xffff, memory::sa1bwram);
   map(MapMode::Linear, 0x60, 0x6f, 0x0000, 0xffff, memory::bitmapram);
   map(MapMode::Linear, 0x80, 0xbf, 0x0000, 0x07ff, memory::sa1iram);
-  map(MapMode::Direct, 0x80, 0xbf, 0x2200, 0x23ff, memory::mmio);
+  map(MapMode::Direct, 0x80, 0xbf, 0x2200, 0x23ff, *memory::mmio);
   map(MapMode::Linear, 0x80, 0xbf, 0x3000, 0x37ff, memory::sa1iram);
   map(MapMode::Linear, 0x80, 0xbf, 0x6000, 0x7fff, memory::sa1bwram);
   map(MapMode::Linear, 0x80, 0xbf, 0x8000, 0xffff, memory::vsprom);

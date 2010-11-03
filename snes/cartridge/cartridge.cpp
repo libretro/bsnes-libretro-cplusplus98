@@ -106,7 +106,7 @@ void Cartridge::load(Mode::e cartridge_mode, const lstring &xml_list) {
   foreach(n, shahash) hash << strhex<2>(n);
   sha256 = hash;
 
-  bus.load_cart();
+  bus->load_cart();
   system->serialize_init();
   loaded = true;
 }
@@ -127,7 +127,7 @@ void Cartridge::unload() {
   memory::gbrtc.reset();
 
   if(loaded == false) return;
-  bus.unload_cart();
+  bus->unload_cart();
   loaded = false;
 }
 

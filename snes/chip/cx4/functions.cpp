@@ -86,22 +86,22 @@ void Cx4::C4DrawWireFrame() {
   uint8 Color;
 
   for(int32 i = ram[0x0295]; i > 0; i--, line += 5) {
-    if(bus.read(line) == 0xff && bus.read(line + 1) == 0xff) {
+    if(bus->read(line) == 0xff && bus->read(line + 1) == 0xff) {
       int32 tmp = line - 5;
-      while(bus.read(tmp + 2) == 0xff && bus.read(tmp + 3) == 0xff && (tmp + 2) >= 0) { tmp -= 5; }
-      point1 = (read(0x1f82) << 16) | (bus.read(tmp + 2) << 8) | bus.read(tmp + 3);
+      while(bus->read(tmp + 2) == 0xff && bus->read(tmp + 3) == 0xff && (tmp + 2) >= 0) { tmp -= 5; }
+      point1 = (read(0x1f82) << 16) | (bus->read(tmp + 2) << 8) | bus->read(tmp + 3);
     } else {
-      point1 = (read(0x1f82) << 16) | (bus.read(line) << 8) | bus.read(line + 1);
+      point1 = (read(0x1f82) << 16) | (bus->read(line) << 8) | bus->read(line + 1);
     }
-    point2 = (read(0x1f82) << 16) | (bus.read(line + 2) << 8) | bus.read(line + 3);
+    point2 = (read(0x1f82) << 16) | (bus->read(line + 2) << 8) | bus->read(line + 3);
 
-    X1=(bus.read(point1 + 0) << 8) | bus.read(point1 + 1);
-    Y1=(bus.read(point1 + 2) << 8) | bus.read(point1 + 3);
-    Z1=(bus.read(point1 + 4) << 8) | bus.read(point1 + 5);
-    X2=(bus.read(point2 + 0) << 8) | bus.read(point2 + 1);
-    Y2=(bus.read(point2 + 2) << 8) | bus.read(point2 + 3);
-    Z2=(bus.read(point2 + 4) << 8) | bus.read(point2 + 5);
-    Color = bus.read(line + 4);
+    X1=(bus->read(point1 + 0) << 8) | bus->read(point1 + 1);
+    Y1=(bus->read(point1 + 2) << 8) | bus->read(point1 + 3);
+    Z1=(bus->read(point1 + 4) << 8) | bus->read(point1 + 5);
+    X2=(bus->read(point2 + 0) << 8) | bus->read(point2 + 1);
+    Y2=(bus->read(point2 + 2) << 8) | bus->read(point2 + 3);
+    Z2=(bus->read(point2 + 4) << 8) | bus->read(point2 + 5);
+    Color = bus->read(line + 4);
     C4DrawLine(X1, Y1, Z1, X2, Y2, Z2, Color);
   }
 }

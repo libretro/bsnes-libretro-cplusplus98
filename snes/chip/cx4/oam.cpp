@@ -31,28 +31,28 @@ void Cx4::op00_00() {
     sprattr = ram[srcptr + 4] | ram[srcptr + 6];
 
     uint32 spraddr = readl(srcptr + 7);
-    if(bus.read(spraddr)) {
+    if(bus->read(spraddr)) {
       int16 x, y;
-      for(int sprcnt = bus.read(spraddr++); sprcnt > 0 && sprcount > 0; sprcnt--, spraddr += 4) {
-        x = (int8)bus.read(spraddr + 1);
+      for(int sprcnt = bus->read(spraddr++); sprcnt > 0 && sprcount > 0; sprcnt--, spraddr += 4) {
+        x = (int8)bus->read(spraddr + 1);
         if(sprattr & 0x40) {
-          x = -x - ((bus.read(spraddr) & 0x20) ? 16 : 8);
+          x = -x - ((bus->read(spraddr) & 0x20) ? 16 : 8);
         }
         x += sprx;
         if(x >= -16 && x <= 272) {
-          y = (int8)bus.read(spraddr + 2);
+          y = (int8)bus->read(spraddr + 2);
           if(sprattr & 0x80) {
-            y = -y - ((bus.read(spraddr) & 0x20) ? 16 : 8);
+            y = -y - ((bus->read(spraddr) & 0x20) ? 16 : 8);
           }
           y += spry;
           if(y >= -16 && y <= 224) {
             ram[oamptr    ] = (uint8)x;
             ram[oamptr + 1] = (uint8)y;
-            ram[oamptr + 2] = sprname + bus.read(spraddr + 3);
-            ram[oamptr + 3] = sprattr ^ (bus.read(spraddr) & 0xc0);
+            ram[oamptr + 2] = sprname + bus->read(spraddr + 3);
+            ram[oamptr + 3] = sprattr ^ (bus->read(spraddr) & 0xc0);
             ram[oamptr2] &= ~(3 << offset);
             if(x & 0x100) ram[oamptr2] |= 1 << offset;
-            if(bus.read(spraddr) & 0x20) ram[oamptr2] |= 2 << offset;
+            if(bus->read(spraddr) & 0x20) ram[oamptr2] |= 2 << offset;
             oamptr += 4;
             sprcount--;
             offset = (offset + 2) & 6;

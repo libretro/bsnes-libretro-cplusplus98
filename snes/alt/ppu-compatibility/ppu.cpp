@@ -11,7 +11,7 @@ namespace SNES {
 #endif
 
 #include "memory/memory.cpp"
-#include "mmio/mmio.cpp"
+#include "mmio/mmio->cpp"
 #include "render/render.cpp"
 #include "serialization.cpp"
 

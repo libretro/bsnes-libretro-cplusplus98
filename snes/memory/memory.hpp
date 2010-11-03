@@ -65,7 +65,7 @@ struct MMIOAccess : Memory {
   MMIOAccess();
 
 private:
-  MMIO *mmio[0x8000];
+  MMIO *mmio[0x8000] __attribute__((__aligned__(16)));
 };
 
 struct Bus {
@@ -89,7 +89,7 @@ struct Bus {
   struct Page {
     Memory *access;
     unsigned offset;
-  } page[65536];
+  } page[65536] __attribute__((__aligned__(16)));
 
   void serialize(serializer&);
 
@@ -100,15 +100,15 @@ private:
 };
 
 namespace memory {
-  extern MMIOAccess mmio;   //S-CPU, S-PPU
+  extern MMIOAccess *mmio;   //S-CPU, S-PPU
   extern StaticRAM wram;    //S-CPU
   extern StaticRAM apuram;  //S-SMP, S-DSP
   extern StaticRAM vram;    //S-PPU
   extern StaticRAM oam;     //S-PPU
   extern StaticRAM cgram;   //S-PPU
 
-  extern UnmappedMemory memory_unmapped;
-  extern UnmappedMMIO mmio_unmapped;
+  extern UnmappedMemory *memory_unmapped;
+  extern UnmappedMMIO *mmio_unmapped;
 };
 
-extern Bus bus;
+extern Bus *bus;

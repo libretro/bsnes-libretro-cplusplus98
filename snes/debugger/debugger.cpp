@@ -33,7 +33,7 @@ uint8 Debugger::read(Debugger::MemorySource::e source, unsigned addr) {
     case MemorySource::CPUBus: {
       //do not read from memory-mapped registers that could affect program behavior
       if(((addr - 0x2000) & 0x40c000) == 0x000000) break;  //$00-3f:2000-5fff MMIO
-      return bus.read(addr & 0xffffff);
+      return bus->read(addr & 0xffffff);
     } break;
 
     case MemorySource::APURAM: {
@@ -63,7 +63,7 @@ void Debugger::write(Debugger::MemorySource::e source, unsigned addr, uint8 data
       //do not write to memory-mapped registers that could affect program behavior
       if(((addr - 0x2000) & 0x40c000) == 0x000000) break;  //$00-3f:2000-5fff MMIO
       memory::cartrom.write_protect(false);
-      bus.write(addr & 0xffffff, data);
+      bus->write(addr & 0xffffff, data);
       memory::cartrom.write_protect(true);
     } break;
 

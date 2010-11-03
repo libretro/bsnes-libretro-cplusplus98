@@ -14,7 +14,7 @@ namespace SNES {
 #include "serialization.cpp"
 #include "dma/dma.cpp"
 #include "memory/memory.cpp"
-#include "mmio/mmio.cpp"
+#include "mmio/mmio->cpp"
 #include "timing/timing.cpp"
 
 void CPU::step(unsigned clocks) {
@@ -71,8 +71,8 @@ void CPU::enter() {
       } else if(status.reset_pending) {
         status.reset_pending = false;
         add_clocks(186);
-        regs.pc.l = bus.read(0xfffc);
-        regs.pc.h = bus.read(0xfffd);
+        regs.pc.l = bus->read(0xfffc);
+        regs.pc.h = bus->read(0xfffd);
       }
     }
 

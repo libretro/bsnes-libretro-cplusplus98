@@ -5,7 +5,7 @@ public:
   alwaysinline void synchronize_cpu();
 
   #include "memory/memory.hpp"
-  #include "mmio/mmio.hpp"
+  #include "mmio/mmio->hpp"
   #include "render/render.hpp"
 
   uint16 *surface;

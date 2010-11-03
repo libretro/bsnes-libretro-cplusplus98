@@ -6,7 +6,7 @@ void BSXBase::init() {
 }
 
 void BSXBase::enable() {
-  for(uint16 i = 0x2188; i <= 0x219f; i++) memory::mmio.map(i, *this);
+  for(uint16 i = 0x2188; i <= 0x219f; i++) memory::mmio->map(i, *this);
 }
 
 void BSXBase::power() {

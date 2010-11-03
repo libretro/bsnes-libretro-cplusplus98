@@ -25,7 +25,7 @@ public:
 private:
   #include "dma/dma.hpp"
   #include "memory/memory.hpp"
-  #include "mmio/mmio.hpp"
+  #include "mmio/mmio->hpp"
   #include "timing/timing.hpp"
 
   uint8 cpu_version;

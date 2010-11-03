@@ -14,8 +14,8 @@ void SDD1::enable() {
   //hook S-CPU DMA MMIO registers to gather information for struct dma[];
   //buffer address and transfer size information for use in SDD1::read()
   for(unsigned i = 0x4300; i <= 0x437f; i++) {
-    cpu_mmio[i & 0x7f] = memory::mmio.handle(i);
-    memory::mmio.map(i, *this);
+    cpu_mmio[i & 0x7f] = memory::mmio->handle(i);
+    memory::mmio->map(i, *this);
   }
 }
 
@@ -88,8 +88,8 @@ void SDD1::mmio_write(unsigned addr, uint8 data) {
 //the design is meant to be as close to the hardware design as possible, thus this code
 //avoids adding S-DD1 hooks inside S-CPU::DMA emulation.
 //
-//the real S-DD1 cannot see $420b (DMA enable) writes, as they are not placed on the bus.
-//however, $43x0-$43xf writes (DMAx channel settings) most likely do appear on the bus.
+//the real S-DD1 cannot see $420b (DMA enable) writes, as they are not placed on the bus->
+//however, $43x0-$43xf writes (DMAx channel settings) most likely do appear on the bus->
 //the S-DD1 also requires fixed addresses for transfers, which wouldn't be necessary if
 //it could see $420b writes (eg it would know when the transfer should begin.)
 //

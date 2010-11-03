@@ -103,12 +103,12 @@ void SuperGameBoy::init() {
 }
 
 void SuperGameBoy::enable() {
-  mmio[0] = memory::mmio.handle(0x2181);
-  mmio[1] = memory::mmio.handle(0x2182);
-  mmio[2] = memory::mmio.handle(0x420b);
-  memory::mmio.map(0x2181, *this);
-  memory::mmio.map(0x2182, *this);
-  memory::mmio.map(0x420b, *this);
+  mmio[0] = memory::mmio->handle(0x2181);
+  mmio[1] = memory::mmio->handle(0x2182);
+  mmio[2] = memory::mmio->handle(0x420b);
+  memory::mmio->map(0x2181, *this);
+  memory::mmio->map(0x2182, *this);
+  memory::mmio->map(0x420b, *this);
 }
 
 void SuperGameBoy::power() {

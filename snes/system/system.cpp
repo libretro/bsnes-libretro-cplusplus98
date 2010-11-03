@@ -73,6 +73,11 @@ void System::init(Interface *interface_) {
    dsp = new DSP;
    input = new Input;
 
+   bus = new Bus;
+   memory::mmio = new MMIOAccess;
+   memory::memory_unmapped = new UnmappedMemory;
+   memory::mmio_unmapped = new UnmappedMMIO;
+
   interface = interface_;
   assert(interface != 0);
 
@@ -109,6 +114,10 @@ void System::term() {
    delete audio;
    delete dsp;
    delete input;
+   delete memory::mmio;
+   delete memory::memory_unmapped;
+   delete memory::mmio_unmapped;
+   delete bus;
 }
 
 void System::power() {
@@ -123,13 +132,13 @@ void System::power() {
   apu_frequency = region.i == Region::NTSC ? config.smp.ntsc_frequency : config.smp.pal_frequency;
 
    SNES_DBG("#1\n");
-  bus.power();
-  for(unsigned i = 0x2100; i <= 0x213f; i++) memory::mmio.map(i, *ppu);
-  for(unsigned i = 0x2140; i <= 0x217f; i++) memory::mmio.map(i, *cpu);
-  for(unsigned i = 0x2180; i <= 0x2183; i++) memory::mmio.map(i, *cpu);
-  for(unsigned i = 0x4016; i <= 0x4017; i++) memory::mmio.map(i, *cpu);
-  for(unsigned i = 0x4200; i <= 0x421f; i++) memory::mmio.map(i, *cpu);
-  for(unsigned i = 0x4300; i <= 0x437f; i++) memory::mmio.map(i, *cpu);
+  bus->power();
+  for(unsigned i = 0x2100; i <= 0x213f; i++) memory::mmio->map(i, *ppu);
+  for(unsigned i = 0x2140; i <= 0x217f; i++) memory::mmio->map(i, *cpu);
+  for(unsigned i = 0x2180; i <= 0x2183; i++) memory::mmio->map(i, *cpu);
+  for(unsigned i = 0x4016; i <= 0x4017; i++) memory::mmio->map(i, *cpu);
+  for(unsigned i = 0x4200; i <= 0x421f; i++) memory::mmio->map(i, *cpu);
+  for(unsigned i = 0x4300; i <= 0x437f; i++) memory::mmio->map(i, *cpu);
 
    SNES_DBG("#2\n");
   audio->coprocessor_enable(false);
@@ -213,7 +222,7 @@ void System::power() {
 }
 
 void System::reset() {
-  bus.reset();
+  bus->reset();
   cpu->reset();
   smp.reset();
   dsp->reset();

@@ -17,11 +17,11 @@ bool CPU::dma_addr_valid(unsigned abus) {
 
 uint8 CPU::dma_read(unsigned abus) {
   if(dma_addr_valid(abus) == false) return 0x00;
-  return bus.read(abus);
+  return bus->read(abus);
 }
 
 void CPU::dma_write(bool valid, unsigned addr, uint8 data) {
-  if(valid) bus.write(addr, data);
+  if(valid) bus->write(addr, data);
 }
 
 void CPU::dma_transfer(bool direction, uint8 bbus, unsigned abus) {
@@ -30,7 +30,7 @@ void CPU::dma_transfer(bool direction, uint8 bbus, unsigned abus) {
     add_clocks(8);
     dma_write(dma_transfer_valid(bbus, abus), 0x2100 | bbus, data);
   } else {
-    uint8 data = dma_transfer_valid(bbus, abus) ? bus.read(0x2100 | bbus) : 0x00;
+    uint8 data = dma_transfer_valid(bbus, abus) ? bus->read(0x2100 | bbus) : 0x00;
     add_clocks(8);
     dma_write(dma_addr_valid(abus), abus, data);
   }

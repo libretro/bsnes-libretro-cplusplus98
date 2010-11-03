@@ -5,12 +5,12 @@ bool CPU::joylatch() { return status.joypad_strobe_latch; }
 
 //WMDATA
 uint8 CPU::mmio_r2180() {
-  return bus.read(0x7e0000 | status.wram_addr++);
+  return bus->read(0x7e0000 | status.wram_addr++);
 }
 
 //WMDATA
 void CPU::mmio_w2180(uint8 data) {
-  bus.write(0x7e0000 | status.wram_addr++, data);
+  bus->write(0x7e0000 | status.wram_addr++, data);
 }
 
 //WMADDL

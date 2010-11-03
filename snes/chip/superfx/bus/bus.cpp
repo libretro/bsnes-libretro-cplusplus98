@@ -10,7 +10,7 @@ namespace memory {
 }
 
 void SuperFXBus::init() {
-  map(MapMode::Direct, 0x00, 0xff, 0x0000, 0xffff, memory::memory_unmapped);
+  map(MapMode::Direct, 0x00, 0xff, 0x0000, 0xffff, *memory::memory_unmapped);
 
   map(MapMode::Linear, 0x00, 0x3f, 0x0000, 0x7fff, memory::gsurom);
   map(MapMode::Linear, 0x00, 0x3f, 0x8000, 0xffff, memory::gsurom);

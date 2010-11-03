@@ -84,7 +84,7 @@ void Cx4::transfer_data() {
   dest  = (reg[0x45]) | (reg[0x46] << 8);
 
   for(uint32 i=0;i<count;i++) {
-    write(dest++, bus.read(src++));
+    write(dest++, bus->read(src++));
   }
 }
 
