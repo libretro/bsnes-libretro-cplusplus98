@@ -9,7 +9,7 @@ void CPUDebugger::op_step() {
 
   if(debugger.step_cpu) {
     debugger.break_event = Debugger::BreakEvent::CPUStep;
-    scheduler.exit(Scheduler::ExitReason::DebuggerEvent);
+    scheduler->exit(Scheduler::ExitReason::DebuggerEvent);
   } else {
     debugger.breakpoint_test(Debugger::Breakpoint::Source::CPUBus, Debugger::Breakpoint::Mode::Exec, regs.pc, 0x00);
   }

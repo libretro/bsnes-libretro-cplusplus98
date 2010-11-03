@@ -25,7 +25,7 @@ unsigned SuperFXGSUROM::size() const {
 }
 
 uint8 SuperFXGSUROM::read(unsigned addr) {
-  while(!superfx.regs.scmr.ron && scheduler.sync.i != Scheduler::SynchronizeMode::All) {
+  while(!superfx.regs.scmr.ron && scheduler->sync.i != Scheduler::SynchronizeMode::All) {
     superfx.add_clocks(6);
     superfx.synchronize_cpu();
   }
@@ -33,7 +33,7 @@ uint8 SuperFXGSUROM::read(unsigned addr) {
 }
 
 void SuperFXGSUROM::write(unsigned addr, uint8 data) {
-  while(!superfx.regs.scmr.ron && scheduler.sync.i != Scheduler::SynchronizeMode::All) {
+  while(!superfx.regs.scmr.ron && scheduler->sync.i != Scheduler::SynchronizeMode::All) {
     superfx.add_clocks(6);
     superfx.synchronize_cpu();
   }
@@ -45,7 +45,7 @@ unsigned SuperFXGSURAM::size() const {
 }
 
 uint8 SuperFXGSURAM::read(unsigned addr) {
-  while(!superfx.regs.scmr.ran && scheduler.sync.i != Scheduler::SynchronizeMode::All) {
+  while(!superfx.regs.scmr.ran && scheduler->sync.i != Scheduler::SynchronizeMode::All) {
     superfx.add_clocks(6);
     superfx.synchronize_cpu();
   }
@@ -53,7 +53,7 @@ uint8 SuperFXGSURAM::read(unsigned addr) {
 }
 
 void SuperFXGSURAM::write(unsigned addr, uint8 data) {
-  while(!superfx.regs.scmr.ran && scheduler.sync.i != Scheduler::SynchronizeMode::All) {
+  while(!superfx.regs.scmr.ran && scheduler->sync.i != Scheduler::SynchronizeMode::All) {
     superfx.add_clocks(6);
     superfx.synchronize_cpu();
   }

@@ -8,7 +8,7 @@ void SMPDebugger::op_step() {
 
   if(debugger.step_smp) {
     debugger.break_event = Debugger::BreakEvent::SMPStep;
-    scheduler.exit(Scheduler::ExitReason::DebuggerEvent);
+    scheduler->exit(Scheduler::ExitReason::DebuggerEvent);
   } else {
     debugger.breakpoint_test(Debugger::Breakpoint::Source::APURAM, Debugger::Breakpoint::Mode::Exec, regs.pc, 0x00);
   }

@@ -1,6 +1,6 @@
 #ifdef SYSTEM_CPP
 
-Scheduler scheduler;
+Scheduler *scheduler;
 
 void Scheduler::enter() {
   host_thread = co_active();

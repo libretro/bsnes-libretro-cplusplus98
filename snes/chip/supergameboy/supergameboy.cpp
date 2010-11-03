@@ -11,8 +11,8 @@ void SuperGameBoy::Enter() { supergameboy.enter(); }
 
 void SuperGameBoy::enter() {
   if(!sgb_run) while(true) {
-    if(scheduler.sync.i == Scheduler::SynchronizeMode::All) {
-      scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
+    if(scheduler->sync.i == Scheduler::SynchronizeMode::All) {
+      scheduler->exit(Scheduler::ExitReason::SynchronizeEvent);
     }
 
     audio->coprocessor_sample(0, 0);
@@ -21,8 +21,8 @@ void SuperGameBoy::enter() {
   }
 
   while(true) {
-    if(scheduler.sync.i == Scheduler::SynchronizeMode::All) {
-      scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
+    if(scheduler->sync.i == Scheduler::SynchronizeMode::All) {
+      scheduler->exit(Scheduler::ExitReason::SynchronizeEvent);
     }
 
     unsigned samples = sgb_run(samplebuffer, 16);

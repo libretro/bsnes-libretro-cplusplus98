@@ -17,10 +17,10 @@ System *system;
 #include "serialization.cpp"
 
 void System::run() {
-  scheduler.sync.i = Scheduler::SynchronizeMode::None;
+  scheduler->sync.i = Scheduler::SynchronizeMode::None;
 
-  scheduler.enter();
-  if(scheduler.exit_reason.i == Scheduler::ExitReason::FrameEvent) {
+  scheduler->enter();
+  if(scheduler->exit_reason.i == Scheduler::ExitReason::FrameEvent) {
     input->update();
     video->update();
   }
@@ -28,37 +28,37 @@ void System::run() {
 
 void System::runtosave() {
   if(CPU::Threaded == true) {
-    scheduler.sync.i = Scheduler::SynchronizeMode::CPU;
+    scheduler->sync.i = Scheduler::SynchronizeMode::CPU;
     runthreadtosave();
   }
 
   if(SMP::Threaded == true) {
-    scheduler.thread = smp->thread;
+    scheduler->thread = smp->thread;
     runthreadtosave();
   }
 
   if(PPU::Threaded == true) {
-    scheduler.thread = ppu->thread;
+    scheduler->thread = ppu->thread;
     runthreadtosave();
   }
 
   if(DSP::Threaded == true) {
-    scheduler.thread = dsp->thread;
+    scheduler->thread = dsp->thread;
     runthreadtosave();
   }
 
   for(unsigned i = 0; i < cpu->coprocessors.size(); i++) {
     Processor &chip = *cpu->coprocessors[i];
-    scheduler.thread = chip.thread;
+    scheduler->thread = chip.thread;
     runthreadtosave();
   }
 }
 
 void System::runthreadtosave() {
   while(true) {
-    scheduler.enter();
-    if(scheduler.exit_reason.i == Scheduler::ExitReason::SynchronizeEvent) break;
-    if(scheduler.exit_reason.i == Scheduler::ExitReason::FrameEvent) {
+    scheduler->enter();
+    if(scheduler->exit_reason.i == Scheduler::ExitReason::SynchronizeEvent) break;
+    if(scheduler->exit_reason.i == Scheduler::ExitReason::FrameEvent) {
       input->update();
       video->update();
     }
@@ -73,6 +73,7 @@ void System::init(Interface *interface_) {
    dsp = new DSP;
    input = new Input;
    smp = new SMP;
+   scheduler = new Scheduler;
 
    bus = new Bus;
    memory::mmio = new MMIOAccess;
@@ -120,6 +121,7 @@ void System::term() {
    delete memory::memory_unmapped;
    delete memory::mmio_unmapped;
    delete bus;
+   delete scheduler;
 }
 
 void System::power() {
@@ -212,7 +214,7 @@ void System::power() {
   if(cartridge.has_serial()) cpu->coprocessors.append(&serial);
 
    SNES_DBG("#7\n");
-  scheduler.init();
+  scheduler->init();
 
    SNES_DBG("#8\n");
   input->port_set_device(0, config.controller_port1.i);
@@ -258,7 +260,7 @@ void System::reset() {
   if(cartridge.has_msu1()) cpu->coprocessors.append(&msu1);
   if(cartridge.has_serial()) cpu->coprocessors.append(&serial);
 
-  scheduler.init();
+  scheduler->init();
 
   input->port_set_device(0, config.controller_port1.i);
   input->port_set_device(1, config.controller_port2.i);
@@ -272,7 +274,7 @@ void System::unload() {
 
 void System::scanline() {
   video->scanline();
-  if(cpu->vcounter() == 241) scheduler.exit(Scheduler::ExitReason::FrameEvent);
+  if(cpu->vcounter() == 241) scheduler->exit(Scheduler::ExitReason::FrameEvent);
 }
 
 void System::frame() {

@@ -31,7 +31,7 @@ void DSP::step(unsigned clocks) {
 
 void DSP::synchronize_smp() {
   if(SMP::Threaded == true) {
-    if(clock >= 0 && scheduler.sync.i != Scheduler::SynchronizeMode::All) co_switch(smp->thread);
+    if(clock >= 0 && scheduler->sync.i != Scheduler::SynchronizeMode::All) co_switch(smp->thread);
   } else {
     while(clock >= 0) smp->enter();
   }
@@ -41,8 +41,8 @@ void DSP::Enter() { dsp->enter(); }
 
 void DSP::enter() {
   while(true) {
-    if(scheduler.sync.i == Scheduler::SynchronizeMode::All) {
-      scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
+    if(scheduler->sync.i == Scheduler::SynchronizeMode::All) {
+      scheduler->exit(Scheduler::ExitReason::SynchronizeEvent);
     }
 
     voice_5(voice[0]);

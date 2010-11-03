@@ -13,4 +13,4 @@ struct Scheduler : property<Scheduler> {
   Scheduler();
 };
 
-extern Scheduler scheduler;
+extern Scheduler *scheduler;

@@ -17,8 +17,8 @@ void SuperFX::Enter() { superfx.enter(); }
 
 void SuperFX::enter() {
   while(true) {
-    if(scheduler.sync.i == Scheduler::SynchronizeMode::All) {
-      scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
+    if(scheduler->sync.i == Scheduler::SynchronizeMode::All) {
+      scheduler->exit(Scheduler::ExitReason::SynchronizeEvent);
     }
 
     if(regs.sfr.g == 0) {

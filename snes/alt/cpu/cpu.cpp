@@ -52,9 +52,9 @@ void CPU::Enter() { cpu->enter(); }
 
 void CPU::enter() {
   while(true) {
-    if(scheduler.sync.i == Scheduler::SynchronizeMode::CPU) {
-      scheduler.sync.i = Scheduler::SynchronizeMode::All;
-      scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
+    if(scheduler->sync.i == Scheduler::SynchronizeMode::CPU) {
+      scheduler->sync.i = Scheduler::SynchronizeMode::All;
+      scheduler->exit(Scheduler::ExitReason::SynchronizeEvent);
     }
 
     if(status.nmi_pending) {

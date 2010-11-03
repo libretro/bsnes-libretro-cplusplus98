@@ -15,8 +15,8 @@ void SA1::Enter() { sa1.enter(); }
 
 void SA1::enter() {
   while(true) {
-    if(scheduler.sync.i == Scheduler::SynchronizeMode::All) {
-      scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
+    if(scheduler->sync.i == Scheduler::SynchronizeMode::All) {
+      scheduler->exit(Scheduler::ExitReason::SynchronizeEvent);
     }
 
     if(mmio.sa1_rdyb || mmio.sa1_resb) {

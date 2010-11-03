@@ -22,7 +22,7 @@ void SMP::step(unsigned clocks) {
 
 void SMP::synchronize_cpu() {
   if(CPU::Threaded == true) {
-    if(clock >= 0 && scheduler.sync.i != Scheduler::SynchronizeMode::All) co_switch(cpu->thread);
+    if(clock >= 0 && scheduler->sync.i != Scheduler::SynchronizeMode::All) co_switch(cpu->thread);
   } else {
     while(clock >= 0) cpu->enter();
   }
@@ -30,7 +30,7 @@ void SMP::synchronize_cpu() {
 
 void SMP::synchronize_dsp() {
   if(DSP::Threaded == true) {
-    if(dsp->clock < 0 && scheduler.sync.i != Scheduler::SynchronizeMode::All) co_switch(dsp->thread);
+    if(dsp->clock < 0 && scheduler->sync.i != Scheduler::SynchronizeMode::All) co_switch(dsp->thread);
   } else {
     while(dsp->clock < 0) dsp->enter();
   }
@@ -40,8 +40,8 @@ void SMP::Enter() { smp->enter(); }
 
 void SMP::enter() {
   while(true) {
-    if(scheduler.sync.i == Scheduler::SynchronizeMode::All) {
-      scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
+    if(scheduler->sync.i == Scheduler::SynchronizeMode::All) {
+      scheduler->exit(Scheduler::ExitReason::SynchronizeEvent);
     }
 
     op_step();

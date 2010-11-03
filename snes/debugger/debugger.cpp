@@ -23,7 +23,7 @@ void Debugger::breakpoint_test(Debugger::Breakpoint::Source::e source, Debugger:
     breakpoint[i].counter++;
     breakpoint_hit = i;
     break_event.i = BreakEvent::BreakpointHit;
-    scheduler.exit(Scheduler::ExitReason::DebuggerEvent);
+    scheduler->exit(Scheduler::ExitReason::DebuggerEvent);
     break;
   }
 }
