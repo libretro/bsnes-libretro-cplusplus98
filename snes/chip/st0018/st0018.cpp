@@ -9,7 +9,7 @@ uint8 ST0018::mmio_read(unsigned addr) {
   addr &= 0xffff;
   if(addr == 0x3800) return regs.r3800;
   if(addr == 0x3804) return regs.r3804;
-  return cpu.regs.mdr;
+  return cpu->regs.mdr;
 }
 
 void ST0018::mmio_write(unsigned addr, uint8 data) {

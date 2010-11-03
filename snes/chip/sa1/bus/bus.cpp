@@ -111,12 +111,12 @@ unsigned CPUIRAM::size() const {
 }
 
 uint8 CPUIRAM::read(unsigned addr) {
-  cpu.synchronize_coprocessor();
+  cpu->synchronize_coprocessor();
   return memory::iram.read(addr);
 }
 
 void CPUIRAM::write(unsigned addr, uint8 data) {
-  cpu.synchronize_coprocessor();
+  cpu->synchronize_coprocessor();
   memory::iram.write(addr, data);
 }
 
@@ -147,13 +147,13 @@ unsigned CC1BWRAM::size() const {
 }
 
 uint8 CC1BWRAM::read(unsigned addr) {
-  cpu.synchronize_coprocessor();
+  cpu->synchronize_coprocessor();
   if(dma) return sa1.dma_cc1_read(addr);
   return memory::cartram.read(addr);
 }
 
 void CC1BWRAM::write(unsigned addr, uint8 data) {
-  cpu.synchronize_coprocessor();
+  cpu->synchronize_coprocessor();
   memory::cartram.write(addr, data);
 }
 

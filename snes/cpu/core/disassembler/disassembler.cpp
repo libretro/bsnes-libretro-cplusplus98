@@ -429,7 +429,7 @@ void CPUcore::disassemble_opcode(char *output, uint32 addr) {
   strcat(s, t);
   strcat(s, " ");
 
-  sprintf(t, "V:%3d H:%4d", cpu.vcounter(), cpu.hcounter());
+  sprintf(t, "V:%3d H:%4d", cpu->vcounter(), cpu->hcounter());
   strcat(s, t);
 }
 

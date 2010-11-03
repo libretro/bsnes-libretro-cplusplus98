@@ -38,14 +38,14 @@ void SA1::mmio_w2201(uint8 data) {
   if(!mmio.cpu_irqen && (data & 0x80)) {
     if(mmio.cpu_irqfl) {
       mmio.cpu_irqcl = 0;
-      cpu.regs.irq = 1;
+      cpu->regs.irq = 1;
     }
   }
 
   if(!mmio.chdma_irqen && (data & 0x20)) {
     if(mmio.chdma_irqfl) {
       mmio.chdma_irqcl = 0;
-      cpu.regs.irq = 1;
+      cpu->regs.irq = 1;
     }
   }
 
@@ -61,7 +61,7 @@ void SA1::mmio_w2202(uint8 data) {
   if(mmio.cpu_irqcl  ) mmio.cpu_irqfl   = false;
   if(mmio.chdma_irqcl) mmio.chdma_irqfl = false;
 
-  if(!mmio.cpu_irqfl && !mmio.chdma_irqfl) cpu.regs.irq = 0;
+  if(!mmio.cpu_irqfl && !mmio.chdma_irqfl) cpu->regs.irq = 0;
 }
 
 //(CRV) SA-1 reset vector
@@ -87,7 +87,7 @@ void SA1::mmio_w2209(uint8 data) {
     mmio.cpu_irqfl = true;
     if(mmio.cpu_irqen) {
       mmio.cpu_irqcl = 0;
-      cpu.regs.irq = 1;
+      cpu->regs.irq = 1;
     }
   }
 }
@@ -521,7 +521,7 @@ uint8 SA1::mmio_r230e() {
 }
 
 uint8 SA1::mmio_read(unsigned addr) {
-  (co_active() == cpu.thread ? cpu.synchronize_coprocessor() : synchronize_cpu());
+  (co_active() == cpu->thread ? cpu->synchronize_coprocessor() : synchronize_cpu());
   addr &= 0xffff;
 
   switch(addr) {
@@ -546,7 +546,7 @@ uint8 SA1::mmio_read(unsigned addr) {
 }
 
 void SA1::mmio_write(unsigned addr, uint8 data) {
-  (co_active() == cpu.thread ? cpu.synchronize_coprocessor() : synchronize_cpu());
+  (co_active() == cpu->thread ? cpu->synchronize_coprocessor() : synchronize_cpu());
   addr &= 0xffff;
 
   switch(addr) {

@@ -16,15 +16,15 @@ namespace SNES {
 #include "timing/timing.cpp"
 
 void SMP::step(unsigned clocks) {
-  clock += clocks * (uint64)cpu.frequency;
+  clock += clocks * (uint64)cpu->frequency;
   dsp.clock -= clocks;
 }
 
 void SMP::synchronize_cpu() {
   if(CPU::Threaded == true) {
-    if(clock >= 0 && scheduler.sync.i != Scheduler::SynchronizeMode::All) co_switch(cpu.thread);
+    if(clock >= 0 && scheduler.sync.i != Scheduler::SynchronizeMode::All) co_switch(cpu->thread);
   } else {
-    while(clock >= 0) cpu.enter();
+    while(clock >= 0) cpu->enter();
   }
 }
 

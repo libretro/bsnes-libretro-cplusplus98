@@ -134,5 +134,5 @@ private:
   #include "debugger/debugger.hpp"
   extern CPUDebugger cpu;
 #else
-  extern CPU cpu;
+  extern CPU *cpu;
 #endif

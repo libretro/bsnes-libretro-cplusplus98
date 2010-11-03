@@ -26,7 +26,7 @@ void CPU::add_clocks(unsigned clocks) {
   }
 }
 
-//called by ppu.tick() when Hcounter=0
+//called by ppu->tick() when Hcounter=0
 void CPU::scanline() {
   status.dma_counter = (status.dma_counter + status.line_clocks) & 7;
   status.line_clocks = lineclocks();
@@ -48,12 +48,12 @@ void CPU::scanline() {
   status.dram_refreshed = false;
 
   //HDMA triggers once every visible scanline
-  if(vcounter() <= (ppu.overscan() == false ? 224 : 239)) {
+  if(vcounter() <= (ppu->overscan() == false ? 224 : 239)) {
     status.hdma_position = 1104;
     status.hdma_triggered = false;
   }
 
-  if(status.auto_joypad_poll == true && vcounter() == (ppu.overscan() == false ? 227 : 242)) {
+  if(status.auto_joypad_poll == true && vcounter() == (ppu->overscan() == false ? 227 : 242)) {
     input.poll();
     run_auto_joypad_poll();
   }

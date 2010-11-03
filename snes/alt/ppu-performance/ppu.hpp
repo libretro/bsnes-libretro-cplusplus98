@@ -70,7 +70,7 @@ private:
   #include "debugger/debugger.hpp"
   extern PPUDebugger ppu;
 #else
-  extern PPU ppu;
+  extern PPU *ppu;
 #endif
 
 #endif

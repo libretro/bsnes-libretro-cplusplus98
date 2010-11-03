@@ -4,7 +4,7 @@ void CPU::queue_event(unsigned id) {
   switch(id) {
     case QueueEvent::DramRefresh: return add_clocks(40);
     case QueueEvent::HdmaRun: return hdma_run();
-    case QueueEvent::ControllerLatch: return ppu.latch_counters();
+    case QueueEvent::ControllerLatch: return ppu->latch_counters();
   }
 }
 
@@ -69,7 +69,7 @@ void CPU::scanline() {
 
   queue.enqueue(534, QueueEvent::DramRefresh);
 
-  if(vcounter() <= (ppu.overscan() == false ? 224 : 239)) {
+  if(vcounter() <= (ppu->overscan() == false ? 224 : 239)) {
     queue.enqueue(1104 + 8, QueueEvent::HdmaRun);
   }
 
@@ -78,7 +78,7 @@ void CPU::scanline() {
   }
 
   bool nmi_valid = status.nmi_valid;
-  status.nmi_valid = vcounter() >= (ppu.overscan() == false ? 225 : 240);
+  status.nmi_valid = vcounter() >= (ppu->overscan() == false ? 225 : 240);
   if(!nmi_valid && status.nmi_valid) {
     status.nmi_line = true;
     if(status.nmi_enabled) status.nmi_transition = true;
@@ -86,7 +86,7 @@ void CPU::scanline() {
     status.nmi_line = false;
   }
 
-  if(status.auto_joypad_poll_enabled && vcounter() == (ppu.overscan() == false ? 227 : 242)) {
+  if(status.auto_joypad_poll_enabled && vcounter() == (ppu->overscan() == false ? 227 : 242)) {
     input.poll();
     run_auto_joypad_poll();
   }

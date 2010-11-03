@@ -86,7 +86,7 @@ unsigned SuperFXCPURAM::size() const {
 }
 
 uint8 SuperFXCPURAM::read(unsigned addr) {
-  if(superfx.regs.sfr.g && superfx.regs.scmr.ran) return cpu.regs.mdr;
+  if(superfx.regs.sfr.g && superfx.regs.scmr.ran) return cpu->regs.mdr;
   return memory::cartram.read(addr);
 }
 

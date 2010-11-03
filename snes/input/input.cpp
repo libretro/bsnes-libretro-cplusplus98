@@ -11,7 +11,7 @@ uint8 Input::port_read(bool portnumber) {
 
   switch(p.device.i) {
     case Device::Joypad: {
-      if(cpu.joylatch() == 0) {
+      if(cpu->joylatch() == 0) {
         if(p.counter0 >= 16) return 1;
         return system.interface->input_poll(portnumber, p.device, 0, p.counter0++);
       } else {
@@ -20,12 +20,12 @@ uint8 Input::port_read(bool portnumber) {
     } //case Device::Joypad
 
     case Device::Multitap: {
-      if(cpu.joylatch()) return 2; //when latch is high -- data2 = 1, data1 = 0
+      if(cpu->joylatch()) return 2; //when latch is high -- data2 = 1, data1 = 0
 
       unsigned deviceidx, deviceindex0, deviceindex1;
       uint8 mask = (portnumber == 0 ? 0x40 : 0x80);
 
-      if(cpu.pio() & mask) {
+      if(cpu->pio() & mask) {
         deviceidx = p.counter0;
         if(deviceidx >= 16) return 3;
         p.counter0++;
@@ -140,7 +140,7 @@ uint8 Input::port_read(bool portnumber) {
 
         p.superscope.offscreen =
            p.superscope.x < 0 || p.superscope.x >= 256
-        || p.superscope.y < 0 || p.superscope.y >= (ppu.overscan() ? 240 : 225);
+        || p.superscope.y < 0 || p.superscope.y >= (ppu->overscan() ? 240 : 225);
       }
 
       switch(p.counter0++) {
@@ -265,7 +265,7 @@ void Input::update() {
     } break;
   }
 
-  if(latchy < 0 || latchy >= (ppu.overscan() ? 240 : 225) || latchx < 0 || latchx >= 256) {
+  if(latchy < 0 || latchy >= (ppu->overscan() ? 240 : 225) || latchx < 0 || latchx >= 256) {
     //cursor is offscreen, set to invalid position so counters are not latched
     latchx = ~0;
     latchy = ~0;

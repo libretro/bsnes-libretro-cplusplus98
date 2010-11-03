@@ -21,8 +21,8 @@ const uint8_t Video::cursor[15 * 15] = {
 };
 
 void Video::draw_cursor(uint16_t color, int x, int y) {
-  uint16_t *data = (uint16_t*)ppu.output;
-  if(ppu.interlace() && ppu.field()) data += 512;
+  uint16_t *data = (uint16_t*)ppu->output;
+  if(ppu->interlace() && ppu->field()) data += 512;
 
   for(int cy = 0; cy < 15; cy++) {
     int vy = y + cy - 7;
@@ -53,10 +53,10 @@ void Video::update() {
     case Input::Device::Justifier:  draw_cursor(0x001f, input.port[1].justifier.x1, input.port[1].justifier.y1); break;
   }
 
-  uint16_t *data = (uint16_t*)ppu.output;
-  if(ppu.interlace() && ppu.field()) data += 512;
+  uint16_t *data = (uint16_t*)ppu->output;
+  if(ppu->interlace() && ppu->field()) data += 512;
   unsigned width = 256;
-  unsigned height = !ppu.overscan() ? 224 : 239;
+  unsigned height = !ppu->overscan() ? 224 : 239;
 
   if(frame_hires) {
     width <<= 1;
@@ -74,19 +74,19 @@ void Video::update() {
     height <<= 1;
   }
 
-  system.interface->video_refresh(ppu.output + 1024, width, height);
+  system.interface->video_refresh(ppu->output + 1024, width, height);
 
   frame_hires = false;
   frame_interlace = false;
 }
 
 void Video::scanline() {
-  unsigned y = cpu.vcounter();
+  unsigned y = cpu->vcounter();
   if(y >= 240) return;
 
-  frame_hires |= ppu.hires();
-  frame_interlace |= ppu.interlace();
-  unsigned width = (ppu.hires() == false ? 256 : 512);
+  frame_hires |= ppu->hires();
+  frame_interlace |= ppu->interlace();
+  unsigned width = (ppu->hires() == false ? 256 : 512);
   line_width[y] = width;
 }
 

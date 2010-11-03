@@ -13,7 +13,7 @@ bool PPU::hires() const {
 }
 
 void PPU::latch_counters() {
-  cpu.synchronize_ppu();
+  cpu->synchronize_ppu();
   regs.hcounter = hdot();
   regs.vcounter = vcounter();
   regs.counters_latched = true;
@@ -570,8 +570,8 @@ uint8 PPU::mmio_r2136() {
 
 //SLHV
 uint8 PPU::mmio_r2137() {
-  if(cpu.pio() & 0x80) latch_counters();
-  return cpu.regs.mdr;
+  if(cpu->pio() & 0x80) latch_counters();
+  return cpu->regs.mdr;
 }
 
 //OAMDATAREAD
@@ -669,7 +669,7 @@ uint8 PPU::mmio_r213f() {
 
   regs.ppu2_mdr &= 0x20;
   regs.ppu2_mdr |= field() << 7;
-  if((cpu.pio() & 0x80) == 0) {
+  if((cpu->pio() & 0x80) == 0) {
     regs.ppu2_mdr |= 0x40;
   } else if(regs.counters_latched) {
     regs.ppu2_mdr |= 0x40;
@@ -765,7 +765,7 @@ void PPU::mmio_reset() {
 }
 
 uint8 PPU::mmio_read(unsigned addr) {
-  cpu.synchronize_ppu();
+  cpu->synchronize_ppu();
 
   switch(addr & 0xffff) {
     case 0x2104:
@@ -800,11 +800,11 @@ uint8 PPU::mmio_read(unsigned addr) {
     case 0x213f: return mmio_r213f();  //STAT78
   }
 
-  return cpu.regs.mdr;
+  return cpu->regs.mdr;
 }
 
 void PPU::mmio_write(unsigned addr, uint8 data) {
-  cpu.synchronize_ppu();
+  cpu->synchronize_ppu();
 
   switch(addr & 0xffff) {
     case 0x2100: return mmio_w2100(data);  //INIDISP

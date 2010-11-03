@@ -54,7 +54,7 @@ uint8 SDD1::mmio_read(unsigned addr) {
     case 0x4807: return mmc[3] >> 20;
   }
 
-  return cpu.regs.mdr;
+  return cpu->regs.mdr;
 }
 
 void SDD1::mmio_write(unsigned addr, uint8 data) {

@@ -2,7 +2,7 @@
 
 //INIDISP
 void PPU::mmio_w2100(uint8 value) {
-  if(regs.display_disabled == true && cpu.vcounter() == (!overscan() ? 225 : 240)) {
+  if(regs.display_disabled == true && cpu->vcounter() == (!overscan() ? 225 : 240)) {
     regs.oam_addr = regs.oam_baseaddr << 1;
     regs.oam_firstsprite = (regs.oam_priority == false) ? 0 : (regs.oam_addr >> 2) & 127;
   }
@@ -456,10 +456,10 @@ uint32 r;
 
 //SLHV
 uint8 PPU::mmio_r2137() {
-  if(cpu.pio() & 0x80) {
+  if(cpu->pio() & 0x80) {
     latch_counters();
   }
-  return cpu.regs.mdr;
+  return cpu->regs.mdr;
 }
 
 //OAMDATAREAD
@@ -556,8 +556,8 @@ uint8 r = 0x00;
   regs.latch_hcounter = 0;
   regs.latch_vcounter = 0;
 
-  r |= cpu.field() << 7;
-  if(!(cpu.pio() & 0x80)) {
+  r |= cpu->field() << 7;
+  if(!(cpu->pio() & 0x80)) {
     r |= 0x40;
   } else if(regs.counters_latched == true) {
     r |= 0x40;
@@ -571,7 +571,7 @@ uint8 r = 0x00;
 }
 
 uint8 PPU::mmio_read(unsigned addr) {
-  cpu.synchronize_ppu();
+  cpu->synchronize_ppu();
 
   switch(addr & 0xffff) {
     case 0x2104:
@@ -606,11 +606,11 @@ uint8 PPU::mmio_read(unsigned addr) {
     case 0x213f: return mmio_r213f();  //STAT78
   }
 
-  return cpu.regs.mdr;
+  return cpu->regs.mdr;
 }
 
 void PPU::mmio_write(unsigned addr, uint8 data) {
-  cpu.synchronize_ppu();
+  cpu->synchronize_ppu();
 
   switch(addr & 0xffff) {
     case 0x2100: return mmio_w2100(data);  //INIDISP

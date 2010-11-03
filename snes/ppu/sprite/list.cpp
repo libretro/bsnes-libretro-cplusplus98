@@ -35,21 +35,21 @@ void PPU::Sprite::update(unsigned addr, uint8 data) {
 unsigned PPU::Sprite::SpriteItem::width() const {
   if(size == 0) {
     static unsigned width[] = {  8,  8,  8, 16, 16, 32, 16, 16 };
-    return width[ppu.oam.regs.base_size];
+    return width[ppu->oam.regs.base_size];
   } else {
     static unsigned width[] = { 16, 32, 64, 32, 64, 64, 32, 32 };
-    return width[ppu.oam.regs.base_size];
+    return width[ppu->oam.regs.base_size];
   }
 }
 
 unsigned PPU::Sprite::SpriteItem::height() const {
   if(size == 0) {
-    if(ppu.oam.regs.interlace && ppu.oam.regs.base_size >= 6) return 16;
+    if(ppu->oam.regs.interlace && ppu->oam.regs.base_size >= 6) return 16;
     static unsigned height[] = {  8,  8,  8, 16, 16, 32, 32, 32 };
-    return height[ppu.oam.regs.base_size];
+    return height[ppu->oam.regs.base_size];
   } else {
     static unsigned height[] = { 16, 32, 64, 32, 64, 64, 64, 32 };
-    return height[ppu.oam.regs.base_size];
+    return height[ppu->oam.regs.base_size];
   }
 }
 

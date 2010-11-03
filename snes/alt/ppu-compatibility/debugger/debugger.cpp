@@ -338,7 +338,7 @@ bool PPUDebugger::property(unsigned id, string &name, string &value) {
 
   //$213f
   item("$213f", "");
-  item("Field", cpu.field());
+  item("Field", cpu->field());
   item("Region", !region ? "NTSC" : "PAL");
   item("S-PPU2 Version", (unsigned)ppu2_version);
 

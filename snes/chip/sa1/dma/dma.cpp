@@ -63,7 +63,7 @@ void SA1::dma_cc1() {
   mmio.chdma_irqfl = true;
   if(mmio.chdma_irqen) {
     mmio.chdma_irqcl = 0;
-    cpu.regs.irq = 1;
+    cpu->regs.irq = 1;
   }
 }
 

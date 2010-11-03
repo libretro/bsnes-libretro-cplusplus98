@@ -19,7 +19,7 @@ namespace SNES {
 
 void CPU::step(unsigned clocks) {
   smp.clock -= clocks * (uint64)smp.frequency;
-  ppu.clock -= clocks;
+  ppu->clock -= clocks;
   for(unsigned i = 0; i < coprocessors.size(); i++) {
     Processor &chip = *coprocessors[i];
     chip.clock -= clocks * (uint64)chip.frequency;
@@ -36,9 +36,9 @@ void CPU::synchronize_smp() {
 
 void CPU::synchronize_ppu() {
   if(PPU::Threaded == true) {
-    if(ppu.clock < 0) co_switch(ppu.thread);
+    if(ppu->clock < 0) co_switch(ppu->thread);
   } else {
-    while(ppu.clock < 0) ppu.enter();
+    while(ppu->clock < 0) ppu->enter();
   }
 }
 
@@ -49,7 +49,7 @@ void CPU::synchronize_coprocessor() {
   }
 }
 
-void CPU::Enter() { cpu.enter(); }
+void CPU::Enter() { cpu->enter(); }
 
 void CPU::enter() {
   while(true) {
@@ -102,7 +102,7 @@ void CPU::op_irq() {
 void CPU::power() {
    SNES_DBG("CPU::power()\n");
    SNES_DBG("#0\n");
-  cpu_version = config.cpu.version;
+  cpu_version = config.cpu->version;
    SNES_DBG("#1\n");
 
   regs.a = regs.x = regs.y = 0x0000;

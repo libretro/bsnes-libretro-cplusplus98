@@ -20,10 +20,10 @@ namespace memory {
 };
 
 unsigned UnmappedMemory::size() const { return 16 * 1024 * 1024; }
-uint8 UnmappedMemory::read(unsigned) { return cpu.regs.mdr; }
+uint8 UnmappedMemory::read(unsigned) { return cpu->regs.mdr; }
 void UnmappedMemory::write(unsigned, uint8) {}
 
-uint8 UnmappedMMIO::mmio_read(unsigned) { return cpu.regs.mdr; }
+uint8 UnmappedMMIO::mmio_read(unsigned) { return cpu->regs.mdr; }
 void UnmappedMMIO::mmio_write(unsigned, uint8) {}
 
 MMIO* MMIOAccess::handle(unsigned addr) {

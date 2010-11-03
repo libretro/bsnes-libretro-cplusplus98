@@ -66,7 +66,7 @@ void CPU::mmio_w4200(uint8 data) {
 
 //WRIO
 void CPU::mmio_w4201(uint8 data) {
-  if((status.pio & 0x80) && !(data & 0x80)) ppu.latch_counters();
+  if((status.pio & 0x80) && !(data & 0x80)) ppu->latch_counters();
   status.pio = data;
 }
 
@@ -175,7 +175,7 @@ uint8 CPU::mmio_r4211() {
 //0   = JOYPAD acknowledge
 uint8 CPU::mmio_r4212() {
   uint8 r = (regs.mdr & 0x3e);
-  uint16 vs = ppu.overscan() == false ? 225 : 240;
+  uint16 vs = ppu->overscan() == false ? 225 : 240;
   if(vcounter() >= vs && vcounter() <= (vs + 2)) r |= 0x01;  //auto joypad polling
   if(hcounter() <= 2 || hcounter() >= 1096) r |= 0x40;  //hblank
   if(vcounter() >= vs) r |= 0x80;  //vblank

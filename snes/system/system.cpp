@@ -38,7 +38,7 @@ void System::runtosave() {
   }
 
   if(PPU::Threaded == true) {
-    scheduler.thread = ppu.thread;
+    scheduler.thread = ppu->thread;
     runthreadtosave();
   }
 
@@ -47,8 +47,8 @@ void System::runtosave() {
     runthreadtosave();
   }
 
-  for(unsigned i = 0; i < cpu.coprocessors.size(); i++) {
-    Processor &chip = *cpu.coprocessors[i];
+  for(unsigned i = 0; i < cpu->coprocessors.size(); i++) {
+    Processor &chip = *cpu->coprocessors[i];
     scheduler.thread = chip.thread;
     runthreadtosave();
   }
@@ -66,6 +66,9 @@ void System::runthreadtosave() {
 }
 
 void System::init(Interface *interface_) {
+   cpu = new CPU;
+   ppu = new PPU;
+
   interface = interface_;
   assert(interface != 0);
 
@@ -96,6 +99,8 @@ void System::init(Interface *interface_) {
 }
 
 void System::term() {
+   delete ppu;
+   delete cpu;
 }
 
 void System::power() {
@@ -111,12 +116,12 @@ void System::power() {
 
    SNES_DBG("#1\n");
   bus.power();
-  for(unsigned i = 0x2100; i <= 0x213f; i++) memory::mmio.map(i, ppu);
-  for(unsigned i = 0x2140; i <= 0x217f; i++) memory::mmio.map(i, cpu);
-  for(unsigned i = 0x2180; i <= 0x2183; i++) memory::mmio.map(i, cpu);
-  for(unsigned i = 0x4016; i <= 0x4017; i++) memory::mmio.map(i, cpu);
-  for(unsigned i = 0x4200; i <= 0x421f; i++) memory::mmio.map(i, cpu);
-  for(unsigned i = 0x4300; i <= 0x437f; i++) memory::mmio.map(i, cpu);
+  for(unsigned i = 0x2100; i <= 0x213f; i++) memory::mmio.map(i, *ppu);
+  for(unsigned i = 0x2140; i <= 0x217f; i++) memory::mmio.map(i, *cpu);
+  for(unsigned i = 0x2180; i <= 0x2183; i++) memory::mmio.map(i, *cpu);
+  for(unsigned i = 0x4016; i <= 0x4017; i++) memory::mmio.map(i, *cpu);
+  for(unsigned i = 0x4200; i <= 0x421f; i++) memory::mmio.map(i, *cpu);
+  for(unsigned i = 0x4300; i <= 0x437f; i++) memory::mmio.map(i, *cpu);
 
    SNES_DBG("#2\n");
   audio.coprocessor_enable(false);
@@ -145,13 +150,13 @@ void System::power() {
 
    SNES_DBG("#4\n");
    SNES_DBG("#4.0\n");
-  cpu.power();
+  cpu->power();
    SNES_DBG("#4.1\n");
   smp.power();
    SNES_DBG("#4.2\n");
   dsp.power();
    SNES_DBG("#4.3\n");
-  ppu.power();
+  ppu->power();
    SNES_DBG("#4.4\n");
 
   if(expansion.i == ExpansionPortDevice::BSX) bsxbase.power();
@@ -181,11 +186,11 @@ void System::power() {
   if(cartridge.has_serial()) serial.power();
 
    SNES_DBG("#6\n");
-  if(cartridge.mode.i == Cartridge::Mode::SuperGameBoy) cpu.coprocessors.append(&supergameboy);
-  if(cartridge.has_superfx()) cpu.coprocessors.append(&superfx);
-  if(cartridge.has_sa1()) cpu.coprocessors.append(&sa1);
-  if(cartridge.has_msu1()) cpu.coprocessors.append(&msu1);
-  if(cartridge.has_serial()) cpu.coprocessors.append(&serial);
+  if(cartridge.mode.i == Cartridge::Mode::SuperGameBoy) cpu->coprocessors.append(&supergameboy);
+  if(cartridge.has_superfx()) cpu->coprocessors.append(&superfx);
+  if(cartridge.has_sa1()) cpu->coprocessors.append(&sa1);
+  if(cartridge.has_msu1()) cpu->coprocessors.append(&msu1);
+  if(cartridge.has_serial()) cpu->coprocessors.append(&serial);
 
    SNES_DBG("#7\n");
   scheduler.init();
@@ -201,10 +206,10 @@ void System::power() {
 
 void System::reset() {
   bus.reset();
-  cpu.reset();
+  cpu->reset();
   smp.reset();
   dsp.reset();
-  ppu.reset();
+  ppu->reset();
 
   if(expansion.i == ExpansionPortDevice::BSX) bsxbase.reset();
   if(memory::bsxflash.data()) bsxflash.reset();
@@ -228,11 +233,11 @@ void System::reset() {
   if(cartridge.has_msu1()) msu1.reset();
   if(cartridge.has_serial()) serial.reset();
 
-  if(cartridge.mode.i == Cartridge::Mode::SuperGameBoy) cpu.coprocessors.append(&supergameboy);
-  if(cartridge.has_superfx()) cpu.coprocessors.append(&superfx);
-  if(cartridge.has_sa1()) cpu.coprocessors.append(&sa1);
-  if(cartridge.has_msu1()) cpu.coprocessors.append(&msu1);
-  if(cartridge.has_serial()) cpu.coprocessors.append(&serial);
+  if(cartridge.mode.i == Cartridge::Mode::SuperGameBoy) cpu->coprocessors.append(&supergameboy);
+  if(cartridge.has_superfx()) cpu->coprocessors.append(&superfx);
+  if(cartridge.has_sa1()) cpu->coprocessors.append(&sa1);
+  if(cartridge.has_msu1()) cpu->coprocessors.append(&msu1);
+  if(cartridge.has_serial()) cpu->coprocessors.append(&serial);
 
   scheduler.init();
 
@@ -248,7 +253,7 @@ void System::unload() {
 
 void System::scanline() {
   video.scanline();
-  if(cpu.vcounter() == 241) scheduler.exit(Scheduler::ExitReason::FrameEvent);
+  if(cpu->vcounter() == 241) scheduler.exit(Scheduler::ExitReason::FrameEvent);
 }
 
 void System::frame() {

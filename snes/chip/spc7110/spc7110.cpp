@@ -337,7 +337,7 @@ uint8 SPC7110::mmio_read(unsigned addr) {
     }
   }
 
-  return cpu.regs.mdr;
+  return cpu->regs.mdr;
 }
 
 void SPC7110::mmio_write(unsigned addr, uint8 data) {
@@ -648,7 +648,7 @@ uint8 SPC7110MCU::read(unsigned addr) {
   if(addr <= 0xdfffff) return memory::cartrom.read(spc7110.dx_offset + (addr & 0x0fffff));
   if(addr <= 0xefffff) return memory::cartrom.read(spc7110.ex_offset + (addr & 0x0fffff));
   if(addr <= 0xffffff) return memory::cartrom.read(spc7110.fx_offset + (addr & 0x0fffff));
-  return cpu.regs.mdr;
+  return cpu->regs.mdr;
 }
 
 void SPC7110MCU::write(unsigned addr, uint8 data) {

@@ -181,7 +181,7 @@ uint8 Cx4::read(unsigned addr) {
     return reg[addr & 0xff];
   }
 
-  return cpu.regs.mdr;
+  return cpu->regs.mdr;
 }
 
 uint8 Cx4::readb(uint16 addr) {

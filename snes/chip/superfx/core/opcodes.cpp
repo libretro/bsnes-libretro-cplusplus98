@@ -4,7 +4,7 @@
 void SuperFX::op_stop() {
   if(regs.cfgr.irq == 0) {
     regs.sfr.irq = 1;
-    cpu.regs.irq = 1;
+    cpu->regs.irq = 1;
   }
 
   regs.sfr.g = 0;

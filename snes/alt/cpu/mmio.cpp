@@ -42,7 +42,7 @@ uint8 CPU::mmio_read(unsigned addr) {
 
     case 0x4212: {
       uint8 result = (regs.mdr & 0x3e);
-      unsigned vbstart = ppu.overscan() == false ? 225 : 240;
+      unsigned vbstart = ppu->overscan() == false ? 225 : 240;
 
       if(vcounter() >= vbstart && vcounter() <= vbstart + 2) result |= 0x01;
       if(hcounter() <= 2 || hcounter() >= 1096) result |= 0x40;
@@ -162,7 +162,7 @@ void CPU::mmio_write(unsigned addr, uint8 data) {
     }
 
     case 0x4201: {
-      if((status.pio & 0x80) && !(data & 0x80)) ppu.latch_counters();
+      if((status.pio & 0x80) && !(data & 0x80)) ppu->latch_counters();
       status.pio = data;
     }
 

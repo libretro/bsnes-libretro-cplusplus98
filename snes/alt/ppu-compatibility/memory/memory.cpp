@@ -1,8 +1,8 @@
 #ifdef PPU_CPP
 
 void PPU::latch_counters() {
-  regs.hcounter = cpu.hdot();
-  regs.vcounter = cpu.vcounter();
+  regs.hcounter = cpu->hdot();
+  regs.vcounter = cpu->vcounter();
   regs.counters_latched = true;
 }
 
@@ -28,10 +28,10 @@ uint8 PPU::vram_mmio_read(uint16 addr) {
   if(regs.display_disabled == true) {
     data = memory::vram[addr];
   } else {
-    uint16 v = cpu.vcounter();
-    uint16 h = cpu.hcounter();
+    uint16 v = cpu->vcounter();
+    uint16 h = cpu->hcounter();
     uint16 ls = ((system.region.i == System::Region::NTSC ? 525 : 625) >> 1) - 1;
-    if(interlace() && !cpu.field()) ls++;
+    if(interlace() && !cpu->field()) ls++;
 
     if(v == ls && h == 1362) {
       data = 0x00;
@@ -55,13 +55,13 @@ void PPU::vram_mmio_write(uint16 addr, uint8 data) {
   if(regs.display_disabled == true) {
     memory::vram[addr] = data;
   } else {
-    uint16 v = cpu.vcounter();
-    uint16 h = cpu.hcounter();
+    uint16 v = cpu->vcounter();
+    uint16 h = cpu->hcounter();
     if(v == 0) {
       if(h <= 4) {
         memory::vram[addr] = data;
       } else if(h == 6) {
-        memory::vram[addr] = cpu.regs.mdr;
+        memory::vram[addr] = cpu->regs.mdr;
       } else {
         //no write
       }
@@ -87,7 +87,7 @@ uint8 PPU::oam_mmio_read(uint16 addr) {
   if(regs.display_disabled == true) {
     data = memory::oam[addr];
   } else {
-    if(cpu.vcounter() < (!overscan() ? 225 : 240)) {
+    if(cpu->vcounter() < (!overscan() ? 225 : 240)) {
       data = memory::oam[regs.ioamaddr];
     } else {
       data = memory::oam[addr];
@@ -107,7 +107,7 @@ void PPU::oam_mmio_write(uint16 addr, uint8 data) {
     memory::oam[addr] = data;
     update_sprite_list(addr, data);
   } else {
-    if(cpu.vcounter() < (!overscan() ? 225 : 240)) {
+    if(cpu->vcounter() < (!overscan() ? 225 : 240)) {
       memory::oam[regs.ioamaddr] = data;
       update_sprite_list(regs.ioamaddr, data);
     } else {
@@ -124,8 +124,8 @@ uint8 PPU::cgram_mmio_read(uint16 addr) {
   if(1 || regs.display_disabled == true) {
     data = memory::cgram[addr];
   } else {
-    uint16 v = cpu.vcounter();
-    uint16 h = cpu.hcounter();
+    uint16 v = cpu->vcounter();
+    uint16 h = cpu->hcounter();
     if(v < (!overscan() ? 225 : 240) && h >= 128 && h < 1096) {
       data = memory::cgram[regs.icgramaddr] & 0x7f;
     } else {
@@ -144,8 +144,8 @@ void PPU::cgram_mmio_write(uint16 addr, uint8 data) {
   if(1 || regs.display_disabled == true) {
     memory::cgram[addr] = data;
   } else {
-    uint16 v = cpu.vcounter();
-    uint16 h = cpu.hcounter();
+    uint16 v = cpu->vcounter();
+    uint16 h = cpu->hcounter();
     if(v < (!overscan() ? 225 : 240) && h >= 128 && h < 1096) {
       memory::cgram[regs.icgramaddr] = data & 0x7f;
     } else {

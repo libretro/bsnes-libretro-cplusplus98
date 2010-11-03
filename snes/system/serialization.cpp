@@ -52,9 +52,9 @@ void System::serialize_all(serializer &s) {
   bus.serialize(s);
   cartridge.serialize(s);
   system.serialize(s);
-  cpu.serialize(s);
+  cpu->serialize(s);
   smp.serialize(s);
-  ppu.serialize(s);
+  ppu->serialize(s);
   dsp.serialize(s);
 
   if(cartridge.mode.i == Cartridge::Mode::SuperGameBoy) supergameboy.serialize(s);

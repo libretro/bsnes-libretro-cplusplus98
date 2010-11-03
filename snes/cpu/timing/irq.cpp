@@ -3,7 +3,7 @@
 //called once every four clock cycles;
 //as NMI steps by scanlines (divisible by 4) and IRQ by PPU 4-cycle dots.
 //
-//ppu.(vh)counter(n) returns the value of said counters n-clocks before current time;
+//ppu->(vh)counter(n) returns the value of said counters n-clocks before current time;
 //it is used to emulate hardware communication delay between opcode and interrupt units.
 void CPU::poll_interrupts() {
   //NMI hold
@@ -13,7 +13,7 @@ void CPU::poll_interrupts() {
   }
 
   //NMI test
-  bool nmi_valid = (vcounter(2) >= (!ppu.overscan() ? 225 : 240));
+  bool nmi_valid = (vcounter(2) >= (!ppu->overscan() ? 225 : 240));
   if(!status.nmi_valid && nmi_valid) {
     //0->1 edge sensitive transition
     status.nmi_line = true;

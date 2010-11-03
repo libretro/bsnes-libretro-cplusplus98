@@ -1,8 +1,8 @@
 #ifdef PPU_CPP
 
 void PPU::latch_counters() {
-  regs.hcounter = cpu.hdot();
-  regs.vcounter = cpu.vcounter();
+  regs.hcounter = cpu->hdot();
+  regs.vcounter = cpu->vcounter();
   regs.counters_latched = true;
 }
 
@@ -23,12 +23,12 @@ uint16 PPU::get_vram_addr() {
 
 uint8 PPU::vram_read(unsigned addr) {
   if(regs.display_disable) return memory::vram[addr];
-  if(cpu.vcounter() >= display.height) return memory::vram[addr];
+  if(cpu->vcounter() >= display.height) return memory::vram[addr];
   return 0x00;
 }
 
 void PPU::vram_write(unsigned addr, uint8 data) {
-  if(regs.display_disable || cpu.vcounter() >= display.height) {
+  if(regs.display_disable || cpu->vcounter() >= display.height) {
     memory::vram[addr] = data;
     cache.tilevalid[0][addr >> 4] = false;
     cache.tilevalid[1][addr >> 5] = false;
@@ -40,13 +40,13 @@ void PPU::vram_write(unsigned addr, uint8 data) {
 uint8 PPU::oam_read(unsigned addr) {
   if(addr & 0x0200) addr &= 0x021f;
   if(regs.display_disable) return memory::oam[addr];
-  if(cpu.vcounter() >= display.height) return memory::oam[addr];
+  if(cpu->vcounter() >= display.height) return memory::oam[addr];
   return memory::oam[0x0218];
 }
 
 void PPU::oam_write(unsigned addr, uint8 data) {
   if(addr & 0x0200) addr &= 0x021f;
-  if(!regs.display_disable && cpu.vcounter() < display.height) addr = 0x0218;
+  if(!regs.display_disable && cpu->vcounter() < display.height) addr = 0x0218;
   memory::oam[addr] = data;
   oam.update_list(addr, data);
 }
@@ -158,7 +158,7 @@ void PPU::mmio_update_video_mode() {
 }
 
 uint8 PPU::mmio_read(unsigned addr) {
-  cpu.synchronize_ppu();
+  cpu->synchronize_ppu();
 
   switch(addr & 0xffff) {
     case 0x2104: case 0x2105: case 0x2106: case 0x2108: case 0x2109: case 0x210a:
@@ -186,8 +186,8 @@ uint8 PPU::mmio_read(unsigned addr) {
     }
 
     case 0x2137: {  //SLHV
-      if(cpu.pio() & 0x80) latch_counters();
-      return cpu.regs.mdr;
+      if(cpu->pio() & 0x80) latch_counters();
+      return cpu->regs.mdr;
     }
 
     case 0x2138: {  //OAMDATAREAD
@@ -262,8 +262,8 @@ uint8 PPU::mmio_read(unsigned addr) {
       regs.latch_vcounter = 0;
 
       regs.ppu2_mdr &= 0x20;
-      regs.ppu2_mdr |= cpu.field() << 7;
-      if((cpu.pio() & 0x80) == 0) {
+      regs.ppu2_mdr |= cpu->field() << 7;
+      if((cpu->pio() & 0x80) == 0) {
         regs.ppu2_mdr |= 0x40;
       } else if(regs.counters_latched) {
         regs.ppu2_mdr |= 0x40;
@@ -275,11 +275,11 @@ uint8 PPU::mmio_read(unsigned addr) {
     }
   }
 
-  return cpu.regs.mdr;
+  return cpu->regs.mdr;
 }
 
 void PPU::mmio_write(unsigned addr, uint8 data) {
-  cpu.synchronize_ppu();
+  cpu->synchronize_ppu();
 
   switch(addr & 0xffff) {
     case 0x2100: {  //INIDISP

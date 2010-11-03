@@ -23,13 +23,13 @@ void PPU::step(unsigned clocks) {
 
 void PPU::synchronize_cpu() {
   if(CPU::Threaded == true) {
-    if(clock >= 0 && scheduler.sync.i != Scheduler::SynchronizeMode::All) co_switch(cpu.thread);
+    if(clock >= 0 && scheduler.sync.i != Scheduler::SynchronizeMode::All) co_switch(cpu->thread);
   } else {
-    while(clock >= 0) cpu.enter();
+    while(clock >= 0) cpu->enter();
   }
 }
 
-void PPU::Enter() { ppu.enter(); }
+void PPU::Enter() { ppu->enter(); }
 
 void PPU::enter() {
   while(true) {

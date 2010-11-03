@@ -28,21 +28,21 @@ void Serial::add_clocks(unsigned clocks) {
 }
 
 uint8 Serial::read() {
-  while(cpu.joylatch() == 0) add_clocks(1);
-  while(cpu.joylatch() == 1) add_clocks(1);
+  while(cpu->joylatch() == 0) add_clocks(1);
+  while(cpu->joylatch() == 1) add_clocks(1);
   add_clocks(4);
 
   uint8 data = 0;
   for(unsigned i = 0; i < 8; i++) {
     add_clocks(8);
-    data = (cpu.joylatch() << 7) | (data >> 1);
+    data = (cpu->joylatch() << 7) | (data >> 1);
   }
 
   return data;
 }
 
 void Serial::write(uint8 data) {
-  if(flowcontrol()) while(cpu.pio() & 0x80) add_clocks(1);
+  if(flowcontrol()) while(cpu->pio() & 0x80) add_clocks(1);
   add_clocks(8);
 
   data1 = 1;
@@ -59,7 +59,7 @@ void Serial::write(uint8 data) {
 }
 
 uint8 Serial::mmio_read(unsigned addr) {
-  cpu.synchronize_coprocessor();
+  cpu->synchronize_coprocessor();
   switch(addr & 1) { default:
     case 0: return r4016->mmio_read(addr);
     case 1: return r4017->mmio_read(addr);
@@ -67,7 +67,7 @@ uint8 Serial::mmio_read(unsigned addr) {
 }
 
 void Serial::mmio_write(unsigned addr, uint8 data) {
-  cpu.synchronize_coprocessor();
+  cpu->synchronize_coprocessor();
   switch(addr & 1) { default:
     case 0: r4016->mmio_write(addr, data); break;
     case 1: r4017->mmio_write(addr, data); break;

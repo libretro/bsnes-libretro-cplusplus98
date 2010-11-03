@@ -176,7 +176,7 @@ uint8 SRTC::mmio_read(unsigned addr) {
     }
   }
 
-  return cpu.regs.mdr;
+  return cpu->regs.mdr;
 }
 
 void SRTC::mmio_write(unsigned addr, uint8 data) {

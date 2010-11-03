@@ -45,7 +45,7 @@ alwaysinline uint8 SMP::op_busread(uint16 addr) {
       case 0xf6:    //CPUIO2
       case 0xf7: {  //CPUIO3
         synchronize_cpu();
-        r = cpu.port_read(addr);
+        r = cpu->port_read(addr);
       } break;
 
       case 0xf8: {  //RAM0
@@ -112,12 +112,12 @@ alwaysinline void SMP::op_buswrite(uint16 addr, uint8 data) {
           //emulated by simulating CPU writes of 0x00
           synchronize_cpu();
           if(data & 0x20) {
-            cpu.port_write(2, 0x00);
-            cpu.port_write(3, 0x00);
+            cpu->port_write(2, 0x00);
+            cpu->port_write(3, 0x00);
           }
           if(data & 0x10) {
-            cpu.port_write(0, 0x00);
-            cpu.port_write(1, 0x00);
+            cpu->port_write(0, 0x00);
+            cpu->port_write(1, 0x00);
           }
         }
 

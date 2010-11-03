@@ -25,7 +25,7 @@ void PPUcounter::tick(unsigned clocks) {
 
 //internal
 void PPUcounter::vcounter_tick() {
-  if(++status.vcounter == 128) status.interlace = ppu.interlace();
+  if(++status.vcounter == 128) status.interlace = ppu->interlace();
 
   if((system.region.i == System::Region::NTSC && status.interlace == false && status.vcounter == 262)
   || (system.region.i == System::Region::NTSC && status.interlace == true  && status.vcounter == 263)

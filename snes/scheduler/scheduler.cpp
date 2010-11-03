@@ -15,7 +15,7 @@ void Scheduler::exit(ExitReason::e reason) {
 
 void Scheduler::init() {
   host_thread = co_active();
-  thread = cpu.thread;
+  thread = cpu->thread;
   sync.i = SynchronizeMode::None;
 }
 

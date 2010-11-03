@@ -72,7 +72,7 @@ uint8 BSXBase::mmio_read(unsigned addr) {
     case 0x2199: return regs.r2199;
   }
 
-  return cpu.regs.mdr;
+  return cpu->regs.mdr;
 }
 
 void BSXBase::mmio_write(unsigned addr, uint8 data) {

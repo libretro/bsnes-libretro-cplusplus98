@@ -41,7 +41,7 @@ void PPU::Sprite::scanline() {
   }
 
   if(t.item_count > 0 && oam_item[t.item_count - 1] != 0xff) {
-    ppu.regs.oam_iaddr = 0x0200 + (oam_item[t.item_count - 1] >> 2);
+    ppu->regs.oam_iaddr = 0x0200 + (oam_item[t.item_count - 1] >> 2);
   }
 }
 
