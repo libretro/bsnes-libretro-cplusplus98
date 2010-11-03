@@ -112,7 +112,7 @@ void PPU::render_scanline() {
 }
 
 void PPU::frame() {
-  system.frame();
+  system->frame();
 
   if(field() == 0) {
     display.interlace = regs.interlace;
@@ -131,7 +131,7 @@ void PPU::power() {
   for(unsigned i = 0; i < memory::cgram.size(); i++) memory::cgram[i] = 0x00;
   flush_tiledata_cache();
 
-  region = (system.region.i == System::Region::NTSC ? 0 : 1);  //0 = NTSC, 1 = PAL
+  region = (system->region.i == System::Region::NTSC ? 0 : 1);  //0 = NTSC, 1 = PAL
 
   regs.ioamaddr   = 0x0000;
   regs.icgramaddr = 0x01ff;
@@ -341,7 +341,7 @@ void PPU::power() {
 }
 
 void PPU::reset() {
-  create(Enter, system.cpu_frequency());
+  create(Enter, system->cpu_frequency());
   PPUcounter::reset();
   memset(surface, 0, 512 * 512 * sizeof(uint16));
 

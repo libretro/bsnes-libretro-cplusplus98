@@ -32,7 +32,7 @@ struct Interface : public SNES::Interface {
   }
 };
 
-static Interface interface;
+static Interface *interface;
 
 unsigned snes_library_revision_major(void) {
   return 1;
@@ -43,56 +43,60 @@ unsigned snes_library_revision_minor(void) {
 }
 
 void snes_set_video_refresh(snes_video_refresh_t video_refresh) {
-  interface.pvideo_refresh = video_refresh;
+  interface->pvideo_refresh = video_refresh;
 }
 
 void snes_set_audio_sample(snes_audio_sample_t audio_sample) {
-  interface.paudio_sample = audio_sample;
+  interface->paudio_sample = audio_sample;
 }
 
 void snes_set_input_poll(snes_input_poll_t input_poll) {
-  interface.pinput_poll = input_poll;
+  interface->pinput_poll = input_poll;
 }
 
 void snes_set_input_state(snes_input_state_t input_state) {
-  interface.pinput_state = input_state;
+  interface->pinput_state = input_state;
 }
 
 void snes_set_controller_port_device(bool port, unsigned device) {
-  SNES::input.port_set_device(port, (SNES::Input::Device::e)device);
+  SNES::input->port_set_device(port, (SNES::Input::Device::e)device);
 }
 
 void snes_init(void) {
   SNES_DBG("Initializing SNES\n");
-  SNES::system.init(&interface);
-  SNES::input.port_set_device(0, SNES::Input::Device::Joypad);
-  SNES::input.port_set_device(1, SNES::Input::Device::Joypad);
+  interface = new Interface;
+  SNES::system = new SNES::System;
+  SNES::system->init(interface);
+  SNES::input->port_set_device(0, SNES::Input::Device::Joypad);
+  SNES::input->port_set_device(1, SNES::Input::Device::Joypad);
   SNES_DBG("Done initializing SNES\n");
 }
 
 void snes_term(void) {
-  SNES::system.term();
+  SNES::system->term();
+  delete SNES::system;
+  delete interface;
 }
 
 void snes_power(void) {
-  SNES::system.power();
+  SNES::system->power();
 }
 
 void snes_reset(void) {
-  SNES::system.reset();
+  SNES::system->reset();
 }
 
 void snes_run(void) {
-  SNES::system.run();
+  SNES::system->run();
 }
 
 unsigned snes_serialize_size(void) {
-  return SNES::system.serialize_size();
+  return SNES::system->serialize_size();
 }
 
 bool snes_serialize(uint8_t *data, unsigned size) {
-  SNES::system.runtosave();
-  serializer s = SNES::system.serialize();
+  SNES::system->runtosave();
+  serializer s = SNES::system->serialize();
   if(s.size() > size) return false;
   memcpy(data, s.data(), s.size());
   return true;
@@ -100,7 +104,7 @@ bool snes_serialize(uint8_t *data, unsigned size) {
 
 bool snes_unserialize(const uint8_t *data, unsigned size) {
   serializer s(data, size);
-  return SNES::system.unserialize(s);
+  return SNES::system->unserialize(s);
 }
 
 void snes_cheat_reset(void) {
@@ -127,7 +131,7 @@ bool snes_load_cartridge_normal(
    SNES_DBG("Load cartridge\n");
   SNES::cartridge.load(SNES::Cartridge::Mode::Normal, lstring(xmlrom));
    SNES_DBG("Turn power on\n");
-  SNES::system.power();
+  SNES::system->power();
    SNES_DBG("Completed load_cartridge\n");
   return true;
 }
@@ -142,7 +146,7 @@ bool snes_load_cartridge_bsx_slotted(
   if(bsx_data) SNES::memory::bsxflash.copy(bsx_data, bsx_size);
   string xmlbsx = (bsx_xml && *bsx_xml) ? string(bsx_xml) : snes_information(bsx_data, bsx_size).xml_memory_map;
   SNES::cartridge.load(SNES::Cartridge::Mode::BsxSlotted, lstring(xmlrom, xmlbsx));
-  SNES::system.power();
+  SNES::system->power();
   return true;
 }
 
@@ -156,7 +160,7 @@ bool snes_load_cartridge_bsx(
   if(bsx_data) SNES::memory::bsxflash.copy(bsx_data, bsx_size);
   string xmlbsx = (bsx_xml && *bsx_xml) ? string(bsx_xml) : snes_information(bsx_data, bsx_size).xml_memory_map;
   SNES::cartridge.load(SNES::Cartridge::Mode::Bsx, lstring(xmlrom, xmlbsx));
-  SNES::system.power();
+  SNES::system->power();
   return true;
 }
 
@@ -173,7 +177,7 @@ bool snes_load_cartridge_sufami_turbo(
   if(stb_data) SNES::memory::stBrom.copy(stb_data, stb_size);
   string xmlstb = (stb_xml && *stb_xml) ? string(stb_xml) : snes_information(stb_data, stb_size).xml_memory_map;
   SNES::cartridge.load(SNES::Cartridge::Mode::SufamiTurbo, lstring(xmlrom, xmlsta, xmlstb));
-  SNES::system.power();
+  SNES::system->power();
   return true;
 }
 
@@ -187,7 +191,7 @@ bool snes_load_cartridge_super_game_boy(
   if(dmg_data) SNES::memory::gbrom.copy(dmg_data, dmg_size);
   string xmldmg = (dmg_xml && *dmg_xml) ? string(dmg_xml) : snes_information(dmg_data, dmg_size).xml_memory_map;
   SNES::cartridge.load(SNES::Cartridge::Mode::SuperGameBoy, lstring(xmlrom, xmldmg));
-  SNES::system.power();
+  SNES::system->power();
   return true;
 }
 
@@ -196,7 +200,7 @@ void snes_unload_cartridge(void) {
 }
 
 bool snes_get_region(void) {
-  return SNES::system.region.i == SNES::System::Region::NTSC ? 0 : 1;
+  return SNES::system->region.i == SNES::System::Region::NTSC ? 0 : 1;
 }
 
 uint8_t* snes_get_memory_data(unsigned id) {

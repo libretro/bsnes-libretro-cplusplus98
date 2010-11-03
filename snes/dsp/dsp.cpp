@@ -7,7 +7,7 @@ namespace SNES {
   #include "debugger/debugger.cpp"
   DSPDebugger dsp;
 #else
-  DSP dsp;
+  DSP *dsp;
 #endif
 
 #include "serialization.cpp"
@@ -37,7 +37,7 @@ void DSP::synchronize_smp() {
   }
 }
 
-void DSP::Enter() { dsp.enter(); }
+void DSP::Enter() { dsp->enter(); }
 
 void DSP::enter() {
   while(true) {
@@ -279,7 +279,7 @@ void DSP::power() {
 }
 
 void DSP::reset() {
-  create(Enter, system.apu_frequency());
+  create(Enter, system->apu_frequency());
 
   REG(flg) = 0xe0;
 

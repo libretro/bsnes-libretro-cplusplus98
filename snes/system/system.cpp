@@ -4,7 +4,7 @@
 #define SYSTEM_CPP
 namespace SNES {
 
-System system;
+System *system;
 
 #include <config/config.cpp>
 #include <debugger/debugger.cpp>
@@ -21,8 +21,8 @@ void System::run() {
 
   scheduler.enter();
   if(scheduler.exit_reason.i == Scheduler::ExitReason::FrameEvent) {
-    input.update();
-    video.update();
+    input->update();
+    video->update();
   }
 }
 
@@ -43,7 +43,7 @@ void System::runtosave() {
   }
 
   if(DSP::Threaded == true) {
-    scheduler.thread = dsp.thread;
+    scheduler.thread = dsp->thread;
     runthreadtosave();
   }
 
@@ -59,8 +59,8 @@ void System::runthreadtosave() {
     scheduler.enter();
     if(scheduler.exit_reason.i == Scheduler::ExitReason::SynchronizeEvent) break;
     if(scheduler.exit_reason.i == Scheduler::ExitReason::FrameEvent) {
-      input.update();
-      video.update();
+      input->update();
+      video->update();
     }
   }
 }
@@ -68,6 +68,10 @@ void System::runthreadtosave() {
 void System::init(Interface *interface_) {
    cpu = new CPU;
    ppu = new PPU;
+   video = new Video;
+   audio = new Audio;
+   dsp = new DSP;
+   input = new Input;
 
   interface = interface_;
   assert(interface != 0);
@@ -93,14 +97,18 @@ void System::init(Interface *interface_) {
   msu1.init();
   serial.init();
 
-  video.init();
-  audio.init();
-  input.init();
+  video->init();
+  audio->init();
+  input->init();
 }
 
 void System::term() {
    delete ppu;
    delete cpu;
+   delete video;
+   delete audio;
+   delete dsp;
+   delete input;
 }
 
 void System::power() {
@@ -124,7 +132,7 @@ void System::power() {
   for(unsigned i = 0x4300; i <= 0x437f; i++) memory::mmio.map(i, *cpu);
 
    SNES_DBG("#2\n");
-  audio.coprocessor_enable(false);
+  audio->coprocessor_enable(false);
   if(expansion.i == ExpansionPortDevice::BSX) bsxbase.enable();
   if(memory::bsxflash.data()) bsxflash.enable();
   if(cartridge.mode.i == Cartridge::Mode::Bsx) bsxcart.enable();
@@ -154,7 +162,7 @@ void System::power() {
    SNES_DBG("#4.1\n");
   smp.power();
    SNES_DBG("#4.2\n");
-  dsp.power();
+  dsp->power();
    SNES_DBG("#4.3\n");
   ppu->power();
    SNES_DBG("#4.4\n");
@@ -196,11 +204,11 @@ void System::power() {
   scheduler.init();
 
    SNES_DBG("#8\n");
-  input.port_set_device(0, config.controller_port1.i);
-  input.port_set_device(1, config.controller_port2.i);
+  input->port_set_device(0, config.controller_port1.i);
+  input->port_set_device(1, config.controller_port2.i);
    SNES_DBG("#9: Updating Input\n");
-  input.update();
-//video.update();
+  input->update();
+//video->update();
    SNES_DBG("Completing System::power()\n");
 }
 
@@ -208,7 +216,7 @@ void System::reset() {
   bus.reset();
   cpu->reset();
   smp.reset();
-  dsp.reset();
+  dsp->reset();
   ppu->reset();
 
   if(expansion.i == ExpansionPortDevice::BSX) bsxbase.reset();
@@ -241,10 +249,10 @@ void System::reset() {
 
   scheduler.init();
 
-  input.port_set_device(0, config.controller_port1.i);
-  input.port_set_device(1, config.controller_port2.i);
-  input.update();
-//video.update();
+  input->port_set_device(0, config.controller_port1.i);
+  input->port_set_device(1, config.controller_port2.i);
+  input->update();
+//video->update();
 }
 
 void System::unload() {
@@ -252,7 +260,7 @@ void System::unload() {
 }
 
 void System::scanline() {
-  video.scanline();
+  video->scanline();
   if(cpu->vcounter() == 241) scheduler.exit(Scheduler::ExitReason::FrameEvent);
 }
 

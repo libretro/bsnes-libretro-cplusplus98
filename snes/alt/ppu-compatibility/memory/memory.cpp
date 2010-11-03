@@ -30,7 +30,7 @@ uint8 PPU::vram_mmio_read(uint16 addr) {
   } else {
     uint16 v = cpu->vcounter();
     uint16 h = cpu->hcounter();
-    uint16 ls = ((system.region.i == System::Region::NTSC ? 525 : 625) >> 1) - 1;
+    uint16 ls = ((system->region.i == System::Region::NTSC ? 525 : 625) >> 1) - 1;
     if(interlace() && !cpu->field()) ls++;
 
     if(v == ls && h == 1362) {

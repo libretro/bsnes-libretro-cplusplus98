@@ -15,7 +15,7 @@ void SuperGameBoy::enter() {
       scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
     }
 
-    audio.coprocessor_sample(0, 0);
+    audio->coprocessor_sample(0, 0);
     step(1);
     synchronize_cpu();
   }
@@ -31,7 +31,7 @@ void SuperGameBoy::enter() {
       int16 right = samplebuffer[i] >> 16;
 
       //SNES audio is notoriously quiet; lower Game Boy samples to match SGB sound effects
-      audio.coprocessor_sample(left / 3, right / 3);
+      audio->coprocessor_sample(left / 3, right / 3);
     }
 
     step(samples);
@@ -112,11 +112,11 @@ void SuperGameBoy::enable() {
 }
 
 void SuperGameBoy::power() {
-  unsigned frequency = (cartridge.supergameboy_version.i == Cartridge::SuperGameBoyVersion::Version1 ? system.cpu_frequency() / 10 : 2097152);
+  unsigned frequency = (cartridge.supergameboy_version.i == Cartridge::SuperGameBoyVersion::Version1 ? system->cpu_frequency() / 10 : 2097152);
   create(SuperGameBoy::Enter, frequency);
 
-  audio.coprocessor_enable(true);
-  audio.coprocessor_frequency(cartridge.supergameboy_version.i == Cartridge::SuperGameBoyVersion::Version1 ? 2147727.0 : 2097152.0);
+  audio->coprocessor_enable(true);
+  audio->coprocessor_frequency(cartridge.supergameboy_version.i == Cartridge::SuperGameBoyVersion::Version1 ? 2147727.0 : 2097152.0);
 
   sgb_rom(memory::gbrom.data(), memory::gbrom.size() == -1U ? 0 : memory::gbrom.size());
   sgb_ram(memory::gbram.data(), memory::gbram.size() == -1U ? 0 : memory::gbram.size());
@@ -128,7 +128,7 @@ void SuperGameBoy::power() {
 }
 
 void SuperGameBoy::reset() {
-  unsigned frequency = (cartridge.supergameboy_version.i == Cartridge::SuperGameBoyVersion::Version1 ? system.cpu_frequency() / 10 : 2097152);
+  unsigned frequency = (cartridge.supergameboy_version.i == Cartridge::SuperGameBoyVersion::Version1 ? system->cpu_frequency() / 10 : 2097152);
   create(SuperGameBoy::Enter, frequency);
 
   if(sgb_reset) sgb_reset();

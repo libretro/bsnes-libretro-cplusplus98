@@ -3,7 +3,7 @@
 #define DSP_CPP
 namespace SNES {
 
-DSP dsp;
+DSP *dsp;
 
 #include "serialization.cpp"
 #include "SPC_DSP.cpp"
@@ -26,7 +26,7 @@ void DSP::enter() {
 
   signed count = spc_dsp.sample_count();
   if(count > 0) {
-    for(unsigned n = 0; n < count; n += 2) audio.sample(samplebuffer[n + 0], samplebuffer[n + 1]);
+    for(unsigned n = 0; n < count; n += 2) audio->sample(samplebuffer[n + 0], samplebuffer[n + 1]);
     spc_dsp.set_output(samplebuffer, 8192);
   }
 }

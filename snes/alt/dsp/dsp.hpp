@@ -25,4 +25,4 @@ private:
   bool channel_enabled[8];
 };
 
-extern DSP dsp;
+extern DSP *dsp;

@@ -107,7 +107,7 @@ void Cartridge::load(Mode::e cartridge_mode, const lstring &xml_list) {
   sha256 = hash;
 
   bus.load_cart();
-  system.serialize_init();
+  system->serialize_init();
   loaded = true;
 }
 

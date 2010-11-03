@@ -32,7 +32,7 @@ void CPU::add_clocks(unsigned clocks) {
     if(status.virq_enabled) {
       unsigned cpu_time = vcounter() * 1364 + hcounter();
       unsigned irq_time = status.vtime * 1364 + status.htime * 4;
-      unsigned framelines = (system.region.i == System::Region::NTSC ? 262 : 312) + field();
+      unsigned framelines = (system->region.i == System::Region::NTSC ? 262 : 312) + field();
       if(cpu_time > irq_time) irq_time += framelines * 1364;
       bool irq_valid = status.irq_valid;
       status.irq_valid = cpu_time <= irq_time && cpu_time + clocks > irq_time;
@@ -63,7 +63,7 @@ void CPU::scanline() {
   synchronize_smp();
   synchronize_ppu();
   synchronize_coprocessor();
-  system.scanline();
+  system->scanline();
 
   if(vcounter() == 0) hdma_init();
 
@@ -73,8 +73,8 @@ void CPU::scanline() {
     queue.enqueue(1104 + 8, QueueEvent::HdmaRun);
   }
 
-  if(vcounter() == input.latchy) {
-    queue.enqueue(input.latchx, QueueEvent::ControllerLatch);
+  if(vcounter() == input->latchy) {
+    queue.enqueue(input->latchx, QueueEvent::ControllerLatch);
   }
 
   bool nmi_valid = status.nmi_valid;
@@ -87,7 +87,7 @@ void CPU::scanline() {
   }
 
   if(status.auto_joypad_poll_enabled && vcounter() == (ppu->overscan() == false ? 227 : 242)) {
-    input.poll();
+    input->poll();
     run_auto_joypad_poll();
   }
 }
@@ -95,8 +95,8 @@ void CPU::scanline() {
 void CPU::run_auto_joypad_poll() {
   uint16 joy1 = 0, joy2 = 0, joy3 = 0, joy4 = 0;
   for(unsigned i = 0; i < 16; i++) {
-    uint8 port0 = input.port_read(0);
-    uint8 port1 = input.port_read(1);
+    uint8 port0 = input->port_read(0);
+    uint8 port1 = input->port_read(1);
 
     joy1 |= (port0 & 1) ? (0x8000 >> i) : 0;
     joy2 |= (port1 & 1) ? (0x8000 >> i) : 0;

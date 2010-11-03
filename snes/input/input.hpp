@@ -85,4 +85,4 @@ private:
   friend class CPU;
 };
 
-extern Input input;
+extern Input *input;

@@ -269,7 +269,7 @@ uint8 PPU::mmio_read(unsigned addr) {
         regs.ppu2_mdr |= 0x40;
         regs.counters_latched = false;
       }
-      regs.ppu2_mdr |= (system.region.i == System::Region::NTSC ? 0 : 1) << 4;
+      regs.ppu2_mdr |= (system->region.i == System::Region::NTSC ? 0 : 1) << 4;
       regs.ppu2_mdr |= 0x03;  //version
       return regs.ppu2_mdr;
     }

@@ -9,7 +9,7 @@ namespace nall {
   class dictionary {
   public:
     string operator[](const char *input) {
-      for(unsigned i = 0; i < index_input.size(); i++) {
+      for(unsigned i = 0; i < index_input->size(); i++) {
         if(index_input[i] == input) return index_output[i];
       }
 
@@ -46,7 +46,7 @@ namespace nall {
         part[0].trim_once("\"");
         part[1].trim_once("\"");
 
-        unsigned n = index_input.size();
+        unsigned n = index_input->size();
         index_input[n]  = part[0];
         index_output[n] = part[1];
       }
@@ -55,7 +55,7 @@ namespace nall {
     }
 
     void reset() {
-      index_input.reset();
+      index_input->reset();
       index_output.reset();
     }
 

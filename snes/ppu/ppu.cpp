@@ -91,7 +91,7 @@ void PPU::power() {
 }
 
 void PPU::reset() {
-  create(Enter, system.cpu_frequency());
+  create(Enter, system->cpu_frequency());
   PPUcounter::reset();
   memset(surface, 0, 512 * 512 * sizeof(uint16));
 
@@ -126,7 +126,7 @@ void PPU::scanline() {
 }
 
 void PPU::frame() {
-  system.frame();
+  system->frame();
   oam.frame();
 
   display.interlace = regs.interlace;

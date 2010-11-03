@@ -106,7 +106,7 @@ void DSP::echo_27() {
   }
 
   //output sample to DAC
-  audio.sample(outl, outr);
+  audio->sample(outl, outr);
 }
 
 void DSP::echo_28() {

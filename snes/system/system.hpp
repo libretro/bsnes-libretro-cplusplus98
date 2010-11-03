@@ -52,4 +52,4 @@ private:
 #include <interface/interface.hpp>
 #include <scheduler/scheduler.hpp>
 
-extern System system;
+extern System *system;

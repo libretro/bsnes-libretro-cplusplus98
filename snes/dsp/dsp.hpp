@@ -113,13 +113,13 @@ private:
   } voice[8];
 
   //gaussian
-  static const int16 gaussian_table[512];
+  static const int16 gaussian_table[512] __attribute__((__aligned__(16)));
   int gaussian_interpolate(const voice_t &v);
 
   //counter
   enum { counter_range = 2048 * 5 * 3 };  //30720 (0x7800)
-  static const uint16 counter_rate[32];
-  static const uint16 counter_offset[32];
+  static const uint16 counter_rate[32] __attribute__((__aligned__(16)));
+  static const uint16 counter_offset[32] __attribute__((__aligned__(16)));
   void counter_tick();
   bool counter_poll(unsigned rate);
 
@@ -176,5 +176,5 @@ private:
   #include "debugger/debugger.hpp"
   extern DSPDebugger dsp;
 #else
-  extern DSP dsp;
+  extern DSP *dsp;
 #endif

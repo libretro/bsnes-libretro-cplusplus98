@@ -1,8 +1,8 @@
 #ifdef SYSTEM_CPP
 
-Video video;
+Video *video;
 
-const uint8_t Video::cursor[15 * 15] = {
+const uint8_t Video::cursor[15 * 15] __attribute__((__aligned__(16))) = {
   0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
   0,0,0,0,1,1,2,2,2,1,1,0,0,0,0,
   0,0,0,1,2,2,1,2,1,2,2,1,0,0,0,
@@ -18,7 +18,7 @@ const uint8_t Video::cursor[15 * 15] = {
   0,0,0,1,2,2,1,2,1,2,2,1,0,0,0,
   0,0,0,0,1,1,2,2,2,1,1,0,0,0,0,
   0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,
-};
+}; 
 
 void Video::draw_cursor(uint16_t color, int x, int y) {
   uint16_t *data = (uint16_t*)ppu->output;
@@ -47,10 +47,10 @@ void Video::draw_cursor(uint16_t color, int x, int y) {
 }
 
 void Video::update() {
-  switch(input.port[1].device.i) {
-    case Input::Device::SuperScope: draw_cursor(0x001f, input.port[1].superscope.x, input.port[1].superscope.y); break;
-    case Input::Device::Justifiers: draw_cursor(0x02e0, input.port[1].justifier.x2, input.port[1].justifier.y2); //fallthrough
-    case Input::Device::Justifier:  draw_cursor(0x001f, input.port[1].justifier.x1, input.port[1].justifier.y1); break;
+  switch(input->port[1].device.i) {
+    case Input::Device::SuperScope: draw_cursor(0x001f, input->port[1].superscope.x, input->port[1].superscope.y); break;
+    case Input::Device::Justifiers: draw_cursor(0x02e0, input->port[1].justifier.x2, input->port[1].justifier.y2); //fallthrough
+    case Input::Device::Justifier:  draw_cursor(0x001f, input->port[1].justifier.x1, input->port[1].justifier.y1); break;
   }
 
   uint16_t *data = (uint16_t*)ppu->output;
@@ -74,7 +74,7 @@ void Video::update() {
     height <<= 1;
   }
 
-  system.interface->video_refresh(ppu->output + 1024, width, height);
+  system->interface->video_refresh(ppu->output + 1024, width, height);
 
   frame_hires = false;
   frame_interlace = false;

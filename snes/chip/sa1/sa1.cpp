@@ -130,7 +130,7 @@ void SA1::power() {
 }
 
 void SA1::reset() {
-  create(SA1::Enter, system.cpu_frequency());
+  create(SA1::Enter, system->cpu_frequency());
 
   memory::cc1bwram.dma = false;
   for(unsigned addr = 0; addr < memory::iram.size(); addr++) {
@@ -154,7 +154,7 @@ void SA1::reset() {
   status.interrupt_pending = false;
   status.interrupt_vector  = 0x0000;
 
-  status.scanlines = (system.region.i == System::Region::NTSC ? 262 : 312);
+  status.scanlines = (system->region.i == System::Region::NTSC ? 262 : 312);
   status.vcounter  = 0;
   status.hcounter  = 0;
 

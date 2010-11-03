@@ -124,7 +124,7 @@ void CPU::power() {
 void CPU::reset() {
    SNES_DBG("CPU::reset()\n");
    SNES_DBG("#0\n");
-  create(Enter, system.cpu_frequency());
+  create(Enter, system->cpu_frequency());
    SNES_DBG("#1\n");
   coprocessors.reset();
    SNES_DBG("#2\n");

@@ -39,7 +39,7 @@ void MSU1::enter() {
     left  = sclamp<16>(static_cast<signed>((double)left  * (double)mmio.audio_volume / 255.0));
     right = sclamp<16>(static_cast<signed>((double)right * (double)mmio.audio_volume / 255.0));
 
-    audio.coprocessor_sample(left, right);
+    audio->coprocessor_sample(left, right);
     step(1);
     synchronize_cpu();
   }
@@ -49,8 +49,8 @@ void MSU1::init() {
 }
 
 void MSU1::enable() {
-  audio.coprocessor_enable(true);
-  audio.coprocessor_frequency(44100.0);
+  audio->coprocessor_enable(true);
+  audio->coprocessor_frequency(44100.0);
 
   if(datafile.open()) datafile.close();
   datafile.open(string(cartridge.basename(), ".msu"), file::mode_read);

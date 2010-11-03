@@ -675,7 +675,7 @@ uint8 PPU::mmio_r213f() {
     regs.ppu2_mdr |= 0x40;
     regs.counters_latched = false;
   }
-  regs.ppu2_mdr |= (system.region.i == System::Region::NTSC ? 0 : 1) << 4;
+  regs.ppu2_mdr |= (system->region.i == System::Region::NTSC ? 0 : 1) << 4;
   regs.ppu2_mdr |= ppu2_version & 0x0f;
   return regs.ppu2_mdr;
 }

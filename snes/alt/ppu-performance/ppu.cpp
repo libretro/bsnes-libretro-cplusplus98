@@ -81,7 +81,7 @@ void PPU::scanline() {
 
 void PPU::frame() {
   oam.frame();
-  system.frame();
+  system->frame();
   display.interlace = regs.interlace;
   display.overscan = regs.overscan;
   display.framecounter = display.frameskip == 0 ? 0 : (display.framecounter + 1) % display.frameskip;
@@ -95,7 +95,7 @@ void PPU::power() {
 }
 
 void PPU::reset() {
-  create(Enter, system.cpu_frequency());
+  create(Enter, system->cpu_frequency());
   PPUcounter::reset();
   memset(surface, 0, 512 * 512 * sizeof(uint16));
   mmio_reset();

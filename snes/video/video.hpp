@@ -14,4 +14,4 @@ private:
   friend class System;
 };
 
-extern Video video;
+extern Video *video;

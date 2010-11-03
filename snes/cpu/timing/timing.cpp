@@ -13,7 +13,7 @@ void CPU::add_clocks(unsigned clocks) {
   while(ticks--) {
     tick();
     if(hcounter() & 2) {
-      input.tick();
+      input->tick();
       poll_interrupts();
     }
   }
@@ -35,7 +35,7 @@ void CPU::scanline() {
   synchronize_ppu();
   synchronize_smp();
   synchronize_coprocessor();
-  system.scanline();
+  system->scanline();
 
   if(vcounter() == 0) {
     //HDMA init triggers once every frame
@@ -54,7 +54,7 @@ void CPU::scanline() {
   }
 
   if(status.auto_joypad_poll == true && vcounter() == (ppu->overscan() == false ? 227 : 242)) {
-    input.poll();
+    input->poll();
     run_auto_joypad_poll();
   }
 }

@@ -52,7 +52,7 @@ void SuperFX::power() {
 }
 
 void SuperFX::reset() {
-  create(SuperFX::Enter, system.cpu_frequency());
+  create(SuperFX::Enter, system->cpu_frequency());
   superfxbus.init();
   instruction_counter = 0;
 

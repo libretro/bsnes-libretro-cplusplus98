@@ -19,4 +19,4 @@ private:
   void flush();
 };
 
-extern Audio audio;
+extern Audio *audio;
