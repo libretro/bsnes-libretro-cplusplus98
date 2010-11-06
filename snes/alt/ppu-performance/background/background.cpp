@@ -1,42 +1,45 @@
 #ifdef PPU_CPP
-
+#include <ppu_intrinsics.h>
 #include "mode7.cpp"
 
-unsigned PPU::Background::get_tile(unsigned hoffset, unsigned voffset) {
-  unsigned tile_x = (hoffset & mask_x) >> tile_width;
-  unsigned tile_y = (voffset & mask_y) >> tile_height;
+alwaysinline unsigned PPU::Background::get_tile(const unsigned hoffset, const unsigned voffset) {
+  const unsigned tile_x = (hoffset & mask_x) >> tile_width;
+  const unsigned tile_y = (voffset & mask_y) >> tile_height;
 
   unsigned tile_pos = ((tile_y & 0x1f) << 5) + (tile_x & 0x1f);
-  if(tile_y & 0x20) tile_pos += scy;
-  if(tile_x & 0x20) tile_pos += scx;
+  tile_pos += scy & ((-(int)(tile_y & 0x20)) >> 31);
+  tile_pos += scx & ((-(int)(tile_x & 0x20)) >> 31);
 
-  const uint16 tiledata_addr = regs.screen_addr + (tile_pos << 1);
-  return (memory::vram[tiledata_addr + 0] << 0) + (memory::vram[tiledata_addr + 1] << 8);
+  const uint64_t tiledata_addr = (regs.screen_addr >> 1) + tile_pos;
+  // BIG ENDIAN CODE!
+  return __lhbrx((uint16_t*)vram + tiledata_addr);
 }
 
 void PPU::Background::offset_per_tile(unsigned x, unsigned y, unsigned &hoffset, unsigned &voffset) {
   unsigned opt_x = (x + (hscroll & 7)), hval, vval;
-  if(opt_x >= 8) {
-    hval = self.bg3.get_tile((opt_x - 8) + (self.bg3.regs.hoffset & ~7), self.bg3.regs.voffset + 0);
-    if(self.regs.bgmode != 4)
-    vval = self.bg3.get_tile((opt_x - 8) + (self.bg3.regs.hoffset & ~7), self.bg3.regs.voffset + 8);
 
-    if(self.regs.bgmode == 4) {
-      if(hval & opt_valid_bit) {
+  if (opt_x < 8)
+     return;
+
+  hval = self.bg3.get_tile((opt_x - 8) + (self.bg3.regs.hoffset & ~7), self.bg3.regs.voffset + 0);
+  if(self.regs.bgmode != 4)
+     vval = self.bg3.get_tile((opt_x - 8) + (self.bg3.regs.hoffset & ~7), self.bg3.regs.voffset + 8);
+
+  if(self.regs.bgmode & 4) {
+     if(hval & opt_valid_bit) {
         if(!(hval & 0x8000)) {
-          hoffset = opt_x + (hval & ~7);
+           hoffset = opt_x + (hval & ~7);
         } else {
-          voffset = y + hval;
+           voffset = y + hval;
         }
-      }
-    } else {
-      if(hval & opt_valid_bit) {
+     }
+  } else {
+     if(hval & opt_valid_bit) {
         hoffset = opt_x + (hval & ~7);
-      }
-      if(vval & opt_valid_bit) {
+     }
+     if(vval & opt_valid_bit) {
         voffset = y + vval;
-      }
-    }
+     }
   }
 }
 
@@ -54,23 +57,17 @@ void PPU::Background::scanline() {
   width = 256 << hires;
 
   tile_height = 3 + regs.tile_size;
-  tile_width = hires ? 4 : tile_height;
+  tile_width = ((4 << 16 | tile_height) >> (hires << 4)) & 0xFFFF;
 
-  //mask_x = (tile_height == 4 ? width << 1 : width);
   mask_x = width << ((tile_height & 4) >> 2);
   mask_y = mask_x;
-  //if(regs.screen_size & 1) mask_x <<= 1;
-  //if(regs.screen_size & 2) mask_y <<= 1;
   mask_x = mask_x << (regs.screen_size & 1);
   mask_y = mask_y << ((regs.screen_size & 2) >> 1);
   mask_x--;
   mask_y--;
 
-  //scx = (regs.screen_size & 1 ? 32 << 5 : 0);
-  //scy = (regs.screen_size & 2 ? 32 << 5 : 0);
   scx = (regs.screen_size & 1) << 10;
   scy = (regs.screen_size & 2) << 9;
-  //if(regs.screen_size == 3) scy <<= 1;
   scy <<= (regs.screen_size == 3);
 }
 
@@ -82,8 +79,12 @@ void PPU::Background::render() {
   if(regs.sub_enable) window.render(1);
   if(regs.mode == Mode::Mode7) return render_mode7();
 
-  unsigned priority0 = (priority0_enable ? regs.priority0 : 0);
-  unsigned priority1 = (priority1_enable ? regs.priority1 : 0);
+  int neg;
+  neg = (int)-priority0_enable >> 31;
+  unsigned priority0 = regs.priority0 & neg;
+  neg = (int)-priority1_enable >> 31;
+  unsigned priority1 = regs.priority1 & neg;
+
   if(priority0 + priority1 == 0) return;
 
   unsigned mosaic_hcounter = 1;
@@ -91,7 +92,9 @@ void PPU::Background::render() {
   unsigned mosaic_priority = 0;
   unsigned mosaic_color = 0;
 
-  const unsigned bgpal_index = (self.regs.bgmode == 0 ? id << 5 : 0);
+  neg = (int)-self.regs.bgmode >> 31;
+  const unsigned bgpal_index = (id << 5) & ~neg;
+
   const unsigned pal_size = 2 << regs.mode;
   const unsigned tile_mask = 0x0fff >> regs.mode;
   const unsigned tiledata_index = regs.tiledata_addr >> (4 + regs.mode);
@@ -100,7 +103,8 @@ void PPU::Background::render() {
   vscroll = regs.voffset;
 
   hscroll <<= hires;
-  y = Background::y + ((Background::y << 1) + self.field() - Background::y) * self.regs.interlace;
+  y = Background::y;
+  y += ((y << 1) + self.field() - y) & (-(int)self.regs.interlace);
 
   unsigned tile_pri, tile_num;
   unsigned pal_index, pal_num;
@@ -150,7 +154,8 @@ void PPU::Background::render() {
       }
       if(mosaic_palette == 0) continue;
 
-      if(hires == false) {
+#if 0
+      if(!hires) {
         if(regs.main_enable && !window.main[x]) self.screen.output.plot_main(x, mosaic_color, mosaic_priority, id);
         if(regs.sub_enable && !window.sub[x]) self.screen.output.plot_sub(x, mosaic_color, mosaic_priority, id);
       } else {
@@ -161,11 +166,24 @@ void PPU::Background::render() {
           if(regs.sub_enable && !window.sub[half_x]) self.screen.output.plot_sub(half_x, mosaic_color, mosaic_priority, id);
         }
       }
+#endif
+      if (hires)
+      {
+         signed half_x = x >> 1;
+         if(x & 1) {
+            if(regs.main_enable && !window.main[half_x]) self.screen.output.plot_main(half_x, mosaic_color, mosaic_priority, id);
+         } else {
+            if(regs.sub_enable && !window.sub[half_x]) self.screen.output.plot_sub(half_x, mosaic_color, mosaic_priority, id);
+         }
+         continue;
+      }
+      if(regs.main_enable && !window.main[x]) self.screen.output.plot_main(x, mosaic_color, mosaic_priority, id);
+      if(regs.sub_enable && !window.sub[x]) self.screen.output.plot_sub(x, mosaic_color, mosaic_priority, id);
     }
   }
 }
 
-PPU::Background::Background(PPU &self, unsigned id) : self(self), id(id) {
+PPU::Background::Background(PPU &self, unsigned id) : self(self), id(id), vram(memory::vram.data()) {
   priority0_enable = true;
   priority1_enable = true;
 

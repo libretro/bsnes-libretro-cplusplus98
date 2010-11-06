@@ -26,6 +26,7 @@ class Background {
     bool sub_enable;
   } regs;
 
+  uint8 *vram;
   uint16 **mosaic_table;
 
   const unsigned id;
@@ -51,7 +52,7 @@ class Background {
 
   LayerWindow window;
 
-  alwaysinline unsigned get_tile(unsigned hoffset, unsigned voffset);
+  alwaysinline unsigned get_tile(const unsigned hoffset, const unsigned voffset);
   void offset_per_tile(unsigned x, unsigned y, unsigned &hoffset, unsigned &voffset);
   void scanline();
   void render();
