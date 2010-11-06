@@ -108,14 +108,14 @@ bool snes_unserialize(const uint8_t *data, unsigned size) {
 }
 
 void snes_cheat_reset(void) {
-  SNES::cheat.reset();
-  SNES::cheat.synchronize();
+  SNES::cheat->reset();
+  SNES::cheat->synchronize();
 }
 
 void snes_cheat_set(unsigned index, bool enabled, const char *code) {
-  SNES::cheat[index] = code;
-  SNES::cheat[index].enabled = enabled;
-  SNES::cheat.synchronize();
+  (*SNES::cheat)[index] = code;
+  (*SNES::cheat)[index].enabled = enabled;
+  SNES::cheat->synchronize();
 }
 
 bool snes_load_cartridge_normal(

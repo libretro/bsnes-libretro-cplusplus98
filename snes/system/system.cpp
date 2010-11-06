@@ -74,6 +74,7 @@ void System::init(Interface *interface_) {
    input = new Input;
    smp = new SMP;
    scheduler = new Scheduler;
+   cheat = new Cheat;
 
    bus = new Bus;
    memory::mmio = new MMIOAccess;
@@ -122,6 +123,7 @@ void System::term() {
    delete memory::mmio_unmapped;
    delete bus;
    delete scheduler;
+   delete cheat;
 }
 
 void System::power() {

@@ -1,12 +1,12 @@
-snes_objects += snes-system
-snes_objects += snes-cartridge snes-cheat
-snes_objects += snes-memory snes-cpucore snes-smpcore
+snes_objects += snes-system snes-dsp
 snes_objects += snes-cpu snes-smp snes-dsp snes-ppu
-snes_objects += snes-supergameboy snes-superfx snes-sa1
+snes_objects += snes-memory snes-cpucore snes-smpcore
+snes_objects += snes-cartridge snes-cheat
 snes_objects += snes-bsx snes-srtc snes-sdd1 snes-spc7110
 snes_objects += snes-cx4 snes-dsp1 snes-dsp2 snes-dsp3 snes-dsp4
 snes_objects += snes-obc1 snes-st0010 snes-st0011 snes-st0018
 snes_objects += snes-msu1 snes-serial
+snes_objects += snes-supergameboy snes-superfx snes-sa1
 objects += $(snes_objects)
 
 ifeq ($(profile),accuracy)

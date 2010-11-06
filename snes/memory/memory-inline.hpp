@@ -53,9 +53,9 @@ MappedRAM::MappedRAM() : data_(0), size_(-1U), write_protect_(false) {}
 
 uint8 Bus::read(uint24 addr) {
   #if defined(CHEAT_SYSTEM)
-  if(cheat.active() && cheat.exists(addr)) {
+  if(cheat->active() && cheat->exists(addr)) {
     uint8 r;
-    if(cheat.read(addr, r)) return r;
+    if(cheat->read(addr, r)) return r;
   }
   #endif
   Page &p = page[addr >> 8];

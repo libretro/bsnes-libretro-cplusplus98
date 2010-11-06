@@ -32,4 +32,4 @@ private:
   unsigned mirror(unsigned) const;
 };
 
-extern Cheat cheat;
+extern Cheat *cheat;

@@ -3,7 +3,7 @@
 #define CHEAT_CPP
 namespace SNES {
 
-Cheat cheat;
+Cheat *cheat;
 
 bool Cheat::enabled() const {
   return system_enabled;
