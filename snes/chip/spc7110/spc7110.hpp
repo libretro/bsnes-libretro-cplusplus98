@@ -153,7 +153,7 @@ public:
   void write(unsigned addr, uint8 data);
 };
 
-extern SPC7110 spc7110;
-extern SPC7110MCU spc7110mcu;
-extern SPC7110DCU spc7110dcu;
-extern SPC7110RAM spc7110ram;
+extern SPC7110 *spc7110;
+extern SPC7110MCU *spc7110mcu;
+extern SPC7110DCU *spc7110dcu;
+extern SPC7110RAM *spc7110ram;

@@ -52,6 +52,6 @@ class DSP2SR : public Memory {
   void write(unsigned addr, uint8 data);
 };
 
-extern DSP2 dsp2;
-extern DSP2DR dsp2dr;
-extern DSP2SR dsp2sr;
+extern DSP2 *dsp2;
+extern DSP2DR *dsp2dr;
+extern DSP2SR *dsp2sr;

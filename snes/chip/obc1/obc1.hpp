@@ -23,4 +23,4 @@ private:
   } status;
 };
 
-extern OBC1 obc1;
+extern OBC1 *obc1;

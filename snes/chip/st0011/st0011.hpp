@@ -6,4 +6,4 @@ public:
   void reset();
 };
 
-extern ST0011 st0011;
+extern ST0011 *st0011;

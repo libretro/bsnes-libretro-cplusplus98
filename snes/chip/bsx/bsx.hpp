@@ -66,6 +66,6 @@ private:
   } regs;
 };
 
-extern BSXBase  bsxbase;
-extern BSXCart  bsxcart;
-extern BSXFlash bsxflash;
+extern BSXBase  *bsxbase;
+extern BSXCart  *bsxcart;
+extern BSXFlash *bsxflash;

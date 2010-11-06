@@ -3,7 +3,7 @@
 #define SDD1_CPP
 namespace SNES {
 
-SDD1 sdd1;
+SDD1 *sdd1;
 
 #include "serialization.cpp"
 #include "sdd1emu.cpp"

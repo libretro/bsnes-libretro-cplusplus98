@@ -39,4 +39,4 @@ private:
   } mmio;
 };
 
-extern MSU1 msu1;
+extern MSU1 *msu1;

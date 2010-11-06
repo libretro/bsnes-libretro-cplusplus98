@@ -1,6 +1,6 @@
 #ifdef BSX_CPP
 
-BSXFlash bsxflash;
+BSXFlash *bsxflash;
 
 void BSXFlash::init() {}
 void BSXFlash::enable() {}

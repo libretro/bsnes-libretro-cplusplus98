@@ -41,4 +41,4 @@ private:
   void op_01(int16 x0, int16 y0, int16 &x1, int16 &y1, int16 &quadrant, int16 &theta);
 };
 
-extern ST0010 st0010;
+extern ST0010 *st0010;

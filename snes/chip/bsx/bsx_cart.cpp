@@ -1,6 +1,6 @@
 #ifdef BSX_CPP
 
-BSXCart bsxcart;
+BSXCart *bsxcart;
 
 void BSXCart::init() {
 }
@@ -21,7 +21,7 @@ void BSXCart::reset() {
 }
 
 void BSXCart::update_memory_map() {
-  Memory &cart = (regs.r[0x01] & 0x80) == 0x00 ? (Memory&)bsxflash : (Memory&)memory::bsxpram;
+  Memory &cart = (regs.r[0x01] & 0x80) == 0x00 ? (Memory&)(*bsxflash) : (Memory&)memory::bsxpram;
 
   if((regs.r[0x02] & 0x80) == 0x00) {
     //LoROM mapping

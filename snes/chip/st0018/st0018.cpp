@@ -3,7 +3,7 @@
 #define ST0018_CPP
 namespace SNES {
 
-ST0018 st0018;
+ST0018 *st0018;
 
 uint8 ST0018::mmio_read(unsigned addr) {
   addr &= 0xffff;

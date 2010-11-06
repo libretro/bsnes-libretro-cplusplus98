@@ -8,7 +8,7 @@ uint8 SuperFX::op_read(uint16 addr) {
       unsigned sp = (regs.pbr << 16) + ((regs.cbr + dp) & 0xfff0);
       for(unsigned n = 0; n < 16; n++) {
         add_clocks(memory_access_speed);
-        cache.buffer[dp++] = superfxbus.read(sp++);
+        cache.buffer[dp++] = superfxbus->read(sp++);
       }
       cache.valid[offset >> 4] = true;
     } else {
@@ -21,12 +21,12 @@ uint8 SuperFX::op_read(uint16 addr) {
     //$[00-5f]:[0000-ffff] ROM
     rombuffer_sync();
     add_clocks(memory_access_speed);
-    return superfxbus.read((regs.pbr << 16) + addr);
+    return superfxbus->read((regs.pbr << 16) + addr);
   } else {
     //$[60-7f]:[0000-ffff] RAM
     rambuffer_sync();
     add_clocks(memory_access_speed);
-    return superfxbus.read((regs.pbr << 16) + addr);
+    return superfxbus->read((regs.pbr << 16) + addr);
   }
 }
 

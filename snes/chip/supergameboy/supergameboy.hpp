@@ -40,4 +40,4 @@ private:
   friend class Cartridge;
 };
 
-extern SuperGameBoy supergameboy;
+extern SuperGameBoy *supergameboy;

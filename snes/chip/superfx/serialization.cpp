@@ -3,7 +3,7 @@
 void SuperFX::serialize(serializer &s) {
   Processor::serialize(s);
 
-  //superfx.hpp
+  //superfx->hpp
   s.integer(clockmode);
   s.integer(instruction_counter);
 

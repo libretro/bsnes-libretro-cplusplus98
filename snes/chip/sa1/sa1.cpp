@@ -3,7 +3,7 @@
 #define SA1_CPP
 namespace SNES {
 
-SA1 sa1;
+SA1 *sa1;
 
 #include "serialization.cpp"
 #include "bus/bus.cpp"
@@ -11,7 +11,7 @@ SA1 sa1;
 #include "memory/memory.cpp"
 #include "mmio/mmio.cpp"
 
-void SA1::Enter() { sa1.enter(); }
+void SA1::Enter() { sa1->enter(); }
 
 void SA1::enter() {
   while(true) {
@@ -125,7 +125,7 @@ void SA1::power() {
   regs.a = regs.x = regs.y = 0x0000;
   regs.s = 0x01ff;
   vbrbus.init();
-  sa1bus.init();
+  sa1bus->init();
   reset();
 }
 

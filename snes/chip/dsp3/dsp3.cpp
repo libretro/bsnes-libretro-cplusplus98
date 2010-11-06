@@ -3,7 +3,7 @@
 #define DSP3_CPP
 namespace SNES {
 
-DSP3 dsp3;
+DSP3 *dsp3;
 
 namespace DSP3i {
   #define bool8 uint8

@@ -3,7 +3,7 @@
 #define ST0011_CPP
 namespace SNES {
 
-ST0011 st0011;
+ST0011 *st0011;
 
 void ST0011::init() {
 }

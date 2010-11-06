@@ -48,4 +48,4 @@ private:
   void op_query_chip();
 };
 
-extern ST0018 st0018;
+extern ST0018 *st0018;

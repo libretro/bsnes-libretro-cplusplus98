@@ -1,6 +1,6 @@
 #ifdef BSX_CPP
 
-BSXBase bsxbase;
+BSXBase *bsxbase;
 
 void BSXBase::init() {
 }

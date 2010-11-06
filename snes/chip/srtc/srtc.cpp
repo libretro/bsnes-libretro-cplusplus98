@@ -6,7 +6,7 @@
 using std::numeric_limits;
 namespace SNES {
 
-SRTC srtc;
+SRTC *srtc;
 
 #include "serialization.cpp"
 

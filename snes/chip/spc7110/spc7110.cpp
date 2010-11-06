@@ -5,10 +5,10 @@
 using std::numeric_limits;
 namespace SNES {
 
-SPC7110 spc7110;
-SPC7110MCU spc7110mcu;
-SPC7110DCU spc7110dcu;
-SPC7110RAM spc7110ram;
+SPC7110 *spc7110;
+SPC7110MCU *spc7110mcu;
+SPC7110DCU *spc7110dcu;
+SPC7110RAM *spc7110ram;
 
 #include "serialization.cpp"
 #include "decomp.cpp"
@@ -645,9 +645,9 @@ unsigned SPC7110MCU::size() const {
 }
 
 uint8 SPC7110MCU::read(unsigned addr) {
-  if(addr <= 0xdfffff) return memory::cartrom.read(spc7110.dx_offset + (addr & 0x0fffff));
-  if(addr <= 0xefffff) return memory::cartrom.read(spc7110.ex_offset + (addr & 0x0fffff));
-  if(addr <= 0xffffff) return memory::cartrom.read(spc7110.fx_offset + (addr & 0x0fffff));
+  if(addr <= 0xdfffff) return memory::cartrom.read(spc7110->dx_offset + (addr & 0x0fffff));
+  if(addr <= 0xefffff) return memory::cartrom.read(spc7110->ex_offset + (addr & 0x0fffff));
+  if(addr <= 0xffffff) return memory::cartrom.read(spc7110->fx_offset + (addr & 0x0fffff));
   return cpu->regs.mdr;
 }
 
@@ -659,7 +659,7 @@ void SPC7110MCU::write(unsigned addr, uint8 data) {
 //==========
 
 uint8 SPC7110DCU::read(unsigned) {
-  return spc7110.mmio_read(0x4800);
+  return spc7110->mmio_read(0x4800);
 }
 
 void SPC7110DCU::write(unsigned, uint8) {
@@ -678,7 +678,7 @@ uint8 SPC7110RAM::read(unsigned addr) {
 }
 
 void SPC7110RAM::write(unsigned addr, uint8 data) {
-  if(spc7110.r4830 & 0x80) memory::cartram.write(addr & 0x1fff, data);
+  if(spc7110->r4830 & 0x80) memory::cartram.write(addr & 0x1fff, data);
 }
 
 }

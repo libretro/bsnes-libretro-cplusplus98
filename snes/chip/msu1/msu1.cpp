@@ -3,11 +3,11 @@
 #define MSU1_CPP
 namespace SNES {
 
-MSU1 msu1;
+MSU1 *msu1;
 
 #include "serialization.cpp"
 
-void MSU1::Enter() { msu1.enter(); }
+void MSU1::Enter() { msu1->enter(); }
 
 void MSU1::enter() {
   while(true) {

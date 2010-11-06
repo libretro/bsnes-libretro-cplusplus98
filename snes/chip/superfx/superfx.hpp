@@ -21,5 +21,5 @@ private:
   unsigned instruction_counter;
 };
 
-extern SuperFX superfx;
-extern SuperFXBus superfxbus;
+extern SuperFX *superfx;
+extern SuperFXBus *superfxbus;

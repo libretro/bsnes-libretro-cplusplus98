@@ -3,7 +3,7 @@
 #define DSP4_CPP
 namespace SNES {
 
-DSP4 dsp4;
+DSP4 *dsp4;
 
 void DSP4::init() {
 }

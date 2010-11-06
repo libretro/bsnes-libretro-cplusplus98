@@ -3,15 +3,15 @@
 #define SERIAL_CPP
 namespace SNES {
 
-Serial serial;
+Serial *serial;
 
 #include "serialization.cpp"
 
-static void snesserial_tick(unsigned clocks) { serial.add_clocks(clocks * 8); }
-static uint8 snesserial_read() { return serial.read(); }
-static void snesserial_write(uint8 data) { serial.write(data); }
+static void snesserial_tick(unsigned clocks) { serial->add_clocks(clocks * 8); }
+static uint8 snesserial_read() { return serial->read(); }
+static void snesserial_write(uint8 data) { serial->write(data); }
 
-void Serial::Enter() { serial.enter(); }
+void Serial::Enter() { serial->enter(); }
 
 void Serial::enter() {
   data1 = 0;

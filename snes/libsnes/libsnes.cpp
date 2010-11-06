@@ -225,11 +225,11 @@ uint8_t* snes_get_memory_data(unsigned id) {
       return SNES::memory::stBram.data();
     case SNES_MEMORY_GAME_BOY_RAM:
       if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SuperGameBoy) break;
-      SNES::supergameboy.save();
+      SNES::supergameboy->save();
       return SNES::memory::gbram.data();
     case SNES_MEMORY_GAME_BOY_RTC:
       if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SuperGameBoy) break;
-      SNES::supergameboy.save();
+      SNES::supergameboy->save();
       return SNES::memory::gbrtc.data();
   }
 

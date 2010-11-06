@@ -25,4 +25,4 @@ private:
   function<void (void (*)(unsigned), uint8_t (*)(), void (*)(uint8_t))> main;
 };
 
-extern Serial serial;
+extern Serial *serial;

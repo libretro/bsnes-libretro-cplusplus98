@@ -3,11 +3,11 @@
 #define SUPERGAMEBOY_CPP
 namespace SNES {
 
-SuperGameBoy supergameboy;
+SuperGameBoy *supergameboy;
 
 #include "serialization.cpp"
 
-void SuperGameBoy::Enter() { supergameboy.enter(); }
+void SuperGameBoy::Enter() { supergameboy->enter(); }
 
 void SuperGameBoy::enter() {
   if(!sgb_run) while(true) {

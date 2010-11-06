@@ -25,6 +25,6 @@ class DSP1SR : public Memory {
   void write(unsigned addr, uint8 data);
 };
 
-extern DSP1 dsp1;
-extern DSP1DR dsp1dr;
-extern DSP1SR dsp1sr;
+extern DSP1 *dsp1;
+extern DSP1DR *dsp1dr;
+extern DSP1SR *dsp1sr;

@@ -11,9 +11,9 @@ namespace SNES {
 #include "timing/timing.cpp"
 #include "disasm/disasm.cpp"
 
-SuperFX superfx;
+SuperFX *superfx;
 
-void SuperFX::Enter() { superfx.enter(); }
+void SuperFX::Enter() { superfx->enter(); }
 
 void SuperFX::enter() {
   while(true) {
@@ -53,7 +53,7 @@ void SuperFX::power() {
 
 void SuperFX::reset() {
   create(SuperFX::Enter, system->cpu_frequency());
-  superfxbus.init();
+  superfxbus->init();
   instruction_counter = 0;
 
   for(unsigned n = 0; n < 16; n++) regs.r[n] = 0x0000;

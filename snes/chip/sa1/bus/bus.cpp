@@ -1,7 +1,7 @@
 #ifdef SA1_CPP
 
 VBRBus vbrbus;
-SA1Bus sa1bus;
+SA1Bus *sa1bus;
 
 namespace memory {
   StaticRAM iram(2048);
@@ -73,10 +73,10 @@ unsigned VSPROM::size() const {
 uint8 VSPROM::read(unsigned addr) {
   //use $7fex instead of $ffex due to linear mapping of 32k granularity ROM data
   if((addr & 0xffffe0) == 0x007fe0) {
-    if(addr == 0x7fea && sa1.mmio.cpu_nvsw) return sa1.mmio.snv >> 0;
-    if(addr == 0x7feb && sa1.mmio.cpu_nvsw) return sa1.mmio.snv >> 8;
-    if(addr == 0x7fee && sa1.mmio.cpu_ivsw) return sa1.mmio.siv >> 0;
-    if(addr == 0x7fef && sa1.mmio.cpu_ivsw) return sa1.mmio.siv >> 8;
+    if(addr == 0x7fea && sa1->mmio.cpu_nvsw) return sa1->mmio.snv >> 0;
+    if(addr == 0x7feb && sa1->mmio.cpu_nvsw) return sa1->mmio.snv >> 8;
+    if(addr == 0x7fee && sa1->mmio.cpu_ivsw) return sa1->mmio.siv >> 0;
+    if(addr == 0x7fef && sa1->mmio.cpu_ivsw) return sa1->mmio.siv >> 8;
   }
   return memory::cartrom.read(addr);
 }
@@ -93,12 +93,12 @@ unsigned SA1IRAM::size() const {
 }
 
 uint8 SA1IRAM::read(unsigned addr) {
-  sa1.synchronize_cpu();
+  sa1->synchronize_cpu();
   return memory::iram.read(addr);
 }
 
 void SA1IRAM::write(unsigned addr, uint8 data) {
-  sa1.synchronize_cpu();
+  sa1->synchronize_cpu();
   memory::iram.write(addr, data);
 }
 
@@ -129,12 +129,12 @@ unsigned SA1BWRAM::size() const {
 }
 
 uint8 SA1BWRAM::read(unsigned addr) {
-  sa1.synchronize_cpu();
+  sa1->synchronize_cpu();
   return memory::cartram.read(addr);
 }
 
 void SA1BWRAM::write(unsigned addr, uint8 data) {
-  sa1.synchronize_cpu();
+  sa1->synchronize_cpu();
   memory::cartram.write(addr, data);
 }
 
@@ -148,7 +148,7 @@ unsigned CC1BWRAM::size() const {
 
 uint8 CC1BWRAM::read(unsigned addr) {
   cpu->synchronize_coprocessor();
-  if(dma) return sa1.dma_cc1_read(addr);
+  if(dma) return sa1->dma_cc1_read(addr);
   return memory::cartram.read(addr);
 }
 
@@ -166,9 +166,9 @@ unsigned BitmapRAM::size() const {
 }
 
 uint8 BitmapRAM::read(unsigned addr) {
-  sa1.synchronize_cpu();
+  sa1->synchronize_cpu();
 
-  if(sa1.mmio.bbf == 0) {
+  if(sa1->mmio.bbf == 0) {
     //4bpp
     unsigned shift = addr & 1;
     addr = (addr >> 1) & (memory::cartram.size() - 1);
@@ -190,9 +190,9 @@ uint8 BitmapRAM::read(unsigned addr) {
 }
 
 void BitmapRAM::write(unsigned addr, uint8 data) {
-  sa1.synchronize_cpu();
+  sa1->synchronize_cpu();
 
-  if(sa1.mmio.bbf == 0) {
+  if(sa1->mmio.bbf == 0) {
     //4bpp
     unsigned shift = addr & 1;
     addr = (addr >> 1) & (memory::cartram.size() - 1);

@@ -3,7 +3,7 @@
 #define OBC1_CPP
 namespace SNES {
 
-OBC1 obc1;
+OBC1 *obc1;
 
 #include "serialization.cpp"
 

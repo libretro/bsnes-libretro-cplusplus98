@@ -92,4 +92,4 @@ public:
   void   writel(uint16 addr, uint32 data);
 };
 
-extern Cx4 cx4;
+extern Cx4 *cx4;

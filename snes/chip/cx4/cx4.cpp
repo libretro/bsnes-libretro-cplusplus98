@@ -9,7 +9,7 @@
 #define CX4_CPP
 namespace SNES {
 
-Cx4 cx4;
+Cx4 *cx4;
 
 #include "serialization.cpp"
 #include "data.cpp"

@@ -4,7 +4,7 @@ void SA1::serialize(serializer &s) {
   Processor::serialize(s);
   CPUcore::core_serialize(s);
 
-  //sa1.hpp
+  //sa1->hpp
   s.integer(status.tick_counter);
 
   s.integer(status.interrupt_pending);

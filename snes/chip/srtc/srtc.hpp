@@ -21,4 +21,4 @@ private:
   unsigned weekday(unsigned year, unsigned month, unsigned day);
 };
 
-extern SRTC srtc;
+extern SRTC *srtc;

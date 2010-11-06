@@ -3,7 +3,7 @@
 #define ST0010_CPP
 namespace SNES {
 
-ST0010 st0010;
+ST0010 *st0010;
 
 #include "data.hpp"
 #include "opcodes.cpp"

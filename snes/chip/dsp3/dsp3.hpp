@@ -9,4 +9,4 @@ public:
   void  write(unsigned addr, uint8 data);
 };
 
-extern DSP3 dsp3;
+extern DSP3 *dsp3;
