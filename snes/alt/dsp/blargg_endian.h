@@ -5,6 +5,7 @@
 #define BLARGG_ENDIAN
 
 #include "blargg_common.h"
+#include <ppu_intrinsics.h>
 
 // BLARGG_CPU_CISC: Defined if CPU has very few general-purpose registers (< 16)
 #if defined (_M_IX86) || defined (_M_IA64) || defined (__i486__) || \
@@ -136,17 +137,10 @@ inline void set_be32( void* p, blargg_ulong n )
 		
 		#if BLARGG_CPU_POWERPC
 			// PowerPC has special byte-reversed instructions
-			#if defined (__MWERKS__)
-				#define GET_LE16( addr )        (__lhbrx( addr, 0 ))
-				#define GET_LE32( addr )        (__lwbrx( addr, 0 ))
-				#define SET_LE16( addr, in )    (__sthbrx( in, addr, 0 ))
-				#define SET_LE32( addr, in )    (__stwbrx( in, addr, 0 ))
-			#elif defined (__GNUC__)
-				#define GET_LE16( addr )        ({unsigned ppc_lhbrx_; asm( "lhbrx %0,0,%1" : "=r" (ppc_lhbrx_) : "r" (addr), "0" (ppc_lhbrx_) ); ppc_lhbrx_;})
-				#define GET_LE32( addr )        ({unsigned ppc_lwbrx_; asm( "lwbrx %0,0,%1" : "=r" (ppc_lwbrx_) : "r" (addr), "0" (ppc_lwbrx_) ); ppc_lwbrx_;})
-				#define SET_LE16( addr, in )    ({asm( "sthbrx %0,0,%1" : : "r" (in), "r" (addr) );})
-				#define SET_LE32( addr, in )    ({asm( "stwbrx %0,0,%1" : : "r" (in), "r" (addr) );})
-			#endif
+         #define GET_LE16( addr )        __lhbrx( addr )
+         #define GET_LE32( addr )        __lwbrx( addr )
+         #define SET_LE16( addr, in )    __sthbrx( addr, in )
+         #define SET_LE32( addr, in )    __stwbrx( addr, in )
 		#endif
 	#endif
 #endif
