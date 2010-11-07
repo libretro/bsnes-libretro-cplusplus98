@@ -54,8 +54,6 @@ bool PPU::Sprite::on_scanline(unsigned sprite) {
 void PPU::Sprite::render() {
   if(list_valid == false) {
     list_valid = true;
-    static unsigned widths[] =  { 8, 8, 8, 16, 16, 32, 16, 16, 16, 32, 64, 32, 64, 64, 32, 32 };
-    static unsigned heights[] = { 8, 8, 8, 16, 16, 32, 32, 32, 16, 32, 64, 32, 64, 64, 64, 32 };
 #if 0
     for(unsigned i = 0; i < 128; i++) {
       if(list[i].size == 0) {
@@ -72,6 +70,8 @@ void PPU::Sprite::render() {
       }
     }
 #endif
+    static unsigned widths[] =  { 8, 8, 8, 16, 16, 32, 16, 16, 16, 32, 64, 32, 64, 64, 32, 32 };
+    static unsigned heights[] = { 8, 8, 8, 16, 16, 32, 32, 32, 16, 32, 64, 32, 64, 64, 64, 32 };
     for (unsigned i = 0; i < 128; i++)
     {
        unsigned shift = ((bool)list[i].size) << 3;
@@ -109,9 +109,11 @@ void PPU::Sprite::render() {
       }
     }
 
-    if(regs.interlace) {
-      y = (s.vflip == false) ? (y + self.field()) : (y - self.field());
-    }
+    //if(regs.interlace) {
+    //  y = (s.vflip == false) ? (y + self.field()) : (y - self.field());
+    //}
+    int field = self.field();
+    y += (int64_t)(((uint64_t)((((uint64_t)(-field) << 16) & 0xFFFF0000) | field)) >> (((regs.interlace ^ 1) << 5) | (s.vflip << 4))) & 0xFFFF;
 
     x &= 511;
     y &= 255;
