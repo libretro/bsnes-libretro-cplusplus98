@@ -10,9 +10,9 @@ alwaysinline unsigned PPU::Background::get_tile(const unsigned hoffset, const un
   tile_pos += scy & ((-(int)(tile_y & 0x20)) >> 31);
   tile_pos += scx & ((-(int)(tile_x & 0x20)) >> 31);
 
-  const uint64_t tiledata_addr = (regs.screen_addr >> 1) + tile_pos;
+  const uint64_t tiledata_addr = regs.screen_addr + (tile_pos << 1);
   // BIG ENDIAN CODE!
-  return __lhbrx((uint16_t*)vram + tiledata_addr);
+  return __lhbrx(vram + tiledata_addr);
 }
 
 void PPU::Background::offset_per_tile(unsigned x, unsigned y, unsigned &hoffset, unsigned &voffset) {
@@ -125,7 +125,8 @@ void PPU::Background::render() {
     tile_num = get_tile(hoffset, voffset);
     mirror_y = tile_num & 0x8000;
     mirror_x = tile_num & 0x4000;
-    tile_pri = tile_num & 0x2000 ? priority1 : priority0;
+    //tile_pri = tile_num & 0x2000 ? priority1 : priority0;
+    tile_pri = (((priority1 << 16) | priority0) >> ((tile_num & 0x2000) >> 9)) & 0xFFFF;
     pal_num = (tile_num >> 10) & 7;
     pal_index = (bgpal_index + (pal_num << pal_size)) & 0xff;
 
@@ -134,8 +135,10 @@ void PPU::Background::render() {
     tile_num += (((tile_width >> 2) & 1) & (((hoffset >> 3) & 1) ^ mirror_x)) | (((tile_height & 4) << 2) & (((voffset & 8) << 1) ^ (mirror_y << 4)));
     tile_num = ((tile_num & 0x03ff) + tiledata_index) & tile_mask;
 
-    voffset ^= mirror_y * 7;
-    unsigned mirror_xmask = mirror_x * 7;
+    //voffset ^= mirror_y * 7;
+    //unsigned mirror_xmask = mirror_x * 7;
+    voffset ^= 7 & ((-(int)mirror_y) >> 31);
+    unsigned mirror_xmask = 7 & ((-(int)mirror_x) >> 31);
 
     uint8 *tiledata = self.cache.tile(regs.mode, tile_num);
     tiledata += ((voffset & 7) << 3);
@@ -154,19 +157,6 @@ void PPU::Background::render() {
       }
       if(mosaic_palette == 0) continue;
 
-#if 0
-      if(!hires) {
-        if(regs.main_enable && !window.main[x]) self.screen.output.plot_main(x, mosaic_color, mosaic_priority, id);
-        if(regs.sub_enable && !window.sub[x]) self.screen.output.plot_sub(x, mosaic_color, mosaic_priority, id);
-      } else {
-        signed half_x = x >> 1;
-        if(x & 1) {
-          if(regs.main_enable && !window.main[half_x]) self.screen.output.plot_main(half_x, mosaic_color, mosaic_priority, id);
-        } else {
-          if(regs.sub_enable && !window.sub[half_x]) self.screen.output.plot_sub(half_x, mosaic_color, mosaic_priority, id);
-        }
-      }
-#endif
       if (hires)
       {
          signed half_x = x >> 1;
