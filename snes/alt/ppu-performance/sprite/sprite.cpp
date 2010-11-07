@@ -54,19 +54,29 @@ bool PPU::Sprite::on_scanline(unsigned sprite) {
 void PPU::Sprite::render() {
   if(list_valid == false) {
     list_valid = true;
+    static unsigned widths[] =  { 8, 8, 8, 16, 16, 32, 16, 16, 16, 32, 64, 32, 64, 64, 32, 32 };
+    static unsigned heights[] = { 8, 8, 8, 16, 16, 32, 32, 32, 16, 32, 64, 32, 64, 64, 64, 32 };
+#if 0
     for(unsigned i = 0; i < 128; i++) {
       if(list[i].size == 0) {
-        static unsigned width[]  = { 8, 8, 8, 16, 16, 32, 16, 16 };
-        static unsigned height[] = { 8, 8, 8, 16, 16, 32, 32, 32 };
+        static unsigned width_0[]  = { 8, 8, 8, 16, 16, 32, 16, 16 };
+        static unsigned height_0[] = { 8, 8, 8, 16, 16, 32, 32, 32 };
         list[i].width = width[regs.base_size];
         list[i].height = height[regs.base_size];
       } else {
-        static unsigned width[]  = { 16, 32, 64, 32, 64, 64, 32, 32 };
-        static unsigned height[] = { 16, 32, 64, 32, 64, 64, 64, 32 };
-        list[i].width = width[regs.base_size];
+        static unsigned width_1[]  = { 16, 32, 64, 32, 64, 64, 32, 32 };
+        static unsigned height_1[] = { 16, 32, 64, 32, 64, 64, 64, 32 };
+        list[i].width = width_1[regs.base_size];
         list[i].height = height[regs.base_size];
         if(regs.interlace && regs.base_size >= 6) list[i].height = 16;
       }
+    }
+#endif
+    for (unsigned i = 0; i < 128; i++)
+    {
+       unsigned shift = ((bool)list[i].size) << 3;
+       list[i].width = widths[regs.base_size + shift];
+       list[i].height = (((16 << 16) | heights[regs.base_size + shift]) >> ((regs.interlace && regs.base_size >= 6 && shift) << 4)) & 0xFFFF;
     }
   }
 
