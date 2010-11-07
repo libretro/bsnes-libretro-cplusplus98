@@ -49,7 +49,7 @@ void PPU::LayerWindow::render(bool screen) {
     }
 #endif
     output[x] = ((((one_mask | two_mask == 1) << 0) | ((one_mask & two_mask == 1) << 1) |
-       ((output[x] = one_mask ^ two_mask == 1) << 2) | ((one_mask ^ two_mask == 0) << 3)) >> mask) & 1;
+       ((one_mask ^ two_mask == 1) << 2) | ((one_mask ^ two_mask == 0) << 3)) >> mask) & 1;
   }
 }
 
