@@ -17,7 +17,7 @@ namespace SNES {
 
 void SMP::step(unsigned clocks) {
   clock += clocks * (uint64)cpu->frequency;
-  dsp->clock -= clocks;
+  m_dsp->clock -= clocks;
 }
 
 void SMP::synchronize_cpu() {
@@ -30,9 +30,9 @@ void SMP::synchronize_cpu() {
 
 void SMP::synchronize_dsp() {
   if(DSP::Threaded == true) {
-    if(dsp->clock < 0 && scheduler->sync.i != Scheduler::SynchronizeMode::All) co_switch(dsp->thread);
+    if(m_dsp->clock < 0 && scheduler->sync.i != Scheduler::SynchronizeMode::All) co_switch(m_dsp->thread);
   } else {
-    while(dsp->clock < 0) dsp->enter();
+    while(m_dsp->clock < 0) m_dsp->enter();
   }
 }
 
@@ -122,7 +122,7 @@ void SMP::reset() {
   t2.enabled = false;
 }
 
-SMP::SMP() {
+SMP::SMP() : m_dsp(dsp) {
 }
 
 SMP::~SMP() {

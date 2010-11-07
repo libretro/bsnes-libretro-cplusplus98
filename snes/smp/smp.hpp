@@ -1,3 +1,4 @@
+class DSP;
 class SMP : public Processor, public SMPcore {
 public:
   enum{ Threaded = true };
@@ -20,6 +21,7 @@ private:
   #include "memory/memory.hpp"
   #include "timing/timing.hpp"
 
+  DSP *m_dsp;
   static const uint8 iplrom[64];
 
   struct {
