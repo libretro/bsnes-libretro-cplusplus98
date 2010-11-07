@@ -40,12 +40,16 @@ void PPU::LayerWindow::render(bool screen) {
   for(unsigned x = 0; x < 256; x++) {
     bool one_mask = (x >= ppu->regs.window_one_left && x <= ppu->regs.window_one_right) ^ one_invert;
     bool two_mask = (x >= ppu->regs.window_two_left && x <= ppu->regs.window_two_right) ^ two_invert;
+#if 0
     switch(mask) {
       case 0: output[x] = one_mask | two_mask == 1; break;
       case 1: output[x] = one_mask & two_mask == 1; break;
       case 2: output[x] = one_mask ^ two_mask == 1; break;
       case 3: output[x] = one_mask ^ two_mask == 0; break;
     }
+#endif
+    output[x] = ((((one_mask | two_mask == 1) << 0) | ((one_mask & two_mask == 1) << 1) |
+       ((output[x] = one_mask ^ two_mask == 1) << 2) | ((one_mask ^ two_mask == 0) << 3)) >> mask) & 1;
   }
 }
 
