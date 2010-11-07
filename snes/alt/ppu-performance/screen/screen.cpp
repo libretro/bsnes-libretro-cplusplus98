@@ -1,6 +1,9 @@
 #ifdef PPU_CPP
 
-unsigned PPU::Screen::get_palette(unsigned color) {
+#include <ppu_intrinsics.h>
+
+unsigned PPU::Screen::get_palette(const unsigned color) const {
+#if 0
   #if defined(ARCH_LSB)
   static uint16 *cgram = (uint16*)memory::cgram.data();
   return cgram[color];
@@ -8,15 +11,18 @@ unsigned PPU::Screen::get_palette(unsigned color) {
   color <<= 1;
   return (memory::cgram[color + 0] << 0) + (memory::cgram[color + 1] << 8);
   #endif
+#endif
+  // BIG ENDIAN!!
+  return __lhbrx(cgram + (color << 1));
 }
 
-unsigned PPU::Screen::get_direct_color(unsigned p, unsigned t) {
+unsigned PPU::Screen::get_direct_color(const unsigned p, const unsigned t) const {
   return ((t & 7) << 2) | ((p & 1) << 1) |
          (((t >> 3) & 7) << 7) | (((p >> 1) & 1) << 6) |
          ((t >> 6) << 13) | ((p >> 2) << 12);
 }
 
-uint16 PPU::Screen::addsub(unsigned x, unsigned y, bool halve) {
+uint16 PPU::Screen::addsub(const unsigned x, const unsigned y, bool halve) const {
   if(!regs.color_mode) {
     if(!halve) {
       unsigned sum = x + y;
@@ -61,7 +67,7 @@ void PPU::Screen::render_black() {
   memset(data, 0, self.display.width << 1);
 }
 
-uint16 PPU::Screen::get_pixel_main(unsigned x) {
+uint16 PPU::Screen::get_pixel_main(const unsigned x) {
   typeof(output.main[0]) main = output.main[x];
   typeof(output.sub[0]) sub = output.sub[x];
 
@@ -88,7 +94,7 @@ uint16 PPU::Screen::get_pixel_main(unsigned x) {
   return main.color;
 }
 
-uint16 PPU::Screen::get_pixel_sub(unsigned x) {
+uint16 PPU::Screen::get_pixel_sub(const unsigned x) {
   typeof(output.sub[0]) main = output.sub[x];
   typeof(output.main[0]) sub = output.main[x];
 
@@ -132,7 +138,7 @@ void PPU::Screen::render() {
   }
 }
 
-PPU::Screen::Screen(PPU &self) : self(self) {
+PPU::Screen::Screen(PPU &self) : self(self), cgram(memory::cgram.data()) {
   light_table = (uint16_t**)memalign(128, 16 * sizeof(uint16_t*));
   for(uint64_t l = 0; l < 16; l++) {
     light_table[l] = (uint16_t*)memalign(128, 32768 * sizeof(uint16_t));
@@ -155,7 +161,7 @@ PPU::Screen::~Screen() {
   free(light_table);
 }
 
-void PPU::Screen::Output::plot_main(unsigned x, unsigned color, unsigned priority, unsigned source) {
+void PPU::Screen::Output::plot_main(const unsigned x, const unsigned color, const unsigned priority, const unsigned source) {
   if(priority > main[x].priority) {
     main[x].color = color;
     main[x].priority = priority;
@@ -163,7 +169,7 @@ void PPU::Screen::Output::plot_main(unsigned x, unsigned color, unsigned priorit
   }
 }
 
-void PPU::Screen::Output::plot_sub(unsigned x, unsigned color, unsigned priority, unsigned source) {
+void PPU::Screen::Output::plot_sub(const unsigned x, const unsigned color, const unsigned priority, const unsigned source) {
   if(priority > sub[x].priority) {
     sub[x].color = color;
     sub[x].priority = priority;

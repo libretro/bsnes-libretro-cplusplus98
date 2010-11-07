@@ -26,14 +26,15 @@ struct Screen {
 
   ColorWindow window;
   uint16 **light_table;
+  uint8 *cgram;
 
-  alwaysinline unsigned get_palette(unsigned color);
-  unsigned get_direct_color(unsigned palette, unsigned tile);
-  alwaysinline uint16 addsub(unsigned x, unsigned y, bool halve);
+  alwaysinline unsigned get_palette(const unsigned color) const;
+  unsigned get_direct_color(const unsigned palette, const unsigned tile) const;
+  alwaysinline uint16 addsub(const unsigned x, const unsigned y, const bool halve) const;
   void scanline();
   void render_black();
-  alwaysinline uint16 get_pixel_main(unsigned x);
-  alwaysinline uint16 get_pixel_sub(unsigned x);
+  alwaysinline uint16 get_pixel_main(const unsigned x);
+  alwaysinline uint16 get_pixel_sub(const unsigned x);
   void render();
 
   void serialize(serializer&);
