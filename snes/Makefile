@@ -69,6 +69,9 @@ obj/snes-serial.o      : $(snes)/chip/serial/serial.cpp $(snes)/chip/serial/*
 
 snes_objects := $(patsubst %,obj/%.o,$(snes_objects))
 
+static-library: $(snes_objects) obj/libsnes.o
+	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o
+
 library: $(snes_objects) obj/libsnes.o
 ifeq ($(platform),x)
 	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o

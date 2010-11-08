@@ -2,12 +2,14 @@ include nall/Makefile
 snes := snes
 profile := performance
 
+fpic = -fPIC
+
 # compiler
 c       := $(compiler) -std=gnu99
 cpp     := $(subst cc,++,$(compiler))
 #c := clang -std=gnu99
 #cpp := clang++
-flags   := -O3 -fomit-frame-pointer -I. -I$(snes) -fPIC
+flags   = -O3 -fomit-frame-pointer -I. -I$(snes) $(fpic)
 link    :=
 objects :=
 
@@ -29,9 +31,12 @@ compile = \
     ) \
   )
 
-
-
 all: library;
+
+set-static:
+	$(eval fpic := )
+
+static: set-static static-library;
 
 install: library-install;
 
@@ -46,6 +51,8 @@ clean:
 	-@$(call delete,obj/*.so)
 	-@$(call delete,obj/*.dylib)
 	-@$(call delete,obj/*.dll)
+	-@$(call delete,out/*.a)
+	-@$(call delete,out/*.so)
 	-@$(call delete,*.res)
 	-@$(call delete,*.pgd)
 	-@$(call delete,*.pgc)
