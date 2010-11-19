@@ -3,15 +3,7 @@ snes := snes
 profile := performance
 
 fpic = -fPIC
-
-# compiler
-c       := $(compiler) -std=gnu99
-cpp     := $(subst cc,++,$(compiler))
-#c := clang -std=gnu99
-#cpp := clang++
-flags   = -O3 -fomit-frame-pointer -I. -I$(snes) $(fpic)
-link    :=
-objects :=
+extraflags = -O3 -fomit-frame-pointer -I. -I$(snes) $(fpic)
 
 # profile-guided instrumentation
 # flags += -fprofile-generate
@@ -24,9 +16,9 @@ objects :=
 compile = \
   $(strip \
     $(if $(filter %.c,$<), \
-      $(c) $(flags) $1 -c $< -o $@, \
+      $(CC) $(CFLAGS) $(extraflags) $1 -c $< -o $@, \
       $(if $(filter %.cpp,$<), \
-        $(cpp) $(flags) $1 -c $< -o $@ \
+        $(CXX) $(CXXFLAGS) $(extraflags) $1 -c $< -o $@ \
       ) \
     ) \
   )

@@ -28,16 +28,6 @@ ifeq ($(platform),)
   endif
 endif
 
-ifeq ($(compiler),)
-  ifeq ($(platform),win)
-    compiler := gcc
-  else ifeq ($(platform),osx)
-    compiler := gcc-mp-4.4
-  else
-    compiler := gcc
-  endif
-endif
-
 ifeq ($(prefix),)
   prefix := /usr/local
 endif
