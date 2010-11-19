@@ -5,9 +5,8 @@ profile := performance
 fpic = -fPIC
 extraflags = -O3 -fomit-frame-pointer -I. -I$(snes) $(fpic)
 
-# profile-guided instrumentation
+# profile-guided instrumentation. Compile your frontend with this as well. :)
 # flags += -fprofile-generate
-# link += -lgcov
 
 # profile-guided optimization
 # flags += -fprofile-use
@@ -53,6 +52,6 @@ clean:
 	-@$(call delete,*.manifest)
 
 archive-all:
-	tar -cjf bsnes.tar.bz2 libco nall obj out snes Makefile cc.bat clean.bat sync.sh
+	tar -cjf libsnes.tar.bz2 libco nall obj out snes Makefile cc.bat clean.bat sync.sh
 
 help:;

@@ -11,19 +11,19 @@ snes_objects += snes-msu1 snes-serial
 objects += $(snes_objects)
 
 ifeq ($(profile),accuracy)
-  flags += -DPROFILE_ACCURACY
+  extraflags += -DPROFILE_ACCURACY
   snescpu := $(snes)/cpu
   snessmp := $(snes)/smp
   snesdsp := $(snes)/dsp
   snesppu := $(snes)/ppu
 else ifeq ($(profile),compatibility)
-  flags += -DPROFILE_COMPATIBILITY
+  extraflags += -DPROFILE_COMPATIBILITY
   snescpu := $(snes)/cpu
   snessmp := $(snes)/smp
   snesdsp := $(snes)/alt/dsp
   snesppu := $(snes)/alt/ppu-compatibility
 else ifeq ($(profile),performance)
-  flags += -DPROFILE_PERFORMANCE
+  extraflags += -DPROFILE_PERFORMANCE
   snescpu := $(snes)/alt/cpu
   snessmp := $(snes)/smp
   snesdsp := $(snes)/alt/dsp
@@ -75,18 +75,19 @@ static-library: $(snes_objects) obj/libsnes.o
 library: $(snes_objects) obj/libsnes.o
 ifeq ($(platform),x)
 	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o
-	$(cpp) -o out/libsnes.so -fPIC -shared -Wl,-soname,libsnes.so.1 $(snes_objects) obj/libsnes.o
+	$(CXX) -o out/libsnes.so -fPIC -shared -Wl,-soname,libsnes.so.1 $(snes_objects) obj/libsnes.o
 else ifeq ($(platform),osx)
 	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o
-	$(cpp) -o out/libsnes.dylib -install_name @executable_path/../Libraries/libsnes.dylib -shared -dynamiclib $(snes_objects) obj/libsnes.o
+	$(CXX) -o out/libsnes.dylib -install_name @executable_path/../Libraries/libsnes.dylib -shared -dynamiclib $(snes_objects) obj/libsnes.o
 else ifeq ($(platform),win)
-	$(cpp) -o out/snes.dll -shared -Wl,--out-implib,libsnes.a $(snes_objects) obj/libsnes.o
+	$(CXX) -o out/snes.dll -shared -Wl,--out-implib,libsnes.a $(snes_objects) obj/libsnes.o
 endif
 
 library-install:
 ifeq ($(platform),x)
 	install -D -m 755 out/libsnes.a $(DESTDIR)$(prefix)/lib/libsnes.a
 	install -D -m 755 out/libsnes.so $(DESTDIR)$(prefix)/lib/libsnes.so
+	install -D -m 644 snes/libsnes/libsnes.hpp $(DESTDIR)$(prefix)/include/libsnes.hpp
 	ldconfig -n $(DESTDIR)$(prefix)/lib
 else ifeq ($(platform),osx)
 	cp out/libsnes.dylib /usr/local/lib/libsnes.dylib
@@ -99,3 +100,4 @@ ifeq ($(platform),x)
 else ifeq ($(platform),osx)
 	rm /usr/local/lib/libsnes.dylib
 endif
+
