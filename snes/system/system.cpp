@@ -92,6 +92,9 @@ void System::init(Interface *interface_) {
   video.init();
   audio.init();
   input.init();
+
+  input.port_set_device(0, config.controller_port1.i);
+  input.port_set_device(1, config.controller_port2.i);
 }
 
 void System::term() {
@@ -173,8 +176,6 @@ void System::power() {
 
   scheduler.init();
 
-  input.port_set_device(0, config.controller_port1.i);
-  input.port_set_device(1, config.controller_port2.i);
   input.update();
 //video.update();
 }

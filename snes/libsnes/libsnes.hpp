@@ -205,6 +205,7 @@ void snes_set_input_state(snes_input_state_t);
    it safe to call this method from inside the input state callback?
 */
 void snes_set_controller_port_device(bool port, unsigned device);
+void snes_set_cartridge_basename(const char *basename);
 
 // Initializes library
 void snes_init(void);
