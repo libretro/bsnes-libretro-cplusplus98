@@ -10,6 +10,9 @@ extern "C" {
 #define SNES_PORT_1  0
 #define SNES_PORT_2  1
 
+#define SNES_REGION_NTSC 0
+#define SNES_REGION_PAL 1
+
 #define SNES_DEVICE_NONE         0
 #define SNES_DEVICE_JOYPAD       1
 #define SNES_DEVICE_MULTITAP     2
