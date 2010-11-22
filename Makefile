@@ -12,15 +12,13 @@ else
 endif
 # SDK compiler
 compiler := $(CELL_SDK)/$(HOST_DIR)/ppu/bin/ppu-lv2-gcc
-compiler := $(CELL_SDK)/sn/ps3ppusnc
 
 c       := $(compiler) -std=gnu99
-#cpp     := $(subst cc,++,$(compiler))
-cpp := $(c)
+cpp     := $(subst cc,++,$(compiler))
 as      := $(subst gcc,as,$(compiler))
 #flags   := -O2 -I. -I$(snes) -DLIBSNES_DEBUG -DLIBCO_PPC_FP -DLIBCO_PPC_ALTIVEC
-flags   := -O3 -funroll-loops -I. -I$(snes) -DBLARGG_NONPORTABLE
-#cxxflags := -fno-rtti -fno-exceptions
+flags   := -O3 -funroll-loops -I. -I$(snes) -fstrict-aliasing -mcpu=cell -mtune=cell -DBLARGG_NONPORTABLE -ftree-vectorize -maltivec -mbase-toc
+cxxflags := -fno-rtti -fno-exceptions
 #flags   := -O2 -I. -I$(snes)
 #flags   := -g -I. -I$(snes) -fpic
 link    :=

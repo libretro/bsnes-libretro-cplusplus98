@@ -30,7 +30,7 @@ else ifeq ($(profile),performance)
 endif
 
 libco_obj := obj/libco.o
-obj/libco.o : libco/ppc.c
+obj/libco.o : libco/libco.c
 
 obj/libsnes.o: $(snes)/libsnes/libsnes.cpp $(snes)/libsnes/*
 
