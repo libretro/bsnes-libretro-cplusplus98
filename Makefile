@@ -6,10 +6,10 @@ fpic = -fPIC
 extraflags = -O3 -fomit-frame-pointer -I. -I$(snes) $(fpic)
 
 # profile-guided instrumentation. Compile your frontend with this as well. :)
-# extraflags += -fprofile-generate -fprofile-arcs
+# extraflags += -fprofile-generate --coverage
 
 # profile-guided optimization
-# extraflags += -fprofile-use -fbranch-probabilities
+# extraflags += -fprofile-use
 
 # implicit rules
 compile = \
