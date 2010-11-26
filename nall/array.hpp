@@ -77,7 +77,7 @@ namespace nall {
     }
 
     void clear() {
-      memset(pool, 0, buffersize * sizeof(T));
+       memset(pool, 0, buffersize * sizeof(T));
     }
 
     array() : pool(0), poolsize(0), buffersize(0) {
