@@ -37,15 +37,12 @@ public:
   readonly<bool> has_bsx_slot;
   readonly<bool> has_superfx;
   readonly<bool> has_sa1;
+  readonly<bool> has_upd77c25;
   readonly<bool> has_srtc;
   readonly<bool> has_sdd1;
   readonly<bool> has_spc7110;
   readonly<bool> has_spc7110rtc;
   readonly<bool> has_cx4;
-  readonly<bool> has_dsp1;
-  readonly<bool> has_dsp2;
-  readonly<bool> has_dsp3;
-  readonly<bool> has_dsp4;
   readonly<bool> has_obc1;
   readonly<bool> has_st0010;
   readonly<bool> has_st0011;
@@ -88,6 +85,7 @@ private:
   void xml_parse_ram(xml_element&);
   void xml_parse_superfx(xml_element&);
   void xml_parse_sa1(xml_element&);
+  void xml_parse_upd77c25(xml_element&);
   void xml_parse_bsx(xml_element&);
   void xml_parse_sufamiturbo(xml_element&);
   void xml_parse_supergameboy(xml_element&);

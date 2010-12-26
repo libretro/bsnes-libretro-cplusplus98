@@ -31,15 +31,12 @@ void Cartridge::load(Mode::e cartridge_mode, const lstring &xml_list) {
   has_bsx_slot   = false;
   has_superfx    = false;
   has_sa1        = false;
+  has_upd77c25   = false;
   has_srtc       = false;
   has_sdd1       = false;
   has_spc7110    = false;
   has_spc7110rtc = false;
   has_cx4        = false;
-  has_dsp1       = false;
-  has_dsp2       = false;
-  has_dsp3       = false;
-  has_dsp4       = false;
   has_obc1       = false;
   has_st0010     = false;
   has_st0011     = false;
@@ -48,6 +45,7 @@ void Cartridge::load(Mode::e cartridge_mode, const lstring &xml_list) {
   has_serial     = false;
 
   parse_xml(xml_list);
+//print(xml_list[0], "\n");
 
   if(ram_size > 0) {
     memory::cartram.map(allocate<uint8_t>(ram_size, 0xff), ram_size);
@@ -103,7 +101,7 @@ void Cartridge::load(Mode::e cartridge_mode, const lstring &xml_list) {
   sha256_hash(&sha, shahash);
 
   string hash;
-  foreach(n, shahash) hash << strhex<2>(n);
+  foreach(n, shahash) hash << hex<2>(n);
   sha256 = hash;
 
   bus.load_cart();

@@ -36,6 +36,11 @@ uint8 Debugger::read(Debugger::MemorySource::e source, unsigned addr) {
       return bus.read(addr & 0xffffff);
     } break;
 
+    case MemorySource::APUBus: {
+      if((addr & 0xffc0) == 0xffc0) return smp.iplrom[addr & 0x3f];
+      return memory::apuram.read(addr & 0xffff);
+    } break;
+
     case MemorySource::APURAM: {
       return memory::apuram.read(addr & 0xffff);
     } break;
