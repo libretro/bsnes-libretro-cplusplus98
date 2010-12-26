@@ -29,7 +29,7 @@ objects :=
 # link += -lgcov
 
 # profile-guided optimization
- flags += -fprofile-use
+# flags += -fprofile-use
 
 # implicit rules
 compile = \
