@@ -44,7 +44,7 @@ inline string& string::lower() { nall::strlower(data); return *this; }
 inline string& string::upper() { nall::strupper(data); return *this; }
 inline string& string::transform(const char *before, const char *after) { nall::strtr(data, before, after); return *this; }
 
-static inline uintmax_t strhex(const char *str) {
+static inline uintmax_t hex(const char *str) {
   if(!str) return 0;
   uintmax_t result = 0;
 
@@ -64,7 +64,7 @@ static inline uintmax_t strhex(const char *str) {
   return result;
 }
 
-static inline intmax_t strsigned(const char *str) {
+static inline intmax_t integer(const char *str) {
   if(!str) return 0;
   intmax_t result = 0;
   bool negate = false;
@@ -85,7 +85,7 @@ static inline intmax_t strsigned(const char *str) {
   return !negate ? result : -result;
 }
 
-static inline uintmax_t strunsigned(const char *str) {
+static inline uintmax_t decimal(const char *str) {
   if(!str) return 0;
   uintmax_t result = 0;
 
@@ -99,7 +99,7 @@ static inline uintmax_t strunsigned(const char *str) {
   return result;
 }
 
-static inline uintmax_t strbin(const char *str) {
+static inline uintmax_t binary(const char *str) {
   if(!str) return 0;
   uintmax_t result = 0;
 
@@ -117,7 +117,7 @@ static inline uintmax_t strbin(const char *str) {
   return result;
 }
 
-static inline double strdouble(const char *str) {
+static inline double fp(const char *str) {
   if(!str) return 0.0;
   bool negate = false;
 

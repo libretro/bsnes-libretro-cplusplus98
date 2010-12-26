@@ -27,7 +27,7 @@ static inline string substr(const char *src, unsigned start, unsigned length) {
 
 /* arithmetic <> string */
 
-template<unsigned length, char padding> static inline string strhex(uintmax_t value) {
+template<unsigned length, char padding> static inline string hex(uintmax_t value) {
   string output;
   int offset = 0;
 
@@ -51,7 +51,7 @@ template<unsigned length, char padding> static inline string strhex(uintmax_t va
   return output;
 }
 
-template<unsigned length, char padding> static inline string strsigned(intmax_t value) {
+template<unsigned length, char padding> static inline string integer(intmax_t value) {
   string output;
   int offset = 0;
 
@@ -77,7 +77,7 @@ template<unsigned length, char padding> static inline string strsigned(intmax_t 
   return output;
 }
 
-template<unsigned length, char padding> static inline string strunsigned(uintmax_t value) {
+template<unsigned length, char padding> static inline string decimal(uintmax_t value) {
   string output;
   int offset = 0;
 
@@ -99,7 +99,7 @@ template<unsigned length, char padding> static inline string strunsigned(uintmax
   return output;
 }
 
-template<unsigned length, char padding> static inline string strbin(uintmax_t value) {
+template<unsigned length, char padding> static inline string binary(uintmax_t value) {
   string output;
   int offset = 0;
 
@@ -124,7 +124,7 @@ template<unsigned length, char padding> static inline string strbin(uintmax_t va
 //using sprintf is certainly not the most ideal method to convert
 //a double to a string ... but attempting to parse a double by
 //hand, digit-by-digit, results in subtle rounding errors.
-static inline unsigned strdouble(char *str, double value) {
+static inline unsigned fp(char *str, double value) {
   char buffer[256];
   sprintf(buffer, "%f", value);
 
@@ -145,10 +145,10 @@ static inline unsigned strdouble(char *str, double value) {
   return length + 1;
 }
 
-static inline string strdouble(double value) {
+static inline string fp(double value) {
   string temp;
-  temp.reserve(strdouble(0, value));
-  strdouble(temp(), value);
+  temp.reserve(fp(0, value));
+  fp(temp(), value);
   return temp;
 }
 

@@ -136,11 +136,11 @@ namespace nall {
   static inline char* strlower(char *str);
   static inline char* strupper(char *str);
   static inline char* strtr(char *dest, const char *before, const char *after);
-  static inline uintmax_t strhex     (const char *str);
-  static inline intmax_t  strsigned  (const char *str);
-  static inline uintmax_t strunsigned(const char *str);
-  static inline uintmax_t strbin     (const char *str);
-  static inline double    strdouble  (const char *str);
+  static inline uintmax_t hex     (const char *str);
+  static inline intmax_t  integer  (const char *str);
+  static inline uintmax_t decimal (const char *str);
+  static inline uintmax_t binary     (const char *str);
+  static inline double    fp  (const char *str);
 
   //match.hpp
   static inline bool match(const char *pattern, const char *str);
@@ -167,21 +167,21 @@ namespace nall {
   static inline string substr(const char *src, unsigned start = 0, unsigned length = 0);
   static inline string& strtr(string &dest, const char *before, const char *after);
   
-  template<unsigned length, char padding> static inline string strhex     (uintmax_t value);
-  template<unsigned length, char padding> static inline string strsigned  (intmax_t  value);
-  template<unsigned length, char padding> static inline string strunsigned(uintmax_t value);
-  template<unsigned length, char padding> static inline string strbin     (uintmax_t value);
-  template<unsigned length>               static inline string strhex     (uintmax_t value) { return strhex      <length, '0'> (value); }
-  template<unsigned length>               static inline string strsigned  (intmax_t  value) { return strsigned   <length, '0'> (value); }
-  template<unsigned length>               static inline string strunsigned(uintmax_t value) { return strunsigned <length, '0'> (value); }
-  template<unsigned length>               static inline string strbin     (uintmax_t value) { return strbin      <length, '0'> (value); }
-                                          static inline string strhex     (uintmax_t value) { return strhex      <0>           (value); }
-                                          static inline string strsigned  (intmax_t  value) { return strsigned   <0>           (value); }
-                                          static inline string strunsigned(uintmax_t value) { return strunsigned <0>           (value); }
-                                          static inline string strbin     (uintmax_t value) { return strbin      <0>           (value); }
+  template<unsigned length, char padding> static inline string hex     (uintmax_t value);
+  template<unsigned length, char padding> static inline string integer  (intmax_t  value);
+  template<unsigned length, char padding> static inline string decimal (uintmax_t value);
+  template<unsigned length, char padding> static inline string binary     (uintmax_t value);
+  template<unsigned length>               static inline string hex     (uintmax_t value) { return hex      <length, '0'> (value); }
+  template<unsigned length>               static inline string integer  (intmax_t  value) { return integer   <length, '0'> (value); }
+  template<unsigned length>               static inline string decimal (uintmax_t value) { return decimal <length, '0'> (value); }
+  template<unsigned length>               static inline string binary     (uintmax_t value) { return binary      <length, '0'> (value); }
+                                          static inline string hex     (uintmax_t value) { return hex      <0>           (value); }
+                                          static inline string integer  (intmax_t  value) { return integer   <0>           (value); }
+                                          static inline string decimal (uintmax_t value) { return decimal <0>           (value); }
+                                          static inline string binary     (uintmax_t value) { return binary      <0>           (value); }
   
-  static inline unsigned strdouble(char *str, double value);
-  static inline string strdouble(double value);
+  static inline unsigned fp(char *str, double value);
+  static inline string fp(double value);
 
   //variadic.hpp
   template <typename T1>
