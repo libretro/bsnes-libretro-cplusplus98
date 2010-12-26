@@ -240,7 +240,7 @@ void Cartridge::xml_parse_upd77c25(xml_element &root) {
   foreach(attr, root.attribute) {
     if(attr.name == "program") {
       file fp;
-      fp.open(string(dir(basename()), attr.content), file::mode::read);
+      fp.open(string(dir(basename()), attr.content), file::mode_read);
       if(fp.open() && fp.size() == 8192) {
         program = true;
 
@@ -297,11 +297,11 @@ void Cartridge::xml_parse_upd77c25(xml_element &root) {
   if(program == false) {
     system.interface->message("Warning: uPD77C25 program is missing.");
   } else if(sha256 == true && xml_hash != rom_hash) {
-    system.interface->message({
+    system.interface->message(string(
       "Warning: uPD77C25 program SHA256 is incorrect.\n\n"
       "Expected:\n", xml_hash, "\n\n"
       "Actual:\n", rom_hash
-    });
+      ));
   }
 }
 

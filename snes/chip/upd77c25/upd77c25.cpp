@@ -23,7 +23,7 @@ void UPD77C25::Enter() { upd77c25.enter(); }
 
 void UPD77C25::enter() {
   while(true) {
-    if(scheduler.sync == Scheduler::SynchronizeMode::All) {
+    if(scheduler.sync.i == Scheduler::SynchronizeMode::All) {
       scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
     }
 

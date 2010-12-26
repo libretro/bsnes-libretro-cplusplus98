@@ -1,5 +1,5 @@
 string UPD77C25::disassemble(uint11 ip) {
-  string output = { hex<3>(ip), "  " };
+  string output = string( hex<3>(ip), "  " );
   uint24 opcode = programROM[ip];
   uint2 type = opcode >> 22;
 

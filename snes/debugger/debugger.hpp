@@ -13,7 +13,7 @@ public:
     unsigned addr;
     signed data;  //-1 = unused
     struct Mode{ enum e{ Exec, Read, Write } i; } mode;
-    struct Source{ enum e{ CPUBus, APUBus, APURAM, VRAM, OAM, CGRAM } i; } source;
+    struct Source{ enum e{ CPUBus, APURAM, VRAM, OAM, CGRAM } i; } source;
     unsigned counter;  //number of times breakpoint has been hit since being set
   } breakpoint[Breakpoints];
   unsigned breakpoint_hit;
@@ -22,7 +22,7 @@ public:
   bool step_cpu;
   bool step_smp;
 
-  struct MemorySource{ enum e{ CPUBus, APURAM, VRAM, OAM, CGRAM } i; };
+  struct MemorySource{ enum e{ CPUBus, APUBus, APURAM, VRAM, OAM, CGRAM } i; };
   uint8 read(MemorySource::e, unsigned addr);
   void write(MemorySource::e, unsigned addr, uint8 data);
 
