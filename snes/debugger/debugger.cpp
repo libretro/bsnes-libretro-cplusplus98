@@ -72,6 +72,10 @@ void Debugger::write(Debugger::MemorySource::e source, unsigned addr, uint8 data
       memory::cartrom.write_protect(true);
     } break;
 
+    case MemorySource::APUBus: {
+      break;
+    }
+
     case MemorySource::APURAM: {
       memory::apuram.write(addr & 0xffff, data);
     } break;
