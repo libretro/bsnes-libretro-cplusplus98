@@ -22,6 +22,8 @@ compile = \
     ) \
   )
 
+include gameboy/Makefile
+
 all: library;
 
 set-static:
