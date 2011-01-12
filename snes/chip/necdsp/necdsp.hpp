@@ -1,6 +1,7 @@
 class NECDSP : public Coprocessor, public Memory {
 public:
-  enum class Revision : unsigned { uPD7725, uPD96050 } revision;
+  //enum class Revision : unsigned { uPD7725, uPD96050 } revision;
+  struct Revision { enum e { uPD7725, uPD96050 } i; } revision;
   unsigned frequency;
   unsigned drmask, drtest;
   unsigned srmask, srtest;

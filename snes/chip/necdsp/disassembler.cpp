@@ -1,7 +1,7 @@
 #ifdef NECDSP_CPP
 
 string NECDSP::disassemble(uint14 ip) {
-  string output = { hex<4>(ip), "  " };
+  string output = string(hex<4>(ip), "  ");
   uint24 opcode = programROM[ip];
   uint2 type = opcode >> 22;
 

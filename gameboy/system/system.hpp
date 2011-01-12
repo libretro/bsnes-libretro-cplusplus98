@@ -1,7 +1,11 @@
 class Interface;
 
-enum class Input : unsigned {
-  Up, Down, Left, Right, B, A, Select, Start,
+//enum class Input : unsigned {
+//  Up, Down, Left, Right, B, A, Select, Start,
+//};
+
+struct Input {
+  enum e { Up, Down, Left, Right, B, A, Select, Start, };
 };
 
 struct System : MMIO {

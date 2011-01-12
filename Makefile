@@ -23,9 +23,10 @@ compile = \
     ) \
   )
 
+all: library;
+
 include gameboy/Makefile
 
-all: library;
 
 set-static:
 	$(eval fpic := )

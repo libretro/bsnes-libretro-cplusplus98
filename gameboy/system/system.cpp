@@ -9,15 +9,15 @@ namespace GameBoy {
 System system;
 
 void System::run() {
-  scheduler.sync = Scheduler::SynchronizeMode::None;
+  scheduler.sync.i = Scheduler::SynchronizeMode::None;
 
   scheduler.enter();
-  if(scheduler.exit_reason() == Scheduler::ExitReason::FrameEvent) {
+  if(scheduler.exit_reason.i == Scheduler::ExitReason::FrameEvent) {
   }
 }
 
 void System::runtosave() {
-  scheduler.sync = Scheduler::SynchronizeMode::CPU;
+  scheduler.sync.i = Scheduler::SynchronizeMode::CPU;
   runthreadtosave();
 
   scheduler.active_thread = lcd.thread;
@@ -27,8 +27,8 @@ void System::runtosave() {
 void System::runthreadtosave() {
   while(true) {
     scheduler.enter();
-    if(scheduler.exit_reason() == Scheduler::ExitReason::SynchronizeEvent) break;
-    if(scheduler.exit_reason() == Scheduler::ExitReason::FrameEvent) {
+    if(scheduler.exit_reason.i == Scheduler::ExitReason::SynchronizeEvent) break;
+    if(scheduler.exit_reason.i == Scheduler::ExitReason::FrameEvent) {
     }
   }
 }

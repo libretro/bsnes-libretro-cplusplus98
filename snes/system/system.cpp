@@ -156,7 +156,7 @@ void System::power() {
   if(cartridge.mode.i == Cartridge::Mode::SuperGameBoy) cpu.coprocessors.append(&icd2);
   if(cartridge.has_superfx()) cpu.coprocessors.append(&superfx);
   if(cartridge.has_sa1()) cpu.coprocessors.append(&sa1);
-  if(cartridge.has_upd77c25()) cpu.coprocessors.append(&necdsp);
+  if(cartridge.has_necdsp()) cpu.coprocessors.append(&necdsp);
   if(cartridge.has_msu1()) cpu.coprocessors.append(&msu1);
   if(cartridge.has_serial()) cpu.coprocessors.append(&serial);
 

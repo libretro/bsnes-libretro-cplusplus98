@@ -95,7 +95,7 @@ void Cartridge::xml_parse_ram(xml_element &root) {
 }
 
 void Cartridge::xml_parse_icd2(xml_element &root) {
-  if(mode != Mode::SuperGameBoy) return;
+  if(mode.i != Mode::SuperGameBoy) return;
   icd2.revision = 1;
 
   foreach(attr, root.attribute) {
@@ -227,7 +227,7 @@ void Cartridge::xml_parse_sa1(xml_element &root) {
 
 void Cartridge::xml_parse_necdsp(xml_element &root) {
   has_necdsp = true;
-  necdsp.revision = NECDSP::Revision::uPD7725;
+  necdsp.revision.i = NECDSP::Revision::uPD7725;
   necdsp.frequency = 8000000;
 
   for(unsigned n = 0; n < 16384; n++) necdsp.programROM[n] = 0x000000;
@@ -238,8 +238,8 @@ void Cartridge::xml_parse_necdsp(xml_element &root) {
 
   foreach(attr, root.attribute) {
     if(attr.name == "revision") {
-      if(attr.content == "upd7725" ) necdsp.revision = NECDSP::Revision::uPD7725;
-      if(attr.content == "upd96050") necdsp.revision = NECDSP::Revision::uPD96050;
+      if(attr.content == "upd7725" ) necdsp.revision.i = NECDSP::Revision::uPD7725;
+      if(attr.content == "upd96050") necdsp.revision.i = NECDSP::Revision::uPD96050;
     } else if(attr.name == "frequency") {
       necdsp.frequency = decimal(attr.content);
     } else if(attr.name == "program") {
@@ -249,12 +249,12 @@ void Cartridge::xml_parse_necdsp(xml_element &root) {
     }
   }
 
-  unsigned promsize = (necdsp.revision == NECDSP::Revision::uPD7725 ? 2048 : 16384);
-  unsigned dromsize = (necdsp.revision == NECDSP::Revision::uPD7725 ? 1024 :  2048);
+  unsigned promsize = (necdsp.revision.i == NECDSP::Revision::uPD7725 ? 2048 : 16384);
+  unsigned dromsize = (necdsp.revision.i == NECDSP::Revision::uPD7725 ? 1024 :  2048);
   unsigned filesize = promsize * 3 + dromsize * 2;
 
   file fp;
-  if(fp.open(string(dir(basename()), program), file::mode::read)) {
+  if(fp.open(string(dir(basename()), program), file::mode_read)) {
     if(fp.size() == filesize) {
       for(unsigned n = 0; n < promsize; n++) necdsp.programROM[n] = fp.readm(3);
       for(unsigned n = 0; n < dromsize; n++) necdsp.dataROM[n] = fp.readm(2);
@@ -312,8 +312,8 @@ void Cartridge::xml_parse_necdsp(xml_element &root) {
   } else if(sha256 != "" && sha256 != programhash) {
     system.interface->message(string(
       "Warning: NEC DSP program ", program, " SHA256 is incorrect.\n\n"
-      "Expected:\n", xml_hash, "\n\n"
-      "Actual:\n", rom_hash
+      "Expected:\n", sha256, "\n\n"
+      "Actual:\n", programhash
       ));
   }
 }
@@ -401,7 +401,7 @@ void Cartridge::xml_parse_srtc(xml_element &root) {
 
   foreach(node, root.element) {
     if(node.name == "map") {
-      Mapping m(strc);
+      Mapping m(srtc);
       foreach(attr, node.attribute) {
         if (attr.name == "address") xml_parse_address(m, attr.content);
       }

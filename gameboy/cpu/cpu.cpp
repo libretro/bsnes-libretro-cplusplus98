@@ -15,8 +15,8 @@ void CPU::Main() {
 
 void CPU::main() {
   while(true) {
-    if(scheduler.sync == Scheduler::SynchronizeMode::CPU) {
-      scheduler.sync = Scheduler::SynchronizeMode::All;
+    if(scheduler.sync.i == Scheduler::SynchronizeMode::CPU) {
+      scheduler.sync.i = Scheduler::SynchronizeMode::All;
       scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
     }
 
@@ -27,7 +27,7 @@ void CPU::main() {
   }
 }
 
-void CPU::interrupt_raise(CPU::Interrupt id) {
+void CPU::interrupt_raise(CPU::Interrupt::e id) {
   switch(id) {
     case Interrupt::Vblank: status.interrupt_request_vblank = 1; break;
     case Interrupt::Stat  : status.interrupt_request_stat   = 1; break;

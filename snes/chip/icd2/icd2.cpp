@@ -12,7 +12,7 @@ void ICD2::Enter() { icd2.enter(); }
 
 void ICD2::enter() {
   while(true) {
-    if(scheduler.sync == Scheduler::SynchronizeMode::All) {
+    if(scheduler.sync.i == Scheduler::SynchronizeMode::All) {
       GameBoy::system.runtosave();
       scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
     }

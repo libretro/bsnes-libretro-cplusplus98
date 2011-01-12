@@ -13,7 +13,7 @@ void LCD::Main() {
 
 void LCD::main() {
   while(true) {
-    if(scheduler.sync == Scheduler::SynchronizeMode::All) {
+    if(scheduler.sync.i == Scheduler::SynchronizeMode::All) {
       scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
     }
 
@@ -30,7 +30,7 @@ void LCD::add_clocks(unsigned clocks) {
   if(status.lx >= 456) scanline();
 
   cpu.clock -= clocks;
-  if(cpu.clock <= 0 && scheduler.sync != Scheduler::SynchronizeMode::All) {
+  if(cpu.clock <= 0 && scheduler.sync.i != Scheduler::SynchronizeMode::All) {
     co_switch(scheduler.active_thread = cpu.thread);
   }
 }

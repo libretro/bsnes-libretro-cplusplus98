@@ -8,16 +8,31 @@ struct Cartridge : property<Cartridge> {
   #include "huc1/huc1.hpp"
   #include "huc3/huc3.hpp"
 
-  enum Mapper : unsigned {
-    MBC0,
-    MBC1,
-    MBC2,
-    MBC3,
-    MBC5,
-    MMM01,
-    HuC1,
-    HuC3,
-    Unknown,
+  //enum Mapper : unsigned {
+  //  MBC0,
+  //  MBC1,
+  //  MBC2,
+  //  MBC3,
+  //  MBC5,
+  //  MMM01,
+  //  HuC1,
+  //  HuC3,
+  //  Unknown,
+  //};
+  //
+
+  struct Mapper {
+     enum e {
+        MBC0,
+        MBC1,
+        MBC2,
+        MBC3,
+        MBC5,
+        MMM01,
+        HuC1,
+        HuC3,
+        Unknown,
+     } i;
   };
 
   struct Information {
@@ -41,7 +56,7 @@ struct Cartridge : property<Cartridge> {
   uint8_t *ramdata;
   unsigned ramsize;
 
-  void load(const string &xml, uint8_t *data, unsigned size);
+  void load(const string &xml, const uint8_t *data, const unsigned size);
   void unload();
 
   uint8 rom_read(unsigned addr);

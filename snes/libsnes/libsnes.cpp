@@ -175,12 +175,21 @@ bool snes_load_cartridge_super_game_boy(
   const char *rom_xml, const uint8_t *rom_data, unsigned rom_size,
   const char *dmg_xml, const uint8_t *dmg_data, unsigned dmg_size
 ) {
+
+  string xmlrom, xmldmg;
   snes_cheat_reset();
-  if(rom_data) SNES::memory::cartrom.copy(rom_data, rom_size);
-  string xmlrom = (rom_xml && *rom_xml) ? string(rom_xml) : SNESCartridge(rom_data, rom_size).xmlMemoryMap;
-  if(dmg_data) SNES::memory::gbrom.copy(dmg_data, dmg_size);
-  string xmldmg = (dmg_xml && *dmg_xml) ? string(dmg_xml) : SNESCartridge(dmg_data, dmg_size).xmlMemoryMap;
-  SNES::cartridge.load(SNES::Cartridge::Mode::SuperGameBoy, lstring(xmlrom, xmldmg));
+
+  if (rom_data) {
+    xmlrom = (rom_xml && *rom_xml) ? string(rom_xml) : SNESCartridge(rom_data, rom_size).xmlMemoryMap;
+    SNES::memory::cartrom.copy(rom_data, rom_size);
+  }
+
+  if (dmg_data) {
+    xmldmg = (dmg_xml && *dmg_xml) ? string(dmg_xml) : GameBoyCartridge(dmg_data, dmg_size).xml;
+    GameBoy::cartridge.load(xmldmg, dmg_data, dmg_size);
+  }
+
+  SNES::cartridge.load(SNES::Cartridge::Mode::SuperGameBoy, string(xmlrom, ""));
   SNES::system.power();
   return true;
 }
@@ -215,12 +224,10 @@ uint8_t* snes_get_memory_data(unsigned id) {
       return SNES::memory::stBram.data();
     case SNES_MEMORY_GAME_BOY_RAM:
       if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SuperGameBoy) break;
-      SNES::supergameboy.save();
-      return SNES::memory::gbram.data();
+      return GameBoy::cartridge.ramdata;
     case SNES_MEMORY_GAME_BOY_RTC:
       if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SuperGameBoy) break;
-      SNES::supergameboy.save();
-      return SNES::memory::gbrtc.data();
+      return 0; // FIXME: Where is this stored?
   }
 
   return 0;
@@ -255,12 +262,11 @@ unsigned snes_get_memory_size(unsigned id) {
       break;
     case SNES_MEMORY_GAME_BOY_RAM:
       if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SuperGameBoy) break;
-      size = SNES::memory::gbram.size();
+      size = GameBoy::cartridge.ramsize;
       break;
     case SNES_MEMORY_GAME_BOY_RTC:
       if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SuperGameBoy) break;
-      size = SNES::memory::gbrtc.size();
-      break;
+      size = 0; // FIXME: Where is this stored?
   }
 
   if(size == -1U) size = 0;

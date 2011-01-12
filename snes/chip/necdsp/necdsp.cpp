@@ -12,7 +12,7 @@ void NECDSP::Enter() { necdsp.enter(); }
 
 void NECDSP::enter() {
   while(true) {
-    if(scheduler.sync == Scheduler::SynchronizeMode::All) {
+    if(scheduler.sync.i == Scheduler::SynchronizeMode::All) {
       scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
     }
 
@@ -254,14 +254,14 @@ void NECDSP::enable() {
 }
 
 void NECDSP::power() {
-  if(revision == Revision::uPD7725) {
+  if(revision.i == Revision::uPD7725) {
     regs.pc.bits(11);
     regs.rp.bits(10);
     regs.dp.bits( 8);
     dpmask = 0x000000, dptest = 0xffffff;  //uPD7725 not mapped to SNES bus
   }
 
-  if(revision == Revision::uPD96050) {
+  if(revision.i == Revision::uPD96050) {
     regs.pc.bits(14);
     regs.rp.bits(11);
     regs.dp.bits(11);

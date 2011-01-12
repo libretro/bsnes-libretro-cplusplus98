@@ -10,8 +10,8 @@ void Scheduler::enter() {
   co_switch(active_thread);
 }
 
-void Scheduler::exit(ExitReason reason) {
-  exit_reason = reason;
+void Scheduler::exit(ExitReason::e reason) {
+  exit_reason.i = reason;
   active_thread = co_active();
   co_switch(host_thread);
 }
@@ -27,7 +27,7 @@ void Scheduler::init() {
 }
 
 Scheduler::Scheduler() {
-  exit_reason = ExitReason::UnknownEvent;
+  exit_reason.i = ExitReason::UnknownEvent;
   host_thread = 0;
   active_thread = 0;
 }

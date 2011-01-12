@@ -110,7 +110,7 @@ namespace nall {
 
       inline void bits(unsigned bits) { mask = (1ULL << (bits - 1)) + ((1ULL << (bits - 1)) - 1); data &= mask; }
       inline varuintmax_t() : data(0), mask(~0ULL) {}
-      inline varuintmax_t(const uintmax_t i) : data(i),
+      inline varuintmax_t(const uintmax_t i) : data(i), mask(~0ULL) {}
   };
 }
 
