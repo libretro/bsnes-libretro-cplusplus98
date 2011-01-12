@@ -7,7 +7,7 @@ snes_objects += snes-icd2 snes-superfx snes-sa1 snes-necdsp
 snes_objects += snes-bsx snes-srtc snes-sdd1 snes-spc7110 snes-cx4
 snes_objects += snes-obc1 snes-st0018
 snes_objects += snes-msu1 snes-serial
-snes_objects += gameboy_objects
+snes_objects += $(gameboy_objects)
 objects += $(snes_objects)
 
 ifeq ($(profile),accuracy)

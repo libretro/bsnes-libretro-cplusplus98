@@ -1,5 +1,6 @@
 include nall/Makefile
 snes := snes
+gameboy := gameboy
 profile := performance
 
 fpic = -fPIC
