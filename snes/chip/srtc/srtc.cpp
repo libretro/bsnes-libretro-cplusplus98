@@ -1,4 +1,4 @@
-#include <snes.hpp>
+#include <snes/snes.hpp>
 #include <limits>
 #include <time.h>
 

@@ -1,8 +1,8 @@
 namespace SNES {
   namespace Info {
     static const char Name[] = "bsnes";
-    static const char Version[] = "073";
-    static const unsigned SerializerVersion = 15;
+    static const char Version[] = "074";
+    static const unsigned SerializerVersion = 16;
   }
 }
 
@@ -29,7 +29,10 @@ namespace SNES {
 #include <nall/utility.hpp>
 #include <nall/varint.hpp>
 #include <nall/vector.hpp>
+#include <nall/gameboy/cartridge.hpp>
 using namespace nall;
+
+#include <gameboy/gameboy.hpp>
 
 #ifdef DEBUGGER
   #define debugvirtual virtual
@@ -80,9 +83,7 @@ namespace SNES {
   typedef uint_t<30> uint30;
   typedef uint_t<31> uint31;
 
-  typedef uint_t<40> uint40;
-  typedef uint_t<48> uint48;
-  typedef uint_t<56> uint56;
+  typedef varuint_t varuint;
 
   struct Processor {
     cothread_t thread;
@@ -108,10 +109,10 @@ namespace SNES {
     virtual bool property(unsigned id, string &name, string &value) = 0;
   };
 
-  #include <memory/memory.hpp>
-  #include <cpu/core/core.hpp>
-  #include <smp/core/core.hpp>
-  #include <ppu/counter/counter.hpp>
+  #include <snes/memory/memory.hpp>
+  #include <snes/cpu/core/core.hpp>
+  #include <snes/smp/core/core.hpp>
+  #include <snes/ppu/counter/counter.hpp>
 
   #if defined(PROFILE_ACCURACY)
   #include "profile-accuracy.hpp"
@@ -121,14 +122,14 @@ namespace SNES {
   #include "profile-performance.hpp"
   #endif
 
-  #include <system/system.hpp>
-  #include <chip/chip.hpp>
-  #include <cartridge/cartridge.hpp>
-  #include <cheat/cheat.hpp>
+  #include <snes/system/system.hpp>
+  #include <snes/chip/chip.hpp>
+  #include <snes/cartridge/cartridge.hpp>
+  #include <snes/cheat/cheat.hpp>
 
-  #include <memory/memory-inline.hpp>
-  #include <ppu/counter/counter-inline.hpp>
-  #include <cheat/cheat-inline.hpp>
+  #include <snes/memory/memory-inline.hpp>
+  #include <snes/ppu/counter/counter-inline.hpp>
+  #include <snes/cheat/cheat-inline.hpp>
 }
 
 namespace nall {

@@ -19,9 +19,6 @@ public:
   unsigned breakpoint_hit;
   void breakpoint_test(Breakpoint::Source::e source, Breakpoint::Mode::e mode, unsigned addr, uint8 data);
 
-  bool step_cpu;
-  bool step_smp;
-
   struct MemorySource{ enum e{ CPUBus, APUBus, APURAM, VRAM, OAM, CGRAM } i; };
   uint8 read(MemorySource::e, unsigned addr);
   void write(MemorySource::e, unsigned addr, uint8 data);
