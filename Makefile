@@ -4,7 +4,12 @@ gameboy := gameboy
 profile := performance
 
 fpic = -fPIC
-extraflags = -O3 -fomit-frame-pointer -I. -I$(snes) $(fpic)
+
+ifeq ($(DEBUG),1)
+   extraflags = -O0 -g -I. -I$(snes) $(fpic)
+else
+   extraflags = -O3 -fomit-frame-pointer -I. -I$(snes) $(fpic)
+endif
 
 # profile-guided instrumentation. Compile your frontend with this as well. :)
 # extraflags += -fprofile-generate --coverage
