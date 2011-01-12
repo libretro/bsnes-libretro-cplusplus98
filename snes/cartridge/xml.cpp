@@ -231,7 +231,7 @@ void Cartridge::xml_parse_necdsp(xml_element &root) {
   necdsp.frequency = 8000000;
 
   for(unsigned n = 0; n < 16384; n++) necdsp.programROM[n] = 0x000000;
-  for(unsigned n = 0; n < 2048; n++) necdsp.dataROM[n] = 0x0000;
+  for(unsigned n = 0; n <  2048; n++) necdsp.dataROM[n] = 0x0000;
 
   string program, programhash;
   string sha256;
@@ -274,8 +274,6 @@ void Cartridge::xml_parse_necdsp(xml_element &root) {
     fp.close();
   }
 
-
-
   foreach(node, root.element) {
     if(node.name == "dr") {
       foreach(attr, node.attribute) {
@@ -308,7 +306,7 @@ void Cartridge::xml_parse_necdsp(xml_element &root) {
   }
 
   if(program == "") {
-    system.interface->message(string("Warning: NEC DSP program ", program, " is missing."));
+    system.interface->message(string( "Warning: NEC DSP program ", program, " is missing." ));
   } else if(sha256 != "" && sha256 != programhash) {
     system.interface->message(string(
       "Warning: NEC DSP program ", program, " SHA256 is incorrect.\n\n"
@@ -395,7 +393,6 @@ void Cartridge::xml_parse_sufamiturbo(xml_element &root) {
   }
 }
 
-
 void Cartridge::xml_parse_srtc(xml_element &root) {
   has_srtc = true;
 
@@ -403,7 +400,7 @@ void Cartridge::xml_parse_srtc(xml_element &root) {
     if(node.name == "map") {
       Mapping m(srtc);
       foreach(attr, node.attribute) {
-        if (attr.name == "address") xml_parse_address(m, attr.content);
+        if(attr.name == "address") xml_parse_address(m, attr.content);
       }
       mapping.append(m);
     }

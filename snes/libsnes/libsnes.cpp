@@ -177,23 +177,21 @@ bool snes_load_cartridge_super_game_boy(
   const char *dmg_xml, const uint8_t *dmg_data, unsigned dmg_size
 ) {
 
-  try {
-    string xmlrom, xmldmg;
-    snes_cheat_reset();
+  string xmlrom, xmldmg;
+  snes_cheat_reset();
 
-    if (rom_data) {
-      xmlrom = (rom_xml && *rom_xml) ? string(rom_xml) : SNESCartridge(rom_data, rom_size).xmlMemoryMap;
-      SNES::memory::cartrom.copy(rom_data, rom_size);
-    }
+  if (rom_data) {
+    xmlrom = (rom_xml && *rom_xml) ? string(rom_xml) : SNESCartridge(rom_data, rom_size).xmlMemoryMap;
+    SNES::memory::cartrom.copy(rom_data, rom_size);
+  }
 
-    if (dmg_data) {
-      xmldmg = (dmg_xml && *dmg_xml) ? string(dmg_xml) : GameBoyCartridge(dmg_data, dmg_size).xml;
-      GameBoy::cartridge.load(xmldmg, dmg_data, dmg_size);
-    }
+  if (dmg_data) {
+    xmldmg = (dmg_xml && *dmg_xml) ? string(dmg_xml) : GameBoyCartridge(dmg_data, dmg_size).xml;
+    GameBoy::cartridge.load(xmldmg, dmg_data, dmg_size);
+  }
 
-    SNES::cartridge.load(SNES::Cartridge::Mode::SuperGameBoy, string(xmlrom, ""));
-    SNES::system.power();
-  } catch (const char *msg) { std::cerr << msg << std::endl; return false; }
+  SNES::cartridge.load(SNES::Cartridge::Mode::SuperGameBoy, lstring(xmlrom, ""));
+  SNES::system.power();
   return true;
 }
 
