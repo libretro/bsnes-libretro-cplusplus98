@@ -56,7 +56,7 @@ struct Cartridge : property<Cartridge> {
   uint8_t *ramdata;
   unsigned ramsize;
 
-  void load(const string &xml, const uint8_t *data, const unsigned size);
+  void load(const string &xml, const uint8_t *data, unsigned size);
   void unload();
 
   uint8 rom_read(unsigned addr);

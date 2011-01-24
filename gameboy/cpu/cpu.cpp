@@ -28,14 +28,30 @@ void CPU::main() {
 }
 
 void CPU::interrupt_raise(CPU::Interrupt::e id) {
-  switch(id) {
-    case Interrupt::Vblank: status.interrupt_request_vblank = 1; break;
-    case Interrupt::Stat  : status.interrupt_request_stat   = 1; break;
-    case Interrupt::Timer : status.interrupt_request_timer  = 1; break;
-    case Interrupt::Serial: status.interrupt_request_serial = 1; break;
-    case Interrupt::Joypad: status.interrupt_request_joypad = 1; status.stop = false; break;
+  if(id == Interrupt::Vblank) {
+    status.interrupt_request_vblank = 1;
+    if(status.interrupt_enable_vblank) status.halt = false;
   }
-  status.halt = false;
+
+  if(id == Interrupt::Stat) {
+    status.interrupt_request_stat = 1;
+    if(status.interrupt_enable_stat) status.halt = false;
+  }
+
+  if(id == Interrupt::Timer) {
+    status.interrupt_request_timer = 1;
+    if(status.interrupt_enable_timer) status.halt = false;
+  }
+
+  if(id == Interrupt::Serial) {
+    status.interrupt_request_serial = 1;
+    if(status.interrupt_enable_serial) status.halt = false;
+  }
+
+  if(id == Interrupt::Joypad) {
+    status.interrupt_request_joypad = 1;
+    if(status.interrupt_enable_joypad) status.halt = status.stop = false;
+  }
 }
 
 void CPU::interrupt_test() {
@@ -104,11 +120,18 @@ void CPU::power() {
   status.timer1 = 0;
   status.timer2 = 0;
   status.timer3 = 0;
+  status.timer4 = 0;
 
   status.p15 = 0;
   status.p14 = 0;
   status.joyp = 0;
   status.mlt_req = 0;
+
+  status.serial_data = 0;
+  status.serial_bits = 0;
+
+  status.serial_transfer = 0;
+  status.serial_clock = 0;
 
   status.div = 0;
 

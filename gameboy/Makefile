@@ -1,6 +1,6 @@
 gameboy_objects := gameboy-system gameboy-scheduler
 gameboy_objects += gameboy-memory gameboy-cartridge
-gameboy_objects += gameboy-cpu gameboy-lcd
+gameboy_objects += gameboy-cpu gameboy-lcd gameboy-apu
 objects += $(gameboy_objects)
 
 obj/gameboy-system.o: $(gameboy)/system/system.cpp $(call rwildcard,$(gameboy)/system/)
