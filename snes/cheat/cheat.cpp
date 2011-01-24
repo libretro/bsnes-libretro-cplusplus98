@@ -61,15 +61,18 @@ uint8 Cheat::read(unsigned addr) const {
   return 0x00;
 }
 
-void Cheat::init() {
-  bus.reader[0xff] = [](unsigned addr) {
-    bus.reader[cheat.lookup[addr]](bus.target[addr]);
-    return cheat.read(addr);
-  };
+uint8 Cheat::default_reader(unsigned addr) {
+  bus.reader[cheat.lookup[addr]](bus.target[addr]);
+  return cheat.read(addr);
+}
 
-  bus.writer[0xff] = [](unsigned addr, uint8 data) {
-    return bus.writer[cheat.lookup[addr]](bus.target[addr], data);
-  };
+void Cheat::default_writer(unsigned addr, uint8 data) {
+  return bus.writer[cheat.lookup[addr]](bus.target[addr], data);
+}
+
+void Cheat::init() {
+  bus.reader[0xff] = function<uint8(unsigned)>(&Cheat::default_reader);
+  bus.writer[0xff] = function<void(unsigned, uint8)>(&Cheat::default_writer);
 
   memcpy(lookup, bus.lookup, 16 * 1024 * 1024);
 }

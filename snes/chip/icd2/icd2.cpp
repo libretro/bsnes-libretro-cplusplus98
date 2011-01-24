@@ -32,10 +32,12 @@ void ICD2::init() {
 }
 
 void ICD2::enable() {
-  bus.map(Bus::MapMode::Direct, 0x00, 0x3f, 0x2181, 0x2182, { &ICD2::mmio_read, &icd2 }, { &ICD2::mmio_write, &icd2 });
-  bus.map(Bus::MapMode::Direct, 0x00, 0x3f, 0x420b, 0x420b, { &ICD2::mmio_read, &icd2 }, { &ICD2::mmio_write, &icd2 });
-  bus.map(Bus::MapMode::Direct, 0x80, 0xbf, 0x2181, 0x2182, { &ICD2::mmio_read, &icd2 }, { &ICD2::mmio_write, &icd2 });
-  bus.map(Bus::MapMode::Direct, 0x80, 0xbf, 0x420b, 0x420b, { &ICD2::mmio_read, &icd2 }, { &ICD2::mmio_write, &icd2 });
+  function<uint8(unsigned)> reader(&ICD2::mmio_read, &icd2);
+  function<void(unsigned, uint8)> writer(&ICD2::mmio_write, &icd2);
+  bus.map(Bus::MapMode::Direct, 0x00, 0x3f, 0x2181, 0x2182, reader, writer);
+  bus.map(Bus::MapMode::Direct, 0x00, 0x3f, 0x420b, 0x420b, reader, writer);
+  bus.map(Bus::MapMode::Direct, 0x80, 0xbf, 0x2181, 0x2182, reader, writer);
+  bus.map(Bus::MapMode::Direct, 0x80, 0xbf, 0x420b, 0x420b, reader, writer);
 }
 
 void ICD2::power() {

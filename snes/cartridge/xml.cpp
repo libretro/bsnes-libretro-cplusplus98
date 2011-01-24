@@ -109,7 +109,7 @@ void Cartridge::xml_parse_icd2(xml_element &root) {
 
   foreach(node, root.element) {
     if(node.name == "map") {
-      Mapping m(function<unsigned>( &ICD2::read, &icd2 ), function<unsigned, uint8>( &ICD2::write, &icd2 ));
+      Mapping m(function<uint8 (unsigned)>( &ICD2::read, &icd2 ), function<void (unsigned, uint8)>( &ICD2::write, &icd2 ));
       foreach(attr, node.attribute) {
         if(attr.name == "address") xml_parse_address(m, attr.content);
       }
@@ -156,7 +156,7 @@ void Cartridge::xml_parse_superfx(xml_element &root) {
     } else if(node.name == "mmio") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m( function<unsigned>( &SuperFX::mmio_read, &superfx ), function<unsigned, uint8>( &SuperFX::mmio_write, &superfx ));
+          Mapping m( function<uint8(unsigned)>( &SuperFX::mmio_read, &superfx ), function<void(unsigned, uint8)>( &SuperFX::mmio_write, &superfx ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -176,7 +176,7 @@ void Cartridge::xml_parse_sa1(xml_element &root) {
         if(subnode.name == "rom") {
           foreach(leaf, subnode.element) {
             if(leaf.name == "map") {
-              Mapping m({ &SA1::mmc_read, &sa1 }, { &SA1::mmc_write, &sa1 });
+              Mapping m(function<uint8(unsigned)>(&SA1::mmc_read, &sa1), function<void(unsigned, uint8)>( &SA1::mmc_write, &sa1 ));
               foreach(attr, leaf.attribute) {
                 if(attr.name == "address") xml_parse_address(m, attr.content);
                 if(attr.name == "mode") xml_parse_mode(m, attr.content);
@@ -189,7 +189,7 @@ void Cartridge::xml_parse_sa1(xml_element &root) {
         } else if(subnode.name == "ram") {
           foreach(leaf, subnode.element) {
             if(leaf.name == "map") {
-              Mapping m({ &SA1::mmc_cpu_read, &sa1 }, { &SA1::mmc_cpu_write, &sa1 });
+              Mapping m(function<uint8(unsigned)>( &SA1::mmc_cpu_read, &sa1 ), function<void(unsigned,uint8)>( &SA1::mmc_cpu_write, &sa1 ));
               foreach(attr, leaf.attribute) {
                 if(attr.name == "address") xml_parse_address(m, attr.content);
               }
@@ -233,7 +233,7 @@ void Cartridge::xml_parse_sa1(xml_element &root) {
     } else if(node.name == "mmio") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m({ &SA1::mmio_read, &sa1 }, { &SA1::mmio_write, &sa1 });
+          Mapping m(function<uint8(unsigned)>( &SA1::mmio_read, &sa1 ), function<void(unsigned,uint8)>( &SA1::mmio_write, &sa1 ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -297,7 +297,7 @@ void Cartridge::xml_parse_necdsp(xml_element &root) {
     if(node.name == "dr") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m({ &NECDSP::dr_read, &necdsp }, { &NECDSP::dr_write, &necdsp });
+          Mapping m(function<uint8(unsigned)>( &NECDSP::dr_read, &necdsp ), function<void(unsigned, uint8)>( &NECDSP::dr_write, &necdsp ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -307,7 +307,7 @@ void Cartridge::xml_parse_necdsp(xml_element &root) {
     } else if(node.name == "sr") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m({ &NECDSP::sr_read, &necdsp }, { &NECDSP::sr_write, &necdsp });
+          Mapping m(function<uint8(unsigned)>( &NECDSP::sr_read, &necdsp ), function<void (unsigned, uint8)>( &NECDSP::sr_write, &necdsp ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -317,7 +317,7 @@ void Cartridge::xml_parse_necdsp(xml_element &root) {
     } else if(node.name == "dp") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m({ &NECDSP::dp_read, &necdsp }, { &NECDSP::dp_write, &necdsp });
+          Mapping m(function<uint8(unsigned)>( &NECDSP::dp_read, &necdsp ), function<void(unsigned, uint8)>( &NECDSP::dp_write, &necdsp ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -358,7 +358,7 @@ void Cartridge::xml_parse_bsx(xml_element &root) {
     } else if(node.name == "mcu") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m({ &BSXCartridge::mcu_read, &bsxcartridge }, { &BSXCartridge::mcu_write, &bsxcartridge });
+          Mapping m(function<uint8(unsigned)>( &BSXCartridge::mcu_read, &bsxcartridge ), function<void(unsigned,uint8)>( &BSXCartridge::mcu_write, &bsxcartridge ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -368,7 +368,7 @@ void Cartridge::xml_parse_bsx(xml_element &root) {
     } else if(node.name == "mmio") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m({ &BSXCartridge::mmio_read, &bsxcartridge }, { &BSXCartridge::mmio_write, &bsxcartridge });
+          Mapping m(function<uint8(unsigned)>( &BSXCartridge::mmio_read, &bsxcartridge ), function<void (unsigned, uint8)>( &BSXCartridge::mmio_write, &bsxcartridge ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -432,7 +432,7 @@ void Cartridge::xml_parse_srtc(xml_element &root) {
 
   foreach(node, root.element) {
     if(node.name == "map") {
-      Mapping m({ &SRTC::read, &srtc }, { &SRTC::write, &srtc });
+      Mapping m(function<uint8(unsigned)>( &SRTC::read, &srtc ), function<void(unsigned, uint8)>( &SRTC::write, &srtc ));
       foreach(attr, node.attribute) {
         if(attr.name == "address") xml_parse_address(m, attr.content);
       }
@@ -448,7 +448,7 @@ void Cartridge::xml_parse_sdd1(xml_element &root) {
     if(node.name == "mcu") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m({ &SDD1::mcu_read, &sdd1 }, { &SDD1::mcu_write, &sdd1 });
+          Mapping m(function<uint8(unsigned)>( &SDD1::mcu_read, &sdd1 ), function<void(unsigned, uint8)>( &SDD1::mcu_write, &sdd1 ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -458,7 +458,7 @@ void Cartridge::xml_parse_sdd1(xml_element &root) {
     } else if(node.name == "mmio") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m({ &SDD1::mmio_read, &sdd1 }, { &SDD1::mmio_write, &sdd1 });
+          Mapping m(function<uint8(unsigned)>( &SDD1::mmio_read, &sdd1 ), function<void(unsigned, uint8)>( &SDD1::mmio_write, &sdd1 ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -477,7 +477,7 @@ void Cartridge::xml_parse_spc7110(xml_element &root) {
     if(node.name == "dcu") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m({ &SPC7110::dcu_read, &spc7110 }, { &SPC7110::dcu_write, &spc7110 });
+          Mapping m(function<uint8(unsigned)>( &SPC7110::dcu_read, &spc7110 ), function<void(unsigned, uint8)>( &SPC7110::dcu_write, &spc7110 ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -487,7 +487,7 @@ void Cartridge::xml_parse_spc7110(xml_element &root) {
     } else if(node.name == "mcu") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m({ &SPC7110::mcu_read, &spc7110 }, { &SPC7110::mcu_write, &spc7110 });
+          Mapping m(function<uint8(unsigned)>( &SPC7110::mcu_read, &spc7110 ), function<void(unsigned, uint8)>( &SPC7110::mcu_write, &spc7110 ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
             if(attr.name == "offset") spc7110.data_rom_offset = hex(attr.content);
@@ -498,7 +498,7 @@ void Cartridge::xml_parse_spc7110(xml_element &root) {
     } else if(node.name == "mmio") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m({ &SPC7110::mmio_read, &spc7110 }, { &SPC7110::mmio_write, &spc7110 });
+          Mapping m(function<uint8(unsigned)>( &SPC7110::mmio_read, &spc7110 ), function<void(unsigned, uint8)>( &SPC7110::mmio_write, &spc7110 ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -512,7 +512,7 @@ void Cartridge::xml_parse_spc7110(xml_element &root) {
 
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m({ &SPC7110::ram_read, &spc7110 }, { &SPC7110::ram_write, &spc7110 });
+          Mapping m(function<uint8(unsigned)>( &SPC7110::ram_read, &spc7110 ), function<void(unsigned,uint8)>( &SPC7110::ram_write, &spc7110 ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
             if(attr.name == "mode") xml_parse_mode(m, attr.content);
@@ -527,7 +527,7 @@ void Cartridge::xml_parse_spc7110(xml_element &root) {
 
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m({ &SPC7110::mmio_read, &spc7110 }, { &SPC7110::mmio_write, &spc7110 });
+          Mapping m(function<uint8(unsigned)>( &SPC7110::mmio_read, &spc7110 ), function<void(unsigned, uint8)>( &SPC7110::mmio_write, &spc7110 ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -543,7 +543,7 @@ void Cartridge::xml_parse_cx4(xml_element &root) {
 
   foreach(node, root.element) {
     if(node.name == "map") {
-      Mapping m({ &Cx4::read, &cx4 }, { &Cx4::write, &cx4 });
+      Mapping m(function<uint8(unsigned)>( &Cx4::read, &cx4 ), function<void(unsigned, uint8)>( &Cx4::write, &cx4 ));
       foreach(attr, node.attribute) {
         if(attr.name == "address") xml_parse_address(m, attr.content);
       }
@@ -557,7 +557,7 @@ void Cartridge::xml_parse_obc1(xml_element &root) {
 
   foreach(node, root.element) {
     if(node.name == "map") {
-      Mapping m({ &OBC1::read, &obc1 }, { &OBC1::write, &obc1 });
+      Mapping m(function<uint8(unsigned)>( &OBC1::read, &obc1 ), function<void(unsigned, uint8)>( &OBC1::write, &obc1 ));
       foreach(attr, node.attribute) {
         if(attr.name == "address") xml_parse_address(m, attr.content);
       }
@@ -571,7 +571,7 @@ void Cartridge::xml_parse_setarisc(xml_element &root) {
 
   foreach(node, root.element) {
     if(node.name == "map") {
-      Mapping m({ &ST0018::mmio_read, &st0018 }, { &ST0018::mmio_write, &st0018 });
+      Mapping m(function<uint8(unsigned)>( &ST0018::mmio_read, &st0018 ), function<void(unsigned, uint8)>( &ST0018::mmio_write, &st0018 ));
       foreach(attr, node.attribute) {
         if(attr.name == "address") xml_parse_address(m, attr.content);
       }
@@ -585,7 +585,7 @@ void Cartridge::xml_parse_msu1(xml_element &root) {
 
   foreach(node, root.element) {
     if(node.name == "map") {
-      Mapping m({ &MSU1::mmio_read, &msu1 }, { &MSU1::mmio_write, &msu1 });
+      Mapping m(function<uint8(unsigned)>( &MSU1::mmio_read, &msu1 ), function<void(unsigned, uint8)>( &MSU1::mmio_write, &msu1 ));
       foreach(attr, node.attribute) {
         if(attr.name == "address") xml_parse_address(m, attr.content);
       }
@@ -635,8 +635,8 @@ Cartridge::Mapping::Mapping() {
 }
 
 Cartridge::Mapping::Mapping(Memory &memory) {
-  read = { &Memory::read, &memory };
-  write = { &Memory::write, &memory };
+  read = function<uint8(unsigned)>( &Memory::read, &memory );
+  write = function<void(unsigned,uint8)>( &Memory::write, &memory );
   mode.i = Bus::MapMode::Direct;
   banklo = bankhi = addrlo = addrhi = offset = size = 0;
 }

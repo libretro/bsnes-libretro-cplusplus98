@@ -90,9 +90,17 @@ void CPU::op_irq(uint16 vector) {
   regs.pc.w = rd.w;
 }
 
+static uint8 cpu_wram_reader(unsigned addr) {
+  return cpu.wram[addr];
+}
+
+static void cpu_wram_writer(unsigned addr, uint8 data) {
+  cpu.wram[addr] = data;
+}
+
 void CPU::enable() {
-  function<uint8 (unsigned)> read = { &CPU::mmio_read, (CPU*)&cpu };
-  function<void (unsigned, uint8)> write = { &CPU::mmio_write, (CPU*)&cpu };
+  function<uint8 (unsigned)> read(&CPU::mmio_read, (CPU*)&cpu);
+  function<void (unsigned, uint8)> write(&CPU::mmio_write, (CPU*)&cpu);
 
   bus.map(Bus::MapMode::Direct, 0x00, 0x3f, 0x2140, 0x2183, read, write);
   bus.map(Bus::MapMode::Direct, 0x80, 0xbf, 0x2140, 0x2183, read, write);
@@ -106,8 +114,8 @@ void CPU::enable() {
   bus.map(Bus::MapMode::Direct, 0x00, 0x3f, 0x4300, 0x437f, read, write);
   bus.map(Bus::MapMode::Direct, 0x80, 0xbf, 0x4300, 0x437f, read, write);
 
-  read = [](unsigned addr) { return cpu.wram[addr]; };
-  write = [](unsigned addr, uint8 data) { cpu.wram[addr] = data; };
+  read = function<uint8(unsigned)>(cpu_wram_reader);
+  write = function<void(unsigned,uint8)>(cpu_wram_writer);
 
   bus.map(Bus::MapMode::Linear, 0x00, 0x3f, 0x0000, 0x1fff, read, write, 0x000000, 0x002000);
   bus.map(Bus::MapMode::Linear, 0x80, 0xbf, 0x0000, 0x1fff, read, write, 0x000000, 0x002000);

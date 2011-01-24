@@ -29,6 +29,9 @@ private:
   bool code_enabled;
   bool cheat_enabled;
   unsigned mirror(unsigned) const;
+
+  static uint8 default_reader(unsigned);
+  static void default_writer(unsigned, uint8);
 };
 
 extern Cheat cheat;

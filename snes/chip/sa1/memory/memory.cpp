@@ -119,6 +119,10 @@ void SA1::op_write(unsigned addr, uint8 data) {
   bus_write(addr, data);
 }
 
+static uint8 sa1_read(unsigned addr) {
+  return cartridge.rom.read(bus.mirror(addr, cartridge.rom.size()));
+}
+
 uint8 SA1::mmc_read(unsigned addr) {
   if((addr & 0xffffe0) == 0x00ffe0) {
     if(addr == 0xffea && sa1.mmio.cpu_nvsw) return sa1.mmio.snv >> 0;
@@ -127,48 +131,44 @@ uint8 SA1::mmc_read(unsigned addr) {
     if(addr == 0xffef && sa1.mmio.cpu_ivsw) return sa1.mmio.siv >> 8;
   }
 
-  static auto read = [](unsigned addr) {
-    return cartridge.rom.read(bus.mirror(addr, cartridge.rom.size()));
-  };
-
   if((addr & 0xe08000) == 0x008000) {  //$00-1f:8000-ffff
     addr = ((addr & 0x1f0000) >> 1) | (addr & 0x007fff);
-    if(mmio.cbmode == 0) return read(0x000000 | addr);
-    return read((mmio.cb << 20) | addr);
+    if(mmio.cbmode == 0) return sa1_read(0x000000 | addr);
+    return sa1_read((mmio.cb << 20) | addr);
   }
 
   if((addr & 0xe08000) == 0x208000) {  //$20-3f:8000-ffff
     addr = ((addr & 0x1f0000) >> 1) | (addr & 0x007fff);
-    if(mmio.dbmode == 0) return read(0x100000 | addr);
-    return read((mmio.db << 20) | addr);
+    if(mmio.dbmode == 0) return sa1_read(0x100000 | addr);
+    return sa1_read((mmio.db << 20) | addr);
   }
 
   if((addr & 0xe08000) == 0x808000) {  //$80-9f:8000-ffff
     addr = ((addr & 0x1f0000) >> 1) | (addr & 0x007fff);
-    if(mmio.ebmode == 0) return read(0x200000 | addr);
-    return read((mmio.eb << 20) | addr);
+    if(mmio.ebmode == 0) return sa1_read(0x200000 | addr);
+    return sa1_read((mmio.eb << 20) | addr);
   }
 
   if((addr & 0xe08000) == 0xa08000) {  //$a0-bf:8000-ffff
     addr = ((addr & 0x1f0000) >> 1) | (addr & 0x007fff);
-    if(mmio.fbmode == 0) return read(0x300000 | addr);
-    return read((mmio.fb << 20) | addr);
+    if(mmio.fbmode == 0) return sa1_read(0x300000 | addr);
+    return sa1_read((mmio.fb << 20) | addr);
   }
 
   if((addr & 0xf00000) == 0xc00000) {  //$c0-cf:0000-ffff
-    return read((mmio.cb << 20) | (addr & 0x0fffff));
+    return sa1_read((mmio.cb << 20) | (addr & 0x0fffff));
   }
 
   if((addr & 0xf00000) == 0xd00000) {  //$d0-df:0000-ffff
-    return read((mmio.db << 20) | (addr & 0x0fffff));
+    return sa1_read((mmio.db << 20) | (addr & 0x0fffff));
   }
 
   if((addr & 0xf00000) == 0xe00000) {  //$e0-ef:0000-ffff
-    return read((mmio.eb << 20) | (addr & 0x0fffff));
+    return sa1_read((mmio.eb << 20) | (addr & 0x0fffff));
   }
 
   if((addr & 0xf00000) == 0xf00000) {  //$f0-ff:0000-ffff
-    return read((mmio.fb << 20) | (addr & 0x0fffff));
+    return sa1_read((mmio.fb << 20) | (addr & 0x0fffff));
   }
 
   return 0x00;

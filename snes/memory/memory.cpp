@@ -24,7 +24,7 @@ unsigned Bus::mirror(unsigned addr, unsigned size) {
 }
 
 void Bus::map(
-  MapMode mode,
+  MapMode::e mode,
   unsigned bank_lo, unsigned bank_hi,
   unsigned addr_lo, unsigned addr_hi,
   const function<uint8 (unsigned)> &rd,
@@ -56,9 +56,15 @@ void Bus::map(
   }
 }
 
+static uint8 bus_reader_dummy(unsigned) {
+  return cpu.regs.mdr;
+}
+
+static void bus_writer_dummy(unsigned, uint8) {}
+
 void Bus::map_reset() {
-  function<uint8 (unsigned)> reader = [](unsigned) { return cpu.regs.mdr; };
-  function<void (unsigned, uint8)> writer = [](unsigned, uint8) {};
+  function<uint8 (unsigned)> reader(bus_reader_dummy);
+  function<void (unsigned, uint8)> writer(bus_writer_dummy);
 
   idcount = 0;
   map(MapMode::Direct, 0x00, 0xff, 0x0000, 0xffff, reader, writer);
@@ -66,7 +72,7 @@ void Bus::map_reset() {
 
 void Bus::map_xml() {
   foreach(m, cartridge.mapping) {
-    map(m.mode, m.banklo, m.bankhi, m.addrlo, m.addrhi, m.read, m.write, m.offset, m.size);
+    map(m.mode.i, m.banklo, m.bankhi, m.addrlo, m.addrhi, m.read, m.write, m.offset, m.size);
   }
 }
 

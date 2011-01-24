@@ -246,8 +246,8 @@ void NECDSP::init() {
 }
 
 void NECDSP::enable() {
-  if(revision == Revision::uPD96050) {
-    cartridge.nvram.append({ "nec", (uint8_t*)dataRAM, 4096 });
+  if(revision.i == Revision::uPD96050) {
+    cartridge.nvram.append(Cartridge::NonVolatileRAM( "nec", (uint8_t*)dataRAM, 4096 ));
   }
 }
 

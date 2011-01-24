@@ -2,7 +2,7 @@
 
 uint8 SuperFX::bus_read(unsigned addr) {
   if((addr & 0xc00000) == 0x000000) {  //$00-3f:0000-7fff, $00-3f:8000-ffff
-    while(!regs.scmr.ron && scheduler.sync != Scheduler::SynchronizeMode::All) {
+    while(!regs.scmr.ron && scheduler.sync.i != Scheduler::SynchronizeMode::All) {
       add_clocks(6);
       synchronize_cpu();
     }
@@ -10,7 +10,7 @@ uint8 SuperFX::bus_read(unsigned addr) {
   }
 
   if((addr & 0xe00000) == 0x400000) {  //$40-5f:0000-ffff
-    while(!regs.scmr.ron && scheduler.sync != Scheduler::SynchronizeMode::All) {
+    while(!regs.scmr.ron && scheduler.sync.i != Scheduler::SynchronizeMode::All) {
       add_clocks(6);
       synchronize_cpu();
     }
@@ -18,7 +18,7 @@ uint8 SuperFX::bus_read(unsigned addr) {
   }
 
   if((addr & 0xe00000) == 0x600000) {  //$60-7f:0000-ffff
-    while(!regs.scmr.ran && scheduler.sync != Scheduler::SynchronizeMode::All) {
+    while(!regs.scmr.ran && scheduler.sync.i != Scheduler::SynchronizeMode::All) {
       add_clocks(6);
       synchronize_cpu();
     }
@@ -28,7 +28,7 @@ uint8 SuperFX::bus_read(unsigned addr) {
 
 void SuperFX::bus_write(unsigned addr, uint8 data) {
   if((addr & 0xe00000) == 0x600000) {  //$60-7f:0000-ffff
-    while(!regs.scmr.ran && scheduler.sync != Scheduler::SynchronizeMode::All) {
+    while(!regs.scmr.ran && scheduler.sync.i != Scheduler::SynchronizeMode::All) {
       add_clocks(6);
       synchronize_cpu();
     }

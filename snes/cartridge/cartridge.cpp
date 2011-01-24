@@ -11,9 +11,9 @@ namespace SNES {
 
 Cartridge cartridge;
 
-void Cartridge::load(Mode cartridge_mode, const lstring &xml_list) {
-  mode = cartridge_mode;
-  region = Region::NTSC;
+void Cartridge::load(Mode::e cartridge_mode, const lstring &xml_list) {
+  mode.i = cartridge_mode;
+  region.i = Region::NTSC;
   ram_size = 0;
 
   has_bsx_slot   = false;
@@ -37,7 +37,7 @@ void Cartridge::load(Mode cartridge_mode, const lstring &xml_list) {
 
   if(ram_size > 0) {
     ram.map(allocate<uint8>(ram_size, 0xff), ram_size);
-    nvram.append({ "srm", ram.data(), ram.size() });
+    nvram.append(NonVolatileRAM("srm", ram.data(), ram.size()));
   }
 
   rom.write_protect(true);

@@ -87,8 +87,10 @@ void Serial::enable() {
     main = sym("snesserial_main");
   }
 
-  bus.map(Bus::MapMode::Direct, 0x00, 0x3f, 0x4016, 0x4017, { &Serial::mmio_read, &serial }, { &Serial::mmio_write, &serial });
-  bus.map(Bus::MapMode::Direct, 0x80, 0xbf, 0x4016, 0x4017, { &Serial::mmio_read, &serial }, { &Serial::mmio_write, &serial });
+  function<uint8(unsigned)> reader(&Serial::mmio_read, &serial);
+  function<void(unsigned, uint8)> writer(&Serial::mmio_write, &serial);
+  bus.map(Bus::MapMode::Direct, 0x00, 0x3f, 0x4016, 0x4017, reader, writer);
+  bus.map(Bus::MapMode::Direct, 0x80, 0xbf, 0x4016, 0x4017, reader, writer);
 }
 
 void Serial::power() {
