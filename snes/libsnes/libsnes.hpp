@@ -60,6 +60,13 @@ extern "C" {
 #define SNES_MEMORY_GAME_BOY_RAM        6
 #define SNES_MEMORY_GAME_BOY_RTC        7
 
+#define SNES_MEMORY_WRAM    100
+#define SNES_MEMORY_APURAM  101
+#define SNES_MEMORY_VRAM    102
+#define SNES_MEMORY_OAM     103
+#define SNES_MEMORY_CGRAM   104
+
+
 // Note: Only one instance of the libsnes library is supported in one process.
 // Compiling with C, you might have to #include <stdbool.h> since bool is not a recognized keyword in C(99) without this header.
 

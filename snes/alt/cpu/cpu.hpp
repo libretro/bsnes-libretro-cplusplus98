@@ -1,5 +1,7 @@
-class CPU : public Processor, public CPUcore, public PPUcounter, public MMIO {
+class CPU : public Processor, public CPUcore, public PPUcounter {
 public:
+  uint8 wram[128 * 1024];
+
   enum{ Threaded = true };
   array<Processor*> coprocessors;
   alwaysinline void step(unsigned clocks);
@@ -20,6 +22,7 @@ public:
   debugvirtual void op_write(unsigned addr, uint8 data);
 
   void enter();
+  void enable();
   void power();
   void reset();
 

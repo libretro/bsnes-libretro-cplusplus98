@@ -49,7 +49,6 @@ void System::serialize(serializer &s) {
 }
 
 void System::serialize_all(serializer &s) {
-  bus.serialize(s);
   cartridge.serialize(s);
   system.serialize(s);
   cpu.serialize(s);
@@ -57,6 +56,7 @@ void System::serialize_all(serializer &s) {
   ppu.serialize(s);
   dsp.serialize(s);
 
+  if(cartridge.mode.i == Cartridge::Mode::SufamiTurbo) sufamiturbo.serialize(s);
   if(cartridge.mode.i == Cartridge::Mode::SuperGameBoy) icd2.serialize(s);
   if(cartridge.has_superfx()) superfx.serialize(s);
   if(cartridge.has_sa1()) sa1.serialize(s);

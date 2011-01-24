@@ -3,8 +3,12 @@
 
 class PPU;
 
-class PPU : public Processor, public PPUcounter, public MMIO {
+class PPU : public Processor, public PPUcounter {
 public:
+  uint8 vram[64 * 1024];
+  uint8 oam[544];
+  uint8 cgram[512];
+
   enum{ Threaded = true };
   alwaysinline void step(unsigned clocks);
   alwaysinline void synchronize_cpu();
@@ -15,6 +19,7 @@ public:
   bool hires() const;
 
   void enter();
+  void enable();
   void power();
   void reset();
   void scanline();
@@ -43,7 +48,7 @@ private:
   Background bg2;
   Background bg3;
   Background bg4;
-  Sprite oam;
+  Sprite sprite;
   Screen screen;
 
   struct Display {

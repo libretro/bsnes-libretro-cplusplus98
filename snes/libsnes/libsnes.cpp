@@ -1,9 +1,9 @@
 #include "libsnes.hpp"
-#include <snes.hpp>
+#include <snes/snes.hpp>
 
 #include <nall/snes/cartridge.hpp>
+#include <nall/gameboy/cartridge.hpp>
 using namespace nall;
-#include <iostream>
 
 struct Interface : public SNES::Interface {
   snes_video_refresh_t pvideo_refresh;
@@ -24,7 +24,7 @@ struct Interface : public SNES::Interface {
   }
 
   int16_t input_poll(bool port, SNES::Input::Device device, unsigned index, unsigned id) {
-    if(pinput_state) return pinput_state(port, (unsigned)device.i, index, id);
+    if(pinput_state) return pinput_state(port, (unsigned)device, index, id);
     return 0;
   }
 
@@ -39,7 +39,7 @@ unsigned snes_library_revision_major(void) {
 }
 
 unsigned snes_library_revision_minor(void) {
-  return 1;
+  return 2;
 }
 
 void snes_set_video_refresh(snes_video_refresh_t video_refresh) {
@@ -59,7 +59,7 @@ void snes_set_input_state(snes_input_state_t input_state) {
 }
 
 void snes_set_controller_port_device(bool port, unsigned device) {
-  SNES::input.port_set_device(port, (SNES::Input::Device::e)device);
+  SNES::input.port_set_device(port, (SNES::Input::Device)device);
 }
 
 void snes_set_cartridge_basename(const char *basename) {
@@ -120,9 +120,9 @@ bool snes_load_cartridge_normal(
   const char *rom_xml, const uint8_t *rom_data, unsigned rom_size
 ) {
   snes_cheat_reset();
-  if(rom_data) SNES::memory::cartrom.copy(rom_data, rom_size);
+  if(rom_data) SNES::cartridge.rom.copy(rom_data, rom_size);
   string xmlrom = (rom_xml && *rom_xml) ? string(rom_xml) : SNESCartridge(rom_data, rom_size).xmlMemoryMap;
-  SNES::cartridge.load(SNES::Cartridge::Mode::Normal, lstring(xmlrom));
+  SNES::cartridge.load(SNES::Cartridge::Mode::Normal, { xmlrom });
   SNES::system.power();
   return true;
 }
@@ -132,11 +132,11 @@ bool snes_load_cartridge_bsx_slotted(
   const char *bsx_xml, const uint8_t *bsx_data, unsigned bsx_size
 ) {
   snes_cheat_reset();
-  if(rom_data) SNES::memory::cartrom.copy(rom_data, rom_size);
+  if(rom_data) SNES::cartridge.rom.copy(rom_data, rom_size);
   string xmlrom = (rom_xml && *rom_xml) ? string(rom_xml) : SNESCartridge(rom_data, rom_size).xmlMemoryMap;
-  if(bsx_data) SNES::memory::bsxflash.copy(bsx_data, bsx_size);
+  if(bsx_data) SNES::bsxflash.memory.copy(bsx_data, bsx_size);
   string xmlbsx = (bsx_xml && *bsx_xml) ? string(bsx_xml) : SNESCartridge(bsx_data, bsx_size).xmlMemoryMap;
-  SNES::cartridge.load(SNES::Cartridge::Mode::BsxSlotted, lstring(xmlrom, xmlbsx));
+  SNES::cartridge.load(SNES::Cartridge::Mode::BsxSlotted, { xmlrom, xmlbsx });
   SNES::system.power();
   return true;
 }
@@ -146,11 +146,11 @@ bool snes_load_cartridge_bsx(
   const char *bsx_xml, const uint8_t *bsx_data, unsigned bsx_size
 ) {
   snes_cheat_reset();
-  if(rom_data) SNES::memory::cartrom.copy(rom_data, rom_size);
+  if(rom_data) SNES::cartridge.rom.copy(rom_data, rom_size);
   string xmlrom = (rom_xml && *rom_xml) ? string(rom_xml) : SNESCartridge(rom_data, rom_size).xmlMemoryMap;
-  if(bsx_data) SNES::memory::bsxflash.copy(bsx_data, bsx_size);
+  if(bsx_data) SNES::bsxflash.memory.copy(bsx_data, bsx_size);
   string xmlbsx = (bsx_xml && *bsx_xml) ? string(bsx_xml) : SNESCartridge(bsx_data, bsx_size).xmlMemoryMap;
-  SNES::cartridge.load(SNES::Cartridge::Mode::Bsx, lstring(xmlrom, xmlbsx));
+  SNES::cartridge.load(SNES::Cartridge::Mode::Bsx, { xmlrom, xmlbsx });
   SNES::system.power();
   return true;
 }
@@ -161,13 +161,13 @@ bool snes_load_cartridge_sufami_turbo(
   const char *stb_xml, const uint8_t *stb_data, unsigned stb_size
 ) {
   snes_cheat_reset();
-  if(rom_data) SNES::memory::cartrom.copy(rom_data, rom_size);
+  if(rom_data) SNES::cartridge.rom.copy(rom_data, rom_size);
   string xmlrom = (rom_xml && *rom_xml) ? string(rom_xml) : SNESCartridge(rom_data, rom_size).xmlMemoryMap;
-  if(sta_data) SNES::memory::stArom.copy(sta_data, sta_size);
+  if(sta_data) SNES::sufamiturbo.slotA.rom.copy(sta_data, sta_size);
   string xmlsta = (sta_xml && *sta_xml) ? string(sta_xml) : SNESCartridge(sta_data, sta_size).xmlMemoryMap;
-  if(stb_data) SNES::memory::stBrom.copy(stb_data, stb_size);
+  if(stb_data) SNES::sufamiturbo.slotB.rom.copy(stb_data, stb_size);
   string xmlstb = (stb_xml && *stb_xml) ? string(stb_xml) : SNESCartridge(stb_data, stb_size).xmlMemoryMap;
-  SNES::cartridge.load(SNES::Cartridge::Mode::SufamiTurbo, lstring(xmlrom, xmlsta, xmlstb));
+  SNES::cartridge.load(SNES::Cartridge::Mode::SufamiTurbo, { xmlrom, xmlsta, xmlstb });
   SNES::system.power();
   return true;
 }
@@ -176,21 +176,14 @@ bool snes_load_cartridge_super_game_boy(
   const char *rom_xml, const uint8_t *rom_data, unsigned rom_size,
   const char *dmg_xml, const uint8_t *dmg_data, unsigned dmg_size
 ) {
-
-  string xmlrom, xmldmg;
   snes_cheat_reset();
-
-  if (rom_data) {
-    xmlrom = (rom_xml && *rom_xml) ? string(rom_xml) : SNESCartridge(rom_data, rom_size).xmlMemoryMap;
-    SNES::memory::cartrom.copy(rom_data, rom_size);
+  if(rom_data) SNES::cartridge.rom.copy(rom_data, rom_size);
+  string xmlrom = (rom_xml && *rom_xml) ? string(rom_xml) : SNESCartridge(rom_data, rom_size).xmlMemoryMap;
+  if(dmg_data) {
+    string xmldmg = (dmg_xml && *dmg_xml) ? string(dmg_xml) : GameBoyCartridge(dmg_data, dmg_size).xml;
+    GameBoy::cartridge.load(dmg_xml, dmg_data, dmg_size);
   }
-
-  if (dmg_data) {
-    xmldmg = (dmg_xml && *dmg_xml) ? string(dmg_xml) : GameBoyCartridge(dmg_data, dmg_size).xml;
-    GameBoy::cartridge.load(xmldmg, dmg_data, dmg_size);
-  }
-
-  SNES::cartridge.load(SNES::Cartridge::Mode::SuperGameBoy, lstring(xmlrom, ""));
+  SNES::cartridge.load(SNES::Cartridge::Mode::SuperGameBoy, { xmlrom, "" });
   SNES::system.power();
   return true;
 }
@@ -200,7 +193,7 @@ void snes_unload_cartridge(void) {
 }
 
 bool snes_get_region(void) {
-  return SNES::system.region.i == SNES::System::Region::NTSC ? 0 : 1;
+  return SNES::system.region() == SNES::System::Region::NTSC ? 0 : 1;
 }
 
 uint8_t* snes_get_memory_data(unsigned id) {
@@ -208,27 +201,40 @@ uint8_t* snes_get_memory_data(unsigned id) {
 
   switch(id) {
     case SNES_MEMORY_CARTRIDGE_RAM:
-      return SNES::memory::cartram.data();
+      return SNES::cartridge.ram.data();
     case SNES_MEMORY_CARTRIDGE_RTC:
-      return SNES::memory::cartrtc.data();
+      if(SNES::cartridge.has_srtc()) return SNES::srtc.rtc;
+      if(SNES::cartridge.has_spc7110rtc()) return SNES::spc7110.rtc;
+      return 0;
     case SNES_MEMORY_BSX_RAM:
-      if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::Bsx) break;
-      return SNES::memory::bsxram.data();
+      if(SNES::cartridge.mode() != SNES::Cartridge::Mode::Bsx) break;
+      return SNES::bsxcartridge.sram.data();
     case SNES_MEMORY_BSX_PRAM:
-      if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::Bsx) break;
-      return SNES::memory::bsxpram.data();
+      if(SNES::cartridge.mode() != SNES::Cartridge::Mode::Bsx) break;
+      return SNES::bsxcartridge.psram.data();
     case SNES_MEMORY_SUFAMI_TURBO_A_RAM:
-      if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SufamiTurbo) break;
-      return SNES::memory::stAram.data();
+      if(SNES::cartridge.mode() != SNES::Cartridge::Mode::SufamiTurbo) break;
+      return SNES::sufamiturbo.slotA.ram.data();
     case SNES_MEMORY_SUFAMI_TURBO_B_RAM:
-      if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SufamiTurbo) break;
-      return SNES::memory::stBram.data();
+      if(SNES::cartridge.mode() != SNES::Cartridge::Mode::SufamiTurbo) break;
+      return SNES::sufamiturbo.slotB.ram.data();
     case SNES_MEMORY_GAME_BOY_RAM:
-      if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SuperGameBoy) break;
+      if(SNES::cartridge.mode() != SNES::Cartridge::Mode::SuperGameBoy) break;
       return GameBoy::cartridge.ramdata;
-    case SNES_MEMORY_GAME_BOY_RTC:
-      if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SuperGameBoy) break;
-      return 0; // FIXME: Where is this stored?
+  //case SNES_MEMORY_GAME_BOY_RTC:
+  //  if(SNES::cartridge.mode() != SNES::Cartridge::Mode::SuperGameBoy) break;
+  //  return GameBoy::cartridge.rtcdata;
+
+    case SNES_MEMORY_WRAM:
+      return SNES::cpu.wram;
+    case SNES_MEMORY_APURAM:
+      return SNES::smp.apuram;
+    case SNES_MEMORY_VRAM:
+      return SNES::ppu.vram;
+    case SNES_MEMORY_OAM:
+      return SNES::ppu.oam;
+    case SNES_MEMORY_CGRAM:
+      return SNES::ppu.cgram;
   }
 
   return 0;
@@ -240,34 +246,51 @@ unsigned snes_get_memory_size(unsigned id) {
 
   switch(id) {
     case SNES_MEMORY_CARTRIDGE_RAM:
-      size = SNES::memory::cartram.size();
+      size = SNES::cartridge.ram.size();
       break;
     case SNES_MEMORY_CARTRIDGE_RTC:
-      size = SNES::memory::cartrtc.size();
+      if(SNES::cartridge.has_srtc() || SNES::cartridge.has_spc7110rtc()) size = 20;
       break;
     case SNES_MEMORY_BSX_RAM:
-      if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::Bsx) break;
-      size = SNES::memory::bsxram.size();
+      if(SNES::cartridge.mode() != SNES::Cartridge::Mode::Bsx) break;
+      size = SNES::bsxcartridge.sram.size();
       break;
     case SNES_MEMORY_BSX_PRAM:
-      if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::Bsx) break;
-      size = SNES::memory::bsxpram.size();
+      if(SNES::cartridge.mode() != SNES::Cartridge::Mode::Bsx) break;
+      size = SNES::bsxcartridge.psram.size();
       break;
     case SNES_MEMORY_SUFAMI_TURBO_A_RAM:
-      if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SufamiTurbo) break;
-      size = SNES::memory::stAram.size();
+      if(SNES::cartridge.mode() != SNES::Cartridge::Mode::SufamiTurbo) break;
+      size = SNES::sufamiturbo.slotA.ram.size();
       break;
     case SNES_MEMORY_SUFAMI_TURBO_B_RAM:
-      if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SufamiTurbo) break;
-      size = SNES::memory::stBram.size();
+      if(SNES::cartridge.mode() != SNES::Cartridge::Mode::SufamiTurbo) break;
+      size = SNES::sufamiturbo.slotB.ram.size();
       break;
     case SNES_MEMORY_GAME_BOY_RAM:
-      if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SuperGameBoy) break;
+      if(SNES::cartridge.mode() != SNES::Cartridge::Mode::SuperGameBoy) break;
       size = GameBoy::cartridge.ramsize;
       break;
-    case SNES_MEMORY_GAME_BOY_RTC:
-      if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SuperGameBoy) break;
-      size = 0; // FIXME: Where is this stored?
+  //case SNES_MEMORY_GAME_BOY_RTC:
+  //  if(SNES::cartridge.mode() != SNES::Cartridge::Mode::SuperGameBoy) break;
+  //  size = GameBoy::cartridge.rtcsize;
+  //  break;
+
+    case SNES_MEMORY_WRAM:
+      size = 128 * 1024;
+      break;
+    case SNES_MEMORY_APURAM:
+      size = 64 * 1024;
+      break;
+    case SNES_MEMORY_VRAM:
+      size = 64 * 1024;
+      break;
+    case SNES_MEMORY_OAM:
+      size = 544;
+      break;
+    case SNES_MEMORY_CGRAM:
+      size = 512;
+      break;
   }
 
   if(size == -1U) size = 0;

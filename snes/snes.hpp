@@ -1,13 +1,12 @@
 namespace SNES {
   namespace Info {
     static const char Name[] = "bsnes";
-    static const char Version[] = "074";
-    static const unsigned SerializerVersion = 16;
+    static const char Version[] = "074.11";
+    static const unsigned SerializerVersion = 17;
   }
 }
 
 //#define DEBUGGER
-#define CHEAT_SYSTEM
 
 #include <libco/libco.h>
 
@@ -85,6 +84,14 @@ namespace SNES {
 
   typedef varuint_t varuint;
 
+  template<uint8 banklo, uint8 bankhi, uint16 addrlo, uint16 addrhi>
+  alwaysinline bool within(unsigned addr) {
+    static const unsigned lo = (banklo << 16) | addrlo;
+    static const unsigned hi = (bankhi << 16) | addrhi;
+    static const unsigned mask = ~(hi ^ lo);
+    return (addr & mask) == lo;
+  }
+
   struct Processor {
     cothread_t thread;
     unsigned frequency;
@@ -129,7 +136,6 @@ namespace SNES {
 
   #include <snes/memory/memory-inline.hpp>
   #include <snes/ppu/counter/counter-inline.hpp>
-  #include <snes/cheat/cheat-inline.hpp>
 }
 
 namespace nall {

@@ -1,5 +1,7 @@
-class CPU : public Processor, public CPUcore, public PPUcounter, public MMIO {
+class CPU : public Processor, public CPUcore, public PPUcounter {
 public:
+  uint8 wram[128 * 1024];
+
   enum{ Threaded = true };
   array<Processor*> coprocessors;
   alwaysinline void step(unsigned clocks);
@@ -15,6 +17,7 @@ public:
   alwaysinline bool interrupt_pending() { return status.interrupt_pending; }
 
   void enter();
+  void enable();
   void power();
   void reset();
 

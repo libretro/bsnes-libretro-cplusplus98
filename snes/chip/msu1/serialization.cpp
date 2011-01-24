@@ -21,7 +21,7 @@ void MSU1::serialize(serializer &s) {
   }
 
   if(audiofile.open()) audiofile.close();
-  if(audiofile.open(string(cartridge.basename(), "-", mmio.audio_track, ".pcm"), file::mode_read)) {
+  if(audiofile.open(string(cartridge.basename(), "-", (unsigned)mmio.audio_track, ".pcm"), file::mode_read)) {
     audiofile.seek(mmio.audio_offset);
   }
 }

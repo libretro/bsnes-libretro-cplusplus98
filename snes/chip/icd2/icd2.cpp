@@ -32,12 +32,10 @@ void ICD2::init() {
 }
 
 void ICD2::enable() {
-  mmio[0] = memory::mmio.handle(0x2181);
-  mmio[1] = memory::mmio.handle(0x2182);
-  mmio[2] = memory::mmio.handle(0x420b);
-  memory::mmio.map(0x2181, *this);
-  memory::mmio.map(0x2182, *this);
-  memory::mmio.map(0x420b, *this);
+  bus.map(Bus::MapMode::Direct, 0x00, 0x3f, 0x2181, 0x2182, { &ICD2::mmio_read, &icd2 }, { &ICD2::mmio_write, &icd2 });
+  bus.map(Bus::MapMode::Direct, 0x00, 0x3f, 0x420b, 0x420b, { &ICD2::mmio_read, &icd2 }, { &ICD2::mmio_write, &icd2 });
+  bus.map(Bus::MapMode::Direct, 0x80, 0xbf, 0x2181, 0x2182, { &ICD2::mmio_read, &icd2 }, { &ICD2::mmio_write, &icd2 });
+  bus.map(Bus::MapMode::Direct, 0x80, 0xbf, 0x420b, 0x420b, { &ICD2::mmio_read, &icd2 }, { &ICD2::mmio_write, &icd2 });
 }
 
 void ICD2::power() {
