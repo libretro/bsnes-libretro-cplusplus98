@@ -109,7 +109,7 @@ void Cartridge::xml_parse_icd2(xml_element &root) {
 
   foreach(node, root.element) {
     if(node.name == "map") {
-      Mapping m({ &ICD2::read, &icd2 }, { &ICD2::write, &icd2 });
+      Mapping m(function<unsigned>( &ICD2::read, &icd2 ), function<unsigned, uint8>( &ICD2::write, &icd2 ));
       foreach(attr, node.attribute) {
         if(attr.name == "address") xml_parse_address(m, attr.content);
       }
@@ -156,7 +156,7 @@ void Cartridge::xml_parse_superfx(xml_element &root) {
     } else if(node.name == "mmio") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m({ &SuperFX::mmio_read, &superfx }, { &SuperFX::mmio_write, &superfx });
+          Mapping m( function<unsigned>( &SuperFX::mmio_read, &superfx ), function<unsigned, uint8>( &SuperFX::mmio_write, &superfx ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }

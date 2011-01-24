@@ -54,9 +54,9 @@ struct Bus {
   function<uint8 (unsigned)> reader[256];
   function<void (unsigned, uint8)> writer[256];
 
-  enum class MapMode : unsigned { Direct, Linear, Shadow };
+  struct MapMode { enum e { Direct, Linear, Shadow } i; };
   void map(
-    MapMode mode,
+    MapMode::e mode,
     unsigned bank_lo, unsigned bank_hi,
     unsigned addr_lo, unsigned addr_hi,
     const function<uint8 (unsigned)> &read,
