@@ -3,7 +3,9 @@ snes := snes
 gameboy := gameboy
 profile := performance
 
-fpic = -fPIC
+ifneq ($(platform),win)
+   fpic = -fPIC
+endif
 
 ifeq ($(DEBUG),1)
    extraflags = -O0 -g -I. -I$(snes) $(fpic)
@@ -34,7 +36,9 @@ include gameboy/Makefile
 
 
 set-static:
+ifneq ($(platform),win)
 	$(eval fpic := )
+endif
 
 static: set-static static-library;
 
