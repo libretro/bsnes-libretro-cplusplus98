@@ -61,8 +61,8 @@ void PPU::Screen::render_black() {
 }
 
 uint16 PPU::Screen::get_pixel_main(unsigned x) {
-  typeof(output.main[0]) main = output.main[x];
-  typeof(output.sub[0]) sub = output.sub[x];
+  Output::Pixel main = output.main[x];
+  Output::Pixel sub = output.sub[x];
 
   if(!regs.addsub_mode) {
     sub.source = 6;
@@ -88,8 +88,8 @@ uint16 PPU::Screen::get_pixel_main(unsigned x) {
 }
 
 uint16 PPU::Screen::get_pixel_sub(unsigned x) {
-  typeof(output.sub[0]) main = output.sub[x];
-  typeof(output.main[0]) sub = output.main[x];
+  Output::Pixel main = output.sub[x];
+  Output::Pixel sub = output.main[x];
 
   if(!regs.addsub_mode) {
     sub.source = 6;

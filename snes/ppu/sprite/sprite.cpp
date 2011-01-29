@@ -24,8 +24,8 @@ void PPU::Sprite::scanline() {
   t.tile_count = 0;
 
   t.active = !t.active;
-  typeof(&t.item[0][0]) oam_item = t.item[t.active];
-  typeof(&t.tile[0][0]) oam_tile = t.tile[t.active];
+  uint8 *oam_item = t.item[t.active];
+  TileItem *oam_tile = t.tile[t.active];
 
   if(t.y == (!self.regs.overscan ? 225 : 240) && self.regs.display_disable == false) address_reset();
   if(t.y >= (!self.regs.overscan ? 224 : 239)) return;
@@ -57,12 +57,12 @@ void PPU::Sprite::run() {
   output.main.priority = 0;
   output.sub.priority = 0;
 
-  typeof(&t.tile[0][0]) oam_tile = t.tile[!t.active];
+  TileItem* oam_tile = t.tile[!t.active];
   unsigned priority_table[] = { regs.priority0, regs.priority1, regs.priority2, regs.priority3 };
   unsigned x = t.x++;
 
   for(unsigned n = 0; n < 34; n++) {
-    typeof(oam_tile[0]) tile = oam_tile[n];
+    const TileItem& tile = oam_tile[n];
     if(tile.x == 0xffff) break;
 
     int px = x - sclip<9>(tile.x);
@@ -90,12 +90,12 @@ void PPU::Sprite::run() {
 }
 
 void PPU::Sprite::tilefetch() {
-  typeof(&t.item[0][0]) oam_item = t.item[t.active];
-  typeof(&t.tile[0][0]) oam_tile = t.tile[t.active];
+  uint8 *oam_item = t.item[t.active];
+  TileItem *oam_tile = t.tile[t.active];
 
   for(signed i = 31; i >= 0; i--) {
     if(oam_item[i] == 0xff) continue;
-    typeof(list[oam_item[0]]) sprite = list[oam_item[i]];
+    const SpriteItem& sprite = list[oam_item[i]];
 
     unsigned tile_width = sprite.width() >> 3;
     signed x = sprite.x;

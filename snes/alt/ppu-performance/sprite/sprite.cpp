@@ -43,7 +43,7 @@ void PPU::Sprite::set_first() {
 }
 
 bool PPU::Sprite::on_scanline(unsigned sprite) {
-  typeof(list[0]) &s = list[sprite];
+  List &s = list[sprite];
   if(s.x > 256 && (s.x + s.width - 1) < 512) return false;
   signed height = (regs.interlace == false ? s.height : s.height >> 1);
   if(self.vcounter() >= s.y && self.vcounter() < (s.y + height)) return true;
@@ -85,7 +85,7 @@ void PPU::Sprite::render() {
 
   for(signed i = 31; i >= 0; i--) {
     if(itemlist[i] == 0xff) continue;
-    typeof(list[itemlist[0]]) &s = list[itemlist[i]];
+    List &s = list[itemlist[i]];
     unsigned tile_width = s.width >> 3;
     signed x = s.x;
     signed y = (self.vcounter() - s.y) & 0xff;
@@ -142,7 +142,7 @@ void PPU::Sprite::render() {
   for(unsigned i = 0; i < 34; i++) {
     if(tilelist[i].tile == 0xffff) continue;
 
-    typeof(tilelist[0]) &t = tilelist[i];
+    TileList &t = tilelist[i];
     uint8 *tiledata = self.cache.tile_4bpp(t.tile);
     tiledata += (t.y & 7) << 3;
     unsigned sx = t.x;
