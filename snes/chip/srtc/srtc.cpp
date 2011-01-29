@@ -15,9 +15,12 @@ const unsigned SRTC::months[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 
 void SRTC::init() {
 }
 
-void SRTC::enable() {
+void SRTC::load() {
   for(unsigned n = 0; n < 20; n++) rtc[n] = 0xff;
   cartridge.nvram.append(Cartridge::NonVolatileRAM( "rtc", rtc, 20 ));
+}
+
+void SRTC::unload() {
 }
 
 void SRTC::power() {

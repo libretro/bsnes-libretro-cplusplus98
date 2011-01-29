@@ -48,10 +48,14 @@ void MSU1::enter() {
 void MSU1::init() {
 }
 
-void MSU1::enable() {
+void MSU1::load() {
 
   if(datafile.open()) datafile.close();
   datafile.open(string(cartridge.basename(), ".msu"), file::mode_read);
+}
+
+void MSU1::unload() {
+  if(datafile.open()) datafile.close();
 }
 
 void MSU1::power() {

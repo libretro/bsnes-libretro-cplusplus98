@@ -5,11 +5,14 @@ BSXSatellaview bsxsatellaview;
 void BSXSatellaview::init() {
 }
 
-void BSXSatellaview::enable() {
+void BSXSatellaview::load() {
   function<uint8(unsigned)> reader(&BSXSatellaview::mmio_read, &bsxsatellaview);
   function<void(unsigned, uint8)> writer(&BSXSatellaview::mmio_write, &bsxsatellaview);
   bus.map(Bus::MapMode::Direct, 0x00, 0x3f, 0x2188, 0x219f, reader, writer);
   bus.map(Bus::MapMode::Direct, 0x80, 0xbf, 0x2188, 0x219f, reader, writer);
+}
+
+void BSXSatellaview::unload() {
 }
 
 void BSXSatellaview::power() {

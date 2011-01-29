@@ -31,13 +31,16 @@ void ICD2::enter() {
 void ICD2::init() {
 }
 
-void ICD2::enable() {
+void ICD2::load() {
   function<uint8(unsigned)> reader(&ICD2::mmio_read, &icd2);
   function<void(unsigned, uint8)> writer(&ICD2::mmio_write, &icd2);
   bus.map(Bus::MapMode::Direct, 0x00, 0x3f, 0x2181, 0x2182, reader, writer);
   bus.map(Bus::MapMode::Direct, 0x00, 0x3f, 0x420b, 0x420b, reader, writer);
   bus.map(Bus::MapMode::Direct, 0x80, 0xbf, 0x2181, 0x2182, reader, writer);
   bus.map(Bus::MapMode::Direct, 0x80, 0xbf, 0x420b, 0x420b, reader, writer);
+}
+
+void ICD2::unload() {
 }
 
 void ICD2::power() {
