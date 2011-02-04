@@ -75,7 +75,7 @@ ifeq ($(platform),x)
 	$(CXX) -o out/libsnes.so -fPIC -shared -Wl,-soname,libsnes.so.1 $(snes_objects) obj/libsnes.o
 else ifeq ($(platform),osx)
 	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o
-	$(CXX) -o out/libsnes.dylib -install_name @executable_path/../Libraries/libsnes.dylib -shared -dynamiclib $(snes_objects) obj/libsnes.o
+	$(CXX) -o out/libsnes.dylib -install_name $(prefix)/lib/libsnes.dylib -shared -dynamiclib $(snes_objects) obj/libsnes.o
 else ifeq ($(platform),win)
 	$(CXX) -o out/snes.dll -static-libgcc -static-libstdc++ -shared -Wl,--out-implib,libsnes.a $(snes_objects) obj/libsnes.o
 endif
@@ -87,7 +87,8 @@ ifeq ($(platform),x)
 	install -D -m 644 snes/libsnes/libsnes.hpp $(DESTDIR)$(prefix)/include/libsnes.hpp
 	ldconfig -n $(DESTDIR)$(prefix)/lib
 else ifeq ($(platform),osx)
-	cp out/libsnes.dylib /usr/local/lib/libsnes.dylib
+	cp out/libsnes.dylib $(DESTDIR)$(prefix)/lib/libsnes.dylib
+	cp snes/libsnes/libsnes.hpp $(DESTDIR)$(prefix)/include/libsnes.hpp
 endif
 
 library-uninstall:
@@ -95,6 +96,7 @@ ifeq ($(platform),x)
 	rm $(DESTDIR)$(prefix)/lib/libsnes.a
 	rm $(DESTDIR)$(prefix)/lib/libsnes.so
 else ifeq ($(platform),osx)
-	rm /usr/local/lib/libsnes.dylib
+	rm $(DESTDIR)$(prefix)/lib/libsnes.dylib
+	rm $(DESTDIR)$(prefix)/include/libsnes.hpp
 endif
 
