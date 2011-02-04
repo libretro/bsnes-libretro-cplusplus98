@@ -80,7 +80,7 @@ void Cheat::init() {
 Cheat::Cheat() {
   lookup = new uint8[16 * 1024 * 1024];
   system_enabled = true;
-  synchronize();
+  //synchronize();
 }
 
 Cheat::~Cheat() {
