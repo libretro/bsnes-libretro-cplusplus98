@@ -1,4 +1,4 @@
-class Sprite {
+struct Sprite {
   struct SpriteItem {
     uint16 x;
     uint16 y;
@@ -77,5 +77,4 @@ class Sprite {
   Sprite(PPU &self);
 
   PPU &self;
-  friend class PPU;
 };

@@ -1,4 +1,4 @@
-class Background {
+struct Background {
   struct ID { enum { BG1, BG2, BG3, BG4 }; };
   unsigned id;
 
@@ -69,5 +69,4 @@ class Background {
   Background(PPU &self, unsigned id);
 
   PPU &self;
-  friend class PPU;
 };

@@ -8,8 +8,7 @@
   #include "x86.c"
 #elif defined(__GNUC__) && defined(__amd64__)
   #include "amd64.c"
-//#elif defined(__GNUC__) && defined(__powerpc__) && defined(__ELF__)
-#elif defined(__GNUC__) && defined(__powerpc__) // Seems to run fine on PPC G5 OSX even when no __ELF__ is defined.
+#elif defined(__GNUC__) && (defined(__powerpc__) || defined(__POWERPC__)) // Seems to run fine on PPC G5 OSX even when no __ELF__ is defined.
   #include "ppc.c"
 #elif defined(__GNUC__)
   #include "sjlj.c"
