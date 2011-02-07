@@ -24,6 +24,8 @@ uint8 SuperFX::bus_read(unsigned addr) {
     }
     return cartridge.ram.read(addr & ram_mask);
   }
+
+  return 0; // FIXME: Can it reach here?
 }
 
 void SuperFX::bus_write(unsigned addr, uint8 data) {

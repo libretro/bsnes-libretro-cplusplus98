@@ -50,7 +50,7 @@ string integer(intmax_t value) {
     result[x] = buffer[y];
   }
 
-  return result;
+  return &result[0];
 }
 
 template<unsigned length> string linteger(intmax_t value) {
@@ -124,7 +124,7 @@ string decimal(uintmax_t value) {
     result[x] = buffer[y];
   }
 
-  return result;
+  return &result[0];
 }
 
 template<unsigned length> string ldecimal(uintmax_t value) {
@@ -146,7 +146,7 @@ template<unsigned length> string ldecimal(uintmax_t value) {
     result[x] = buffer[y];
   }
 
-  return result;
+  return &result[0];
 }
 
 template<unsigned length> string rdecimal(uintmax_t value) {
@@ -168,7 +168,7 @@ template<unsigned length> string rdecimal(uintmax_t value) {
     result[x] = buffer[y];
   }
 
-  return result;
+  return &result[0];
 }
 
 template<unsigned length> string hex(uintmax_t value) {
@@ -192,7 +192,7 @@ template<unsigned length> string hex(uintmax_t value) {
     output[offset - i] = temp;
   }
 
-  return output;
+  return &output[0];
 }
 
 template<unsigned length> string binary(uintmax_t value) {
@@ -214,7 +214,7 @@ template<unsigned length> string binary(uintmax_t value) {
     output[offset - i] = temp;
   }
 
-  return output;
+  return &output[0];
 }
 
 //using sprintf is certainly not the most ideal method to convert

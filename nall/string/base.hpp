@@ -167,23 +167,23 @@ namespace nall {
   static inline string substr(const char *src, unsigned start = 0, unsigned length = 0);
   static inline string& strtr(string &dest, const char *before, const char *after);
   
-  inline string integer(intmax_t value);
-  template<unsigned length> inline string linteger(intmax_t value);
-  template<unsigned length> inline string rinteger(intmax_t value);
-  inline string decimal(uintmax_t value);
-  template<unsigned length> inline string ldecimal(uintmax_t value);
-  template<unsigned length> inline string rdecimal(uintmax_t value);
-  template<unsigned length> inline string hex(uintmax_t value);
-  template<unsigned length> inline string binary(uintmax_t value);
-  inline unsigned fp(char *str, double value);
-  inline string fp(double value);
+  static inline string integer(intmax_t value);
+  template<unsigned length> static inline string linteger(intmax_t value);
+  template<unsigned length> static inline string rinteger(intmax_t value);
+  static inline string decimal(uintmax_t value);
+  template<unsigned length> static inline string ldecimal(uintmax_t value);
+  template<unsigned length> static inline string rdecimal(uintmax_t value);
+  template<unsigned length> static inline string hex(uintmax_t value);
+  template<unsigned length> static inline string binary(uintmax_t value);
+  static inline unsigned fp(char *str, double value);
+  static inline string fp(double value);
 
-  inline string linteger(intmax_t value) { return linteger<0>(value); }
-  inline string rinteger(intmax_t value) { return rinteger<0>(value); }
-  inline string ldecimal(uintmax_t value) { return ldecimal<0>(value); }
-  inline string rdecimal(uintmax_t value) { return rdecimal<0>(value); }
-  inline string hex(uintmax_t value) { return hex<0>(value); }
-  inline string binary(uintmax_t value) { return binary<0>(value); }
+  static inline string linteger(intmax_t value) { return linteger<0>(value); }
+  static inline string rinteger(intmax_t value) { return rinteger<0>(value); }
+  static inline string ldecimal(uintmax_t value) { return ldecimal<0>(value); }
+  static inline string rdecimal(uintmax_t value) { return rdecimal<0>(value); }
+  static inline string hex(uintmax_t value) { return hex<0>(value); }
+  static inline string binary(uintmax_t value) { return binary<0>(value); }
 
   //variadic.hpp
   template <typename T1>
