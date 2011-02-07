@@ -124,66 +124,66 @@ namespace nall {
   };
 
   //compare.hpp
-  static inline char chrlower(char c);
-  static inline char chrupper(char c);
-  static inline int stricmp(const char *dest, const char *src);
-  static inline bool strbegin (const char *str, const char *key);
-  static inline bool stribegin(const char *str, const char *key);
-  static inline bool strend (const char *str, const char *key);
-  static inline bool striend(const char *str, const char *key);
+  inline char chrlower(char c);
+  inline char chrupper(char c);
+  inline int stricmp(const char *dest, const char *src);
+  inline bool strbegin (const char *str, const char *key);
+  inline bool stribegin(const char *str, const char *key);
+  inline bool strend (const char *str, const char *key);
+  inline bool striend(const char *str, const char *key);
 
   //convert.hpp
-  static inline char* strlower(char *str);
-  static inline char* strupper(char *str);
-  static inline char* strtr(char *dest, const char *before, const char *after);
-  static inline uintmax_t hex     (const char *str);
-  static inline intmax_t  integer  (const char *str);
-  static inline uintmax_t decimal (const char *str);
-  static inline uintmax_t binary     (const char *str);
-  static inline double    fp  (const char *str);
+  inline char* strlower(char *str);
+  inline char* strupper(char *str);
+  inline char* strtr(char *dest, const char *before, const char *after);
+  inline uintmax_t hex     (const char *str);
+  inline intmax_t  integer  (const char *str);
+  inline uintmax_t decimal (const char *str);
+  inline uintmax_t binary     (const char *str);
+  inline double    fp  (const char *str);
 
   //match.hpp
-  static inline bool match(const char *pattern, const char *str);
+  inline bool match(const char *pattern, const char *str);
 
   //math.hpp
-  static inline bool strint (const char *str, int &result);
-  static inline bool strmath(const char *str, int &result);
+  inline bool strint (const char *str, int &result);
+  inline bool strmath(const char *str, int &result);
 
   //strl.hpp
-  static inline unsigned strlcpy(char *dest, const char *src, unsigned length);
-  static inline unsigned strlcat(char *dest, const char *src, unsigned length);
+  inline unsigned strlcpy(char *dest, const char *src, unsigned length);
+  inline unsigned strlcat(char *dest, const char *src, unsigned length);
 
   //trim.hpp
-  static inline char* ltrim(char *str, const char *key = " ");
-  static inline char* rtrim(char *str, const char *key = " ");
-  static inline char* trim (char *str, const char *key = " ");
-  static inline char* ltrim_once(char *str, const char *key = " ");
-  static inline char* rtrim_once(char *str, const char *key = " ");
-  static inline char* trim_once (char *str, const char *key = " ");
+  inline char* ltrim(char *str, const char *key = " ");
+  inline char* rtrim(char *str, const char *key = " ");
+  inline char* trim (char *str, const char *key = " ");
+  inline char* ltrim_once(char *str, const char *key = " ");
+  inline char* rtrim_once(char *str, const char *key = " ");
+  inline char* trim_once (char *str, const char *key = " ");
 
   //utility.hpp
-  static inline unsigned strlcpy(string &dest, const char *src, unsigned length);
-  static inline unsigned strlcat(string &dest, const char *src, unsigned length);
-  static inline string substr(const char *src, unsigned start = 0, unsigned length = 0);
-  static inline string& strtr(string &dest, const char *before, const char *after);
+  inline unsigned strlcpy(string &dest, const char *src, unsigned length);
+  inline unsigned strlcat(string &dest, const char *src, unsigned length);
+  inline string substr(const char *src, unsigned start = 0, unsigned length = 0);
+  inline string& strtr(string &dest, const char *before, const char *after);
   
-  static inline string integer(intmax_t value);
-  template<unsigned length> static inline string linteger(intmax_t value);
-  template<unsigned length> static inline string rinteger(intmax_t value);
-  static inline string decimal(uintmax_t value);
-  template<unsigned length> static inline string ldecimal(uintmax_t value);
-  template<unsigned length> static inline string rdecimal(uintmax_t value);
-  template<unsigned length> static inline string hex(uintmax_t value);
-  template<unsigned length> static inline string binary(uintmax_t value);
-  static inline unsigned fp(char *str, double value);
-  static inline string fp(double value);
+  inline string integer(intmax_t value);
+  template<unsigned length> inline string linteger(intmax_t value);
+  template<unsigned length> inline string rinteger(intmax_t value);
+  inline string decimal(uintmax_t value);
+  template<unsigned length> inline string ldecimal(uintmax_t value);
+  template<unsigned length> inline string rdecimal(uintmax_t value);
+  template<unsigned length> inline string hex(uintmax_t value);
+  template<unsigned length> inline string binary(uintmax_t value);
+  inline unsigned fp(char *str, double value);
+  inline string fp(double value);
 
-  static inline string linteger(intmax_t value) { return linteger<0>(value); }
-  static inline string rinteger(intmax_t value) { return rinteger<0>(value); }
-  static inline string ldecimal(uintmax_t value) { return ldecimal<0>(value); }
-  static inline string rdecimal(uintmax_t value) { return rdecimal<0>(value); }
-  static inline string hex(uintmax_t value) { return hex<0>(value); }
-  static inline string binary(uintmax_t value) { return binary<0>(value); }
+  inline string linteger(intmax_t value) { return linteger<0>(value); }
+  inline string rinteger(intmax_t value) { return rinteger<0>(value); }
+  inline string ldecimal(uintmax_t value) { return ldecimal<0>(value); }
+  inline string rdecimal(uintmax_t value) { return rdecimal<0>(value); }
+  inline string hex(uintmax_t value) { return hex<0>(value); }
+  inline string binary(uintmax_t value) { return binary<0>(value); }
 
   //variadic.hpp
   template <typename T1>

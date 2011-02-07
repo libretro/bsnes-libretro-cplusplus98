@@ -3,17 +3,17 @@
 
 namespace nall {
 
-unsigned strlcpy(string &dest, const char *src, unsigned length) {
+inline unsigned strlcpy(string &dest, const char *src, unsigned length) {
   dest.reserve(length);
   return strlcpy(dest(), src, length);
 }
 
-unsigned strlcat(string &dest, const char *src, unsigned length) {
+inline unsigned strlcat(string &dest, const char *src, unsigned length) {
   dest.reserve(length);
   return strlcat(dest(), src, length);
 }
 
-string substr(const char *src, unsigned start, unsigned length) {
+inline string substr(const char *src, unsigned start, unsigned length) {
   string dest;
   if(length == 0) {
     //copy entire string
@@ -27,7 +27,7 @@ string substr(const char *src, unsigned start, unsigned length) {
 
 /* arithmetic <> string */
 
-string integer(intmax_t value) {
+inline string integer(intmax_t value) {
   bool negative = value < 0;
   if(negative) value = abs(value);
 
@@ -53,7 +53,7 @@ string integer(intmax_t value) {
   return &result[0];
 }
 
-template<unsigned length> string linteger(intmax_t value) {
+template<unsigned length> inline string linteger(intmax_t value) {
   bool negative = value < 0;
   if(negative) value = abs(value);
 
@@ -79,7 +79,7 @@ template<unsigned length> string linteger(intmax_t value) {
   return result;
 }
 
-template<unsigned length> string rinteger(intmax_t value) {
+template<unsigned length> inline string rinteger(intmax_t value) {
   bool negative = value < 0;
   if(negative) value = abs(value);
 
@@ -105,7 +105,7 @@ template<unsigned length> string rinteger(intmax_t value) {
   return result;
 }
 
-string decimal(uintmax_t value) {
+inline string decimal(uintmax_t value) {
   char buffer[64];
   unsigned size = 0;
 
@@ -127,7 +127,7 @@ string decimal(uintmax_t value) {
   return &result[0];
 }
 
-template<unsigned length> string ldecimal(uintmax_t value) {
+template<unsigned length> inline string ldecimal(uintmax_t value) {
   char buffer[64];
   unsigned size = 0;
 
@@ -149,7 +149,7 @@ template<unsigned length> string ldecimal(uintmax_t value) {
   return &result[0];
 }
 
-template<unsigned length> string rdecimal(uintmax_t value) {
+template<unsigned length> inline string rdecimal(uintmax_t value) {
   char buffer[64];
   unsigned size = 0;
 
@@ -171,7 +171,7 @@ template<unsigned length> string rdecimal(uintmax_t value) {
   return &result[0];
 }
 
-template<unsigned length> string hex(uintmax_t value) {
+template<unsigned length> inline string hex(uintmax_t value) {
   string output;
   unsigned offset = 0;
 
@@ -195,7 +195,7 @@ template<unsigned length> string hex(uintmax_t value) {
   return &output[0];
 }
 
-template<unsigned length> string binary(uintmax_t value) {
+template<unsigned length> inline string binary(uintmax_t value) {
   string output;
   unsigned offset = 0;
 
@@ -220,7 +220,7 @@ template<unsigned length> string binary(uintmax_t value) {
 //using sprintf is certainly not the most ideal method to convert
 //a double to a string ... but attempting to parse a double by
 //hand, digit-by-digit, results in subtle rounding errors.
-unsigned fp(char *str, double value) {
+inline unsigned fp(char *str, double value) {
   char buffer[256];
   sprintf(buffer, "%f", value);
 
@@ -241,7 +241,7 @@ unsigned fp(char *str, double value) {
   return length + 1;
 }
 
-string fp(double value) {
+inline string fp(double value) {
   string temp;
   temp.reserve(fp(0, value));
   fp(temp(), value);

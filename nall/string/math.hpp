@@ -3,7 +3,7 @@
 
 namespace nall {
 
-static int eval_integer(const char *&s) {
+inline int eval_integer(const char *&s) {
   if(!*s) throw "unrecognized_integer";
   int value = 0, x = *s, y = *(s + 1);
 
@@ -57,7 +57,7 @@ static int eval_integer(const char *&s) {
   throw "unrecognized_integer";
 }
 
-static int eval(const char *&s, int depth = 0) {
+inline int eval(const char *&s, int depth = 0) {
   while(*s == ' ' || *s == '\t') s++; //trim whitespace
   if(!*s) throw "unrecognized_token";
   int value = 0, x = *s, y = *(s + 1);
@@ -139,7 +139,7 @@ static int eval(const char *&s, int depth = 0) {
   return value;
 }
 
-static inline bool strint(const char *s, int &result) {
+inline bool strint(const char *s, int &result) {
   try {
     result = eval_integer(s);
     return true;
@@ -149,7 +149,7 @@ static inline bool strint(const char *s, int &result) {
   }
 }
 
-static inline bool strmath(const char *s, int &result) {
+inline bool strmath(const char *s, int &result) {
   try {
     result = eval(s);
     return true;

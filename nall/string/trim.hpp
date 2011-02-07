@@ -3,7 +3,7 @@
 
 namespace nall {
 
-static inline char* ltrim(char *str, const char *key) {
+inline char* ltrim(char *str, const char *key) {
   if(!key || !*key) return str;
   while(strbegin(str, key)) {
     char *dest = str, *src = str + strlen(key);
@@ -16,17 +16,17 @@ static inline char* ltrim(char *str, const char *key) {
   return str;
 }
 
-static inline char* rtrim(char *str, const char *key) {
+inline char* rtrim(char *str, const char *key) {
   if(!key || !*key) return str;
   while(strend(str, key)) str[strlen(str) - strlen(key)] = 0;
   return str;
 }
 
-static inline char* trim(char *str, const char *key) {
+inline char* trim(char *str, const char *key) {
   return ltrim(rtrim(str, key), key);
 }
 
-static inline char* ltrim_once(char *str, const char *key) {
+inline char* ltrim_once(char *str, const char *key) {
   if(!key || !*key) return str;
   if(strbegin(str, key)) {
     char *dest = str, *src = str + strlen(key);
@@ -39,13 +39,13 @@ static inline char* ltrim_once(char *str, const char *key) {
   return str;
 }
 
-static inline char* rtrim_once(char *str, const char *key) {
+inline char* rtrim_once(char *str, const char *key) {
   if(!key || !*key) return str;
   if(strend(str, key)) str[strlen(str) - strlen(key)] = 0;
   return str;
 }
 
-static inline char* trim_once(char *str, const char *key) {
+inline char* trim_once(char *str, const char *key) {
   return ltrim_once(rtrim_once(str, key), key);
 }
 
