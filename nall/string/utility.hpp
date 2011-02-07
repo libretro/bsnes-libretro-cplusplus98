@@ -42,7 +42,7 @@ inline string integer(intmax_t value) {
   buffer[size++] = negative ? '-' : '+';
   buffer[size] = 0;
 
-  char result[size + 1];
+  char result[64];
   memset(result, '0', size);
   result[size] = 0;
 
@@ -50,7 +50,7 @@ inline string integer(intmax_t value) {
     result[x] = buffer[y];
   }
 
-  return &result[0];
+  return result;
 }
 
 template<unsigned length> inline string linteger(intmax_t value) {
@@ -116,7 +116,7 @@ inline string decimal(uintmax_t value) {
   } while(value);
   buffer[size] = 0;
 
-  char result[size + 1];
+  char result[64];
   memset(result, '0', size);
   result[size] = 0;
 
@@ -146,7 +146,7 @@ template<unsigned length> inline string ldecimal(uintmax_t value) {
     result[x] = buffer[y];
   }
 
-  return &result[0];
+  return result;
 }
 
 template<unsigned length> inline string rdecimal(uintmax_t value) {
@@ -168,7 +168,7 @@ template<unsigned length> inline string rdecimal(uintmax_t value) {
     result[x] = buffer[y];
   }
 
-  return &result[0];
+  return result;
 }
 
 template<unsigned length> inline string hex(uintmax_t value) {
@@ -192,7 +192,7 @@ template<unsigned length> inline string hex(uintmax_t value) {
     output[offset - i] = temp;
   }
 
-  return &output[0];
+  return output;
 }
 
 template<unsigned length> inline string binary(uintmax_t value) {
@@ -214,7 +214,7 @@ template<unsigned length> inline string binary(uintmax_t value) {
     output[offset - i] = temp;
   }
 
-  return &output[0];
+  return output;
 }
 
 //using sprintf is certainly not the most ideal method to convert
