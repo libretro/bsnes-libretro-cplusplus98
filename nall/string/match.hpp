@@ -3,7 +3,7 @@
 
 namespace nall {
 
-static inline bool match(const char *p, const char *s) {
+inline bool match(const char *p, const char *s) {
   const char *p_ = 0, *s_ = 0;
 
   for(;;) {

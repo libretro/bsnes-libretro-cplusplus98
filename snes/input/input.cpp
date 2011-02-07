@@ -214,6 +214,9 @@ uint8 Input::port_read(bool portnumber) {
         case 30: return 0;
         case 31: return 0;
       }
+
+    default:
+      break;
     } //case Device::Justifier(s)
   } //switch(p.device.i)
 
@@ -263,6 +266,8 @@ void Input::update() {
         latchy = (p.device.i == Device::Justifiers ? p.justifier.y2 : -1);
       }
     } break;
+    default:
+      break;
   }
 
   if(latchy < 0 || latchy >= (ppu.overscan() ? 240 : 225) || latchx < 0 || latchx >= 256) {

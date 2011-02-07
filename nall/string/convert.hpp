@@ -3,7 +3,7 @@
 
 namespace nall {
 
-static inline char* strlower(char *str) {
+inline char* strlower(char *str) {
   if(!str) return 0;
   int i = 0;
   while(str[i]) {
@@ -13,7 +13,7 @@ static inline char* strlower(char *str) {
   return str;
 }
 
-static inline char* strupper(char *str) {
+inline char* strupper(char *str) {
   if(!str) return 0;
   int i = 0;
   while(str[i]) {
@@ -23,7 +23,7 @@ static inline char* strupper(char *str) {
   return str;
 }
 
-static inline char* strtr(char *dest, const char *before, const char *after) {
+inline char* strtr(char *dest, const char *before, const char *after) {
   if(!dest || !before || !after) return dest;
   int sl = strlen(dest), bsl = strlen(before), asl = strlen(after);
 
@@ -44,7 +44,7 @@ inline string& string::lower() { nall::strlower(data); return *this; }
 inline string& string::upper() { nall::strupper(data); return *this; }
 inline string& string::transform(const char *before, const char *after) { nall::strtr(data, before, after); return *this; }
 
-static inline uintmax_t hex(const char *str) {
+inline uintmax_t hex(const char *str) {
   if(!str) return 0;
   uintmax_t result = 0;
 
@@ -64,7 +64,7 @@ static inline uintmax_t hex(const char *str) {
   return result;
 }
 
-static inline intmax_t integer(const char *str) {
+inline intmax_t integer(const char *str) {
   if(!str) return 0;
   intmax_t result = 0;
   bool negate = false;
@@ -85,7 +85,7 @@ static inline intmax_t integer(const char *str) {
   return !negate ? result : -result;
 }
 
-static inline uintmax_t decimal(const char *str) {
+inline uintmax_t decimal(const char *str) {
   if(!str) return 0;
   uintmax_t result = 0;
 
@@ -99,7 +99,7 @@ static inline uintmax_t decimal(const char *str) {
   return result;
 }
 
-static inline uintmax_t binary(const char *str) {
+inline uintmax_t binary(const char *str) {
   if(!str) return 0;
   uintmax_t result = 0;
 
@@ -117,7 +117,7 @@ static inline uintmax_t binary(const char *str) {
   return result;
 }
 
-static inline double fp(const char *str) {
+inline double fp(const char *str) {
   if(!str) return 0.0;
   bool negate = false;
 
