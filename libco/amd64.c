@@ -8,7 +8,6 @@
 #include "libco.h"
 #include <assert.h>
 #include <stdlib.h>
-#include <malloc.h>
 
 #ifdef __cplusplus
 extern "C" {
