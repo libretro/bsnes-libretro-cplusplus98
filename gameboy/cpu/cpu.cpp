@@ -94,7 +94,7 @@ void CPU::interrupt_exec(uint16 pc) {
 }
 
 void CPU::power() {
-  create(Main, 4 * 1024 * 1024);
+  create(Main, 4194304);
 
   for(unsigned n = 0xc000; n <= 0xdfff; n++) bus.mmio[n] = this;  //WRAM
   for(unsigned n = 0xe000; n <= 0xfdff; n++) bus.mmio[n] = this;  //WRAM (mirror)
@@ -114,13 +114,7 @@ void CPU::power() {
   status.clock = 0;
   status.halt = false;
   status.stop = false;
-
   status.ime = 0;
-  status.timer0 = 0;
-  status.timer1 = 0;
-  status.timer2 = 0;
-  status.timer3 = 0;
-  status.timer4 = 0;
 
   status.p15 = 0;
   status.p14 = 0;
