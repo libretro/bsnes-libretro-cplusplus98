@@ -69,8 +69,11 @@ inline intmax_t integer(const char *str) {
   intmax_t result = 0;
   bool negate = false;
 
-  //check for negation
-  if(*str == '-') {
+  //check for sign
+  if(*str == '+') {
+    negate = false;
+    str++;
+  } else if(*str == '-') {
     negate = true;
     str++;
   }

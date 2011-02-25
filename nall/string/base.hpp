@@ -71,7 +71,7 @@ namespace nall {
 
     inline ~string();
 
-    inline bool readfile(const char*);
+    inline bool readfile(const string&);
     inline string& replace (const char*, const char*);
     inline string& qreplace(const char*, const char*);
 
