@@ -1,6 +1,8 @@
 #ifndef NALL_REFERENCE_ARRAY_HPP
 #define NALL_REFERENCE_ARRAY_HPP
 
+// Themaister: This is C++0x, but doesn't seem to be used anyways.
+
 #include <type_traits>
 #include <nall/bit.hpp>
 #include <nall/concept.hpp>

@@ -1,6 +1,8 @@
 #ifndef NALL_PUBLIC_CAST_HPP
 #define NALL_PUBLIC_CAST_HPP
 
+// Themaister: This is C++0x, but it not used for obvious reasons :)
+
 //this is a proof-of-concept-*only* C++ access-privilege elevation exploit.
 //this code is 100% legal C++, per C++98 section 14.7.2 paragraph 8:
 //"access checking rules do not apply to names in explicit instantiations."

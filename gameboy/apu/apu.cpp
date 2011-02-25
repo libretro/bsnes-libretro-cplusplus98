@@ -17,7 +17,7 @@ void APU::Main() {
 
 void APU::main() {
   while(true) {
-    if(scheduler.sync == Scheduler::SynchronizeMode::All) {
+    if(scheduler.sync.i == Scheduler::SynchronizeMode::All) {
       scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
     }
 

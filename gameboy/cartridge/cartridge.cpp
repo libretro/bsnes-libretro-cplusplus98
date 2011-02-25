@@ -69,7 +69,7 @@ void Cartridge::load(const string &xml, const uint8_t *data, unsigned size) {
     }
   }
 
-  switch(info.mapper) { default:
+  switch(info.mapper.i) { default:
     case Mapper::MBC0:  mapper = &mbc0;  break;
     case Mapper::MBC1:  mapper = &mbc1;  break;
     case Mapper::MBC2:  mapper = &mbc2;  break;

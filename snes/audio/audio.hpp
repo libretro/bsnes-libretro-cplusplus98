@@ -8,7 +8,10 @@ public:
 
 private:
   bool coprocessor;
-  enum : unsigned { buffer_size = 32768, buffer_mask = buffer_size - 1 };
+
+  static const unsigned buffer_size = 32768;
+  static const unsigned buffer_mask = buffer_size - 1;
+
   uint32 dsp_buffer[buffer_size], cop_buffer[buffer_size];
   unsigned dsp_rdoffset, cop_rdoffset;
   unsigned dsp_wroffset, cop_wroffset;
