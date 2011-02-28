@@ -2,6 +2,7 @@ include nall/Makefile
 snes := snes
 gameboy := gameboy
 profile := performance
+link :=
 
 ifneq ($(platform),win)
    fpic = -fPIC
@@ -13,11 +14,15 @@ else
    extraflags = -O3 -fomit-frame-pointer -I. -I$(snes) $(fpic)
 endif
 
-# profile-guided instrumentation. Compile your frontend with this as well. :)
-# extraflags += -fprofile-generate --coverage
+ifeq ($(PROFILING),gen)
+   extraflags += -fprofile-generate --coverage
+   link += -fprofile-generate --coverage
+endif
 
-# profile-guided optimization
-# extraflags += -fprofile-use
+ifeq ($(PROFILING),use)
+   extraflags += -fprofile-use
+   link += -fprofile-use
+endif
 
 # implicit rules
 compile = \
