@@ -1,24 +1,32 @@
 class Cartridge : property<Cartridge> {
 public:
-  struct Mode{ enum e{
-    Normal,
-    BsxSlotted,
-    Bsx,
-    SufamiTurbo,
-    SuperGameBoy,
-  } i; };
+  struct Mode { 
+    enum e {
+      Normal,
+      BsxSlotted,
+      Bsx,
+      SufamiTurbo,
+      SuperGameBoy,
+    } i; };
 
-  struct Region{ enum e{
-    NTSC,
-    PAL,
-  } i; };
+  struct Region { 
+    enum e {
+      NTSC,
+      PAL,
+    } i; };
+
+  struct Slot {
+    enum e {
+      Base,
+      Bsx,
+      SufamiTurbo,
+      SufamiTurboA,
+      SufamiTurboB,
+      GameBoy,
+    } i; };
 
   MappedRAM rom;
   MappedRAM ram;
-
-  //assigned externally to point to file-system datafiles (msu1 and serial)
-  //example: "/path/to/filename.sfc" would set this to "/path/to/filename"
-  readwrite<string> basename;
 
   readonly<bool> loaded;
   readonly<unsigned> crc32;
@@ -46,9 +54,9 @@ public:
     const string id;
     uint8_t *data;
     unsigned size;
-    unsigned slot;
-    NonVolatileRAM() : id(""), data(0), size(0), slot(0) {}
-    NonVolatileRAM(const string id, uint8_t *data, unsigned size, unsigned slot = 0)
+    Slot::e slot;
+    NonVolatileRAM() : id(""), data(0), size(0), slot(Slot::Base) {}
+    NonVolatileRAM(const string id, uint8_t *data, unsigned size, Slot::e slot = Slot::Base)
     : id(id), data(data), size(size), slot(slot) {}
   };
   linear_vector<NonVolatileRAM> nvram;

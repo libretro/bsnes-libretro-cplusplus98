@@ -37,7 +37,7 @@ void Cartridge::load(Mode::e cartridge_mode, const lstring &xml_list) {
 
   if(ram_size > 0) {
     ram.map(allocate<uint8>(ram_size, 0xff), ram_size);
-    nvram.append(NonVolatileRAM("srm", ram.data(), ram.size()));
+    nvram.append(NonVolatileRAM(".srm", ram.data(), ram.size()));
   }
 
   rom.write_protect(true);

@@ -269,12 +269,13 @@ void Cartridge::xml_parse_necdsp(xml_element &root) {
     }
   }
 
+  string path(dir(system.interface->path(Slot::Base, ".dsp")), program);
   unsigned promsize = (necdsp.revision.i == NECDSP::Revision::uPD7725 ? 2048 : 16384);
   unsigned dromsize = (necdsp.revision.i == NECDSP::Revision::uPD7725 ? 1024 :  2048);
   unsigned filesize = promsize * 3 + dromsize * 2;
 
   file fp;
-  if(fp.open(string(dir(basename()), program), file::mode_read)) {
+  if(fp.open(path, file::mode_read)) {
     if(fp.size() == filesize) {
       for(unsigned n = 0; n < promsize; n++) necdsp.programROM[n] = fp.readm(3);
       for(unsigned n = 0; n < dromsize; n++) necdsp.dataROM[n] = fp.readm(2);
@@ -328,7 +329,7 @@ void Cartridge::xml_parse_necdsp(xml_element &root) {
     }
   }
 
-  if(program == "") {
+  if(programhash == "") {
     system.interface->message(string( "Warning: NEC DSP program ", program, " is missing." ));
   } else if(sha256 != "" && sha256 != programhash) {
     system.interface->message(string(
@@ -405,10 +406,17 @@ void Cartridge::xml_parse_sufamiturbo(xml_element &root) {
                 if(attr.name == "offset") m.offset = hex(attr.content);
                 if(attr.name == "size") m.size = hex(attr.content);
               }
-              if(memory.size() > 0) mapping.append(m);
+              if(m.size == 0) m.size = memory.size();
+              if(m.size) mapping.append(m);
             }
           }
         } else if(slot.name == "ram") {
+          unsigned ram_size = 0;
+
+          foreach(attr, slot.attribute) {
+            if(attr.name == "size") ram_size = hex(attr.content);
+          }
+
           foreach(leaf, slot.element) {
             if(leaf.name == "map") {
               Memory &memory = slotid == 0 ? sufamiturbo.slotA.ram : sufamiturbo.slotB.ram;
@@ -419,7 +427,8 @@ void Cartridge::xml_parse_sufamiturbo(xml_element &root) {
                 if(attr.name == "offset") m.offset = hex(attr.content);
                 if(attr.name == "size") m.size = hex(attr.content);
               }
-              if(memory.size() > 0) mapping.append(m);
+              if(m.size == 0) m.size = ram_size;
+              if(m.size) mapping.append(m);
             }
           }
         }

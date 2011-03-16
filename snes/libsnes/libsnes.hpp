@@ -365,6 +365,19 @@ typedef int16_t (*snes_input_state_t)(bool port, unsigned device,
 // These functions are used to get information about and manipulate the libsnes
 // library itself, not the emulated SNES it implements.
 
+// snes_library_id:
+//
+//    Returns a human readable string describing this libsnes implementation.
+//    It is not supposed to be parsed or used in any other way than being
+//    printed to screen on request by user or otherwise.
+//
+//    Returns:
+//
+//       A human-readable string describing this implementation.
+
+const char* snes_library_id(void);
+
+
 // snes_library_revision_major:
 //
 //    Returns the major API version of this libsnes implementation.
