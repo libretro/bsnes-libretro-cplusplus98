@@ -121,7 +121,7 @@ inline uintmax_t binary(const char *str) {
 }
 
 inline double fp(const char *str) {
-   strtod(str, NULL);
+   return strtod(str, NULL);
 }
 
 }
