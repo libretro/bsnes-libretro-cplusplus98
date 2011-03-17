@@ -44,7 +44,7 @@ struct Interface : public SNES::Interface {
 static Interface interface;
 
 const char* snes_library_id(void) {
-  static string id(SNES::Info::Name, "(", SNES::Info::Profile, ") v", SNES::Info::Version);
+  static string id(SNES::Info::Name, " (", SNES::Info::Profile, ") v", SNES::Info::Version);
   return (const char*)id;
 }
 
