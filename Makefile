@@ -30,8 +30,11 @@ compile = \
     $(if $(filter %.c,$<), \
       $(CC) $(CFLAGS) $(extraflags) $1 -c $< -o $@, \
       $(if $(filter %.cpp,$<), \
-        $(CXX) $(CXXFLAGS) $(extraflags) $1 -c $< -o $@ \
-      ) \
+        $(CXX) $(CXXFLAGS) $(extraflags) $1 -c $< -o $@, \
+		  $(if $(filter %.s,$<), \
+		    $(AS) $(ASFLAGS) -o $@ $<, \
+      	) \
+		 ) \
     ) \
   )
 
