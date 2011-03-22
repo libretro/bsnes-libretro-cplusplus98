@@ -30,17 +30,9 @@ else ifeq ($(profile),performance)
   snesppu := $(snes)/alt/ppu-performance
 endif
 
-ifneq ($(findstring x86_64,$(shell uname -m)),)
-  asm_targets := libco/amd64.s
-  snes_objects += libco-asm
-else
-  asm_targets :=
-endif
-
 obj/libsnes.o: $(snes)/libsnes/libsnes.cpp $(snes)/libsnes/* 
 
 obj/libco.o         : libco/libco.c libco/*
-obj/libco-asm.o     : $(asm_targets)
 
 obj/snes-system.o   : $(snes)/system/system.cpp $(call rwildcard,$(snes)/system/) $(call rwildcard,$(snes)/video/)
 obj/snes-memory.o   : $(snes)/memory/memory.cpp $(call rwildcard,$(snes)/memory/)

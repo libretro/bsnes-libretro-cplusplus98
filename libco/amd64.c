@@ -37,6 +37,31 @@ static thread_local cothread_t co_active_handle = 0;
     0x61, 0x60, 0x44, 0x0F, 0x29, 0x69, 0x70, 0x44, 0x0F, 0x29, 0xB1, 0x80, 0x00, 0x00, 0x00, 0x44,
     0x0F, 0x29, 0xB9, 0x90, 0x00, 0x00, 0x00, 0xFF, 0xE0,
   };
+#else
+asm (
+      ".text\n"
+      ".globl co_swap\n"
+      ".type co_swap, @function\n"
+      "co_swap:\n"
+      "movq %rsp, (%rsi) # Save stack pointer, and pop the old one back.\n"
+      "movq (%rdi), %rsp\n"
+      "popq %rax\n"
+
+      "movq %rbp, 0x8(%rsi) # Save our non-volatile registers to buffer.\n"
+      "movq %rbx, 0x10(%rsi)\n"
+      "movq %r12, 0x18(%rsi)\n"
+      "movq %r13, 0x20(%rsi)\n"
+      "movq %r14, 0x28(%rsi)\n"
+      "movq %r15, 0x30(%rsi)\n"
+
+      "movq 0x8(%rdi),  %rbp # Pop back our saved registers.\n"
+      "movq 0x10(%rdi), %rbx\n"
+      "movq 0x18(%rdi), %r12\n"
+      "movq 0x20(%rdi), %r13\n"
+      "movq 0x28(%rdi), %r14\n"
+      "movq 0x30(%rdi), %r15\n"
+      "jmpq *%rax # Jump back to saved PC.\n"
+);
 #endif
 
 static void crash() {
