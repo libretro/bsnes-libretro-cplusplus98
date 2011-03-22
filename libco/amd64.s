@@ -1,6 +1,7 @@
 
 .text
 .globl co_swap
+.type co_swap, @function
 co_swap:
    movq %rsp, (%rsi) /* Save stack pointer, and pop the old one back */
    movq (%rdi), %rsp
