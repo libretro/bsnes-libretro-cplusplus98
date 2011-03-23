@@ -34,7 +34,8 @@ void fastcall co_swap(cothread_t new_thread, cothread_t old_thread);
 #else
 #define ASM_CO_SWAP_DEF \
    ".globl co_swap\n" \
-   ".type co_swap, @function\n" \
+   ".globl _co_swap\n" \
+   "_co_swap:\n" \
    "co_swap:\n"
 #endif
 
