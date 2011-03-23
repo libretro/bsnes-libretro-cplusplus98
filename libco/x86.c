@@ -23,32 +23,38 @@ extern "C" {
 
 static thread_local long co_active_buffer[64];
 static thread_local cothread_t co_active_handle = 0;
-static void (fastcall *co_swap)(cothread_t, cothread_t) = 0;
 
-//ABI: fastcall
-static unsigned char co_swap_function[] = {
-  0x89, 0x22, 0x8B, 0x21, 0x58, 0x89, 0x6A, 0x04, 0x89, 0x72, 0x08, 0x89, 0x7A, 0x0C, 0x89, 0x5A,
-  0x10, 0x8B, 0x69, 0x04, 0x8B, 0x71, 0x08, 0x8B, 0x79, 0x0C, 0x8B, 0x59, 0x10, 0xFF, 0xE0,
-};
+// ASM co_swap
+void fastcall co_swap(cothread_t new_thread, cothread_t old_thread);
 
 #ifdef _WIN32
-  #include <windows.h>
-
-  void co_init() {
-    DWORD old_privileges;
-    VirtualProtect(co_swap_function, sizeof co_swap_function, PAGE_EXECUTE_READWRITE, &old_privileges);
-  }
+#define ASM_CO_SWAP_DEF \
+   ".globl @co_swap@8\n" \
+   "@co_swap@8:\n"
 #else
-  #include <unistd.h>
-  #include <sys/mman.h>
-
-  void co_init() {
-    unsigned long addr = (unsigned long)co_swap_function;
-    unsigned long base = addr - (addr % sysconf(_SC_PAGESIZE));
-    unsigned long size = (addr - base) + sizeof co_swap_function;
-    mprotect((void*)base, size, PROT_READ | PROT_WRITE | PROT_EXEC);
-  }
+#define ASM_CO_SWAP_DEF \
+   ".globl co_swap\n" \
+   ".type co_swap, @function\n" \
+   "co_swap:\n"
 #endif
+
+// ABI: fastcall
+asm (
+   ".text\n"
+   ASM_CO_SWAP_DEF
+   "movl %esp, (%edx)\n"
+   "movl (%ecx), %esp\n"
+   "popl %eax\n"
+   "movl %ebp, 0x4(%edx)\n"
+   "movl %esi, 0x8(%edx)\n"
+   "mov  %edi, 0xc(%edx)\n"
+   "mov  %ebx, 0x10(%edx)\n"
+   "mov  0x4(%ecx),  %ebp\n"
+   "mov  0x8(%ecx),  %esi\n"
+   "mov  0xc(%ecx),  %edi\n"
+   "mov  0x10(%ecx), %ebx\n"
+   "jmp  *%eax\n"
+);
 
 static void crash() {
   assert(0); /* called only if cothread_t entrypoint returns */
@@ -61,10 +67,6 @@ cothread_t co_active() {
 
 cothread_t co_create(unsigned int size, void (*entrypoint)(void)) {
   cothread_t handle;
-  if(!co_swap) {
-    co_init();
-    co_swap = (void (fastcall*)(cothread_t, cothread_t))co_swap_function;
-  }
   if(!co_active_handle) co_active_handle = &co_active_buffer;
   size += 256; /* allocate additional space for storage */
   size &= ~15; /* align stack to 16-byte boundary */
