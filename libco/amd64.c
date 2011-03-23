@@ -38,10 +38,15 @@ static thread_local cothread_t co_active_handle = 0;
     0x0F, 0x29, 0xB9, 0x90, 0x00, 0x00, 0x00, 0xFF, 0xE0,
   };
 #else
+#ifndef __APPLE__
+#define TYPE_DECL ".type co_swap, @function\n"
+#else
+#define TYPE_DECL
+#endif
 asm (
       ".text\n"
       ".globl co_swap\n"
-      ".type co_swap, @function\n"
+      TYPE_DECL
       "co_swap:\n"
       "movq %rsp, (%rsi) # Save stack pointer, and pop the old one back.\n"
       "movq (%rdi), %rsp\n"
