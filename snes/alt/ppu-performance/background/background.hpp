@@ -26,7 +26,8 @@ struct Background {
     bool sub_enable;
   } regs;
 
-  uint16 **mosaic_table;
+  //uint16 **mosaic_table;
+  uint16 mosaic_table[16][4096];
 
   const unsigned id;
   unsigned opt_valid_bit;
