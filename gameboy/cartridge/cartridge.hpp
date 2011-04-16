@@ -8,31 +8,18 @@ struct Cartridge : MMIO, property<Cartridge> {
   #include "huc1/huc1.hpp"
   #include "huc3/huc3.hpp"
 
-  //enum Mapper : unsigned {
-  //  MBC0,
-  //  MBC1,
-  //  MBC2,
-  //  MBC3,
-  //  MBC5,
-  //  MMM01,
-  //  HuC1,
-  //  HuC3,
-  //  Unknown,
-  //};
-  //
-
   struct Mapper {
-     enum e {
-        MBC0,
-        MBC1,
-        MBC2,
-        MBC3,
-        MBC5,
-        MMM01,
-        HuC1,
-        HuC3,
-        Unknown,
-     } i;
+    enum e {
+      MBC0,
+      MBC1,
+      MBC2,
+      MBC3,
+      MBC5,
+      MMM01,
+      HuC1,
+      HuC3,
+      Unknown,
+    } i;
   };
 
   struct Information {

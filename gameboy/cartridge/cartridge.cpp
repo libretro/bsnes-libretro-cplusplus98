@@ -17,9 +17,10 @@ namespace GameBoy {
 Cartridge cartridge;
 
 void Cartridge::load(const string &xml, const uint8_t *data, unsigned size) {
-  if (size == 0) size = 32768;
-  romdata = new uint8[romsize = size]();
-  if (data) memcpy(romdata, data, size);
+  if(size == 0) size = 32768;
+  romdata = allocate<uint8>(romsize = size, 0xff);
+  if(data) memcpy(romdata, data, size);
+
 //uint32_t crc = crc32_calculate(data, size);
 //print("CRC32 = ", hex<4>(crc), "\n");
 
@@ -136,8 +137,9 @@ void Cartridge::power() {
   mmm01.power();
   huc1.power();
   huc3.power();
-  for(unsigned n = 0x0000; n <= 0x7fff; n++) bus.mmio[n] = mapper;
-  for(unsigned n = 0xa000; n <= 0xbfff; n++) bus.mmio[n] = mapper;
+
+  for(unsigned n = 0x0000; n <= 0x7fff; n++) bus.mmio[n] = this;
+  for(unsigned n = 0xa000; n <= 0xbfff; n++) bus.mmio[n] = this;
   bus.mmio[0xff50] = this;
 }
 

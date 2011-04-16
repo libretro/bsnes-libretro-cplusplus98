@@ -1,8 +1,15 @@
 struct Scheduler : property<Scheduler> {
-  //enum class SynchronizeMode : unsigned { None, CPU, All } sync;
-  //enum class ExitReason : unsigned { UnknownEvent, StepEvent, FrameEvent, SynchronizeEvent };
-  struct SynchronizeMode { enum e { None, CPU, All } i; } sync;
-  struct ExitReason { enum e { UnknownEvent, StepEvent, FrameEvent, SynchronizeEvent } i; };
+  struct SynchronizeMode {
+    enum e {
+      None, CPU, All
+    } i;
+  } sync;
+
+  struct ExitReason {
+    enum e {
+      UnknownEvent, StepEvent, FrameEvent, SynchronizeEvent
+    } i;
+  };
 
   ExitReason exit_reason;
 

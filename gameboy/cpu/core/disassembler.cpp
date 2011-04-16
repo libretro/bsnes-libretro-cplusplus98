@@ -6,15 +6,13 @@ string CPU::disassemble(uint16 pc) {
   output[79] = 0;
 
   string opcode = disassemble_opcode(pc);
-
-  // Terrible hack is terrible. :( Gief vartemplates!
   string registers = string(
-    string(string(" AF:"), hex<4>(r[AF])),
-    string(string(" BC:"), hex<4>(r[BC])),
-    string(string(" DE:"), hex<4>(r[DE])),
-    string(string(" HL:"), hex<4>(r[HL])),
-    string(string(" SP:"), hex<4>(r[SP]))
-    );
+    string(" AF:", hex<4>(r[AF])),
+    string(" BC:", hex<4>(r[BC])),
+    string(" DE:", hex<4>(r[DE])),
+    string(" HL:", hex<4>(r[HL])),
+    string(" SP:", hex<4>(r[SP]))
+  );
 
   memcpy(output +   0, hex<4>(pc), 4);
   memcpy(output +   6, opcode, opcode.length());

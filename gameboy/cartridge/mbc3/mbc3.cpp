@@ -29,7 +29,7 @@ uint8 Cartridge::MBC3::mmio_read(uint16 addr) {
 
   if(within<0xa000, 0xbfff>(addr)) {
     if(ram_enable) {
-      if(ram_select <= 0x03) {
+      if(ram_select >= 0x00 && ram_select <= 0x03) {
         return cartridge.ram_read((ram_select << 13) | (addr & 0x1fff));
       }
       if(ram_select == 0x08) return rtc_latch_second;
@@ -74,7 +74,7 @@ void Cartridge::MBC3::mmio_write(uint16 addr, uint8 data) {
 
   if(within<0xa000, 0xbfff>(addr)) {
     if(ram_enable) {
-      if(ram_select <= 0x03) {
+      if(ram_select >= 0x00 && ram_select <= 0x03) {
         cartridge.ram_write((ram_select << 13) | (addr & 0x1fff), data);
       } else if(ram_select == 0x08) {
         if(data >= 60) data = 0;

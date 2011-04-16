@@ -5,22 +5,14 @@ struct CPU : Processor, MMIO {
 
   bool trace;
 
-  //enum class Interrupt : unsigned {
-  //  Vblank,
-  //  Stat,
-  //  Timer,
-  //  Serial,
-  //  Joypad,
-  //};
-
   struct Interrupt {
-     enum e {
-        Vblank,
-        Stat,
-        Timer,
-        Serial,
-        Joypad,
-     } i;
+    enum e {
+      Vblank,
+      Stat,
+      Timer,
+      Serial,
+      Joypad,
+    } i;
   };
 
   struct Status {
