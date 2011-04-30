@@ -17,7 +17,7 @@ void SRTC::init() {
 
 void SRTC::load() {
   for(unsigned n = 0; n < 20; n++) rtc[n] = 0xff;
-  cartridge.nvram.append(Cartridge::NonVolatileRAM( "rtc", rtc, 20 ));
+  cartridge.nvram.append(Cartridge::NonVolatileRAM( ".rtc", rtc, 20 ));
 }
 
 void SRTC::unload() {

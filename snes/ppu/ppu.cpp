@@ -40,7 +40,7 @@ void PPU::enter() {
     scanline();
     add_clocks(60);
 
-    if(vcounter() <= (!regs.overscan ? 224 : 239)) {
+    if(vcounter() <= 239) {
       for(signed pixel = -7; pixel <= 255; pixel++) {
         bg1.run(1);
         bg2.run(1);
@@ -91,9 +91,9 @@ void PPU::power() {
   ppu1_version = config.ppu1.version;
   ppu2_version = config.ppu2.version;
 
-  foreach(n, vram) n = 0x00;
-  foreach(n, oam) n = 0x00;
-  foreach(n, cgram) n = 0x00;
+  foreach(n, vram) n = random(0x00);
+  foreach(n, oam) n = random(0x00);
+  foreach(n, cgram) n = random(0x00);
 
   reset();
 }

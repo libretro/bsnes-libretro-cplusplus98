@@ -59,11 +59,8 @@ void Video::update() {
 
   uint16_t *data = (uint16_t*)ppu.output;
   if(ppu.interlace() && ppu.field()) data += 512;
-  unsigned width = 256;
-  unsigned height = !ppu.overscan() ? 224 : 239;
 
-  if(frame_hires) {
-    width <<= 1;
+  if(hires) {
     //normalize line widths
     for(unsigned y = 0; y < 240; y++) {
       if(line_width[y] == 512) continue;
@@ -74,29 +71,22 @@ void Video::update() {
     }
   }
 
-  if(frame_interlace) {
-    height <<= 1;
-  }
+  system.interface->video_refresh(ppu.surface, hires, ppu.interlace(), ppu.overscan());
 
-  system.interface->video_refresh(ppu.output + 1024, width, height);
-
-  frame_hires = false;
-  frame_interlace = false;
+  hires = false;
 }
 
 void Video::scanline() {
   unsigned y = cpu.vcounter();
   if(y >= 240) return;
 
-  frame_hires |= ppu.hires();
-  frame_interlace |= ppu.interlace();
+  hires |= ppu.hires();
   unsigned width = (ppu.hires() == false ? 256 : 512);
   line_width[y] = width;
 }
 
 void Video::init() {
-  frame_hires = false;
-  frame_interlace = false;
+  hires = false;
   for(unsigned i = 0; i < 240; i++) line_width[i] = 256;
 }
 

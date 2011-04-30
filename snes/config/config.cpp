@@ -7,6 +7,7 @@ Configuration::Configuration() {
   controller_port2.i = Input::Device::Joypad;
   expansion_port.i   = System::ExpansionPortDevice::BSX;
   region.i           = System::Region::Autodetect;
+  random             = false; // Do this for now until there is an interface for libsnes.
 
   cpu.version         = 2;
   cpu.ntsc_frequency  = 21477272;  //315 / 88 * 6000000
