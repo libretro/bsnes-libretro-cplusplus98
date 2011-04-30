@@ -2,38 +2,42 @@
 
 #include "mode7.cpp"
 
-// Performance critical!!!
 unsigned PPU::Background::get_tile(unsigned hoffset, unsigned voffset) {
   unsigned tile_x = (hoffset & mask_x) >> tile_width;
   unsigned tile_y = (voffset & mask_y) >> tile_height;
 
   unsigned tile_pos = ((tile_y & 0x1f) << 5) + (tile_x & 0x1f);
-
-  tile_pos = isel_if(tile_y & 0x20, tile_pos + scy, tile_pos);
-  tile_pos = isel_if(tile_x & 0x20, tile_pos + scx, tile_pos);
+  if(tile_y & 0x20) tile_pos += scy;
+  if(tile_x & 0x20) tile_pos += scx;
 
   const uint16 tiledata_addr = regs.screen_addr + (tile_pos << 1);
   return (ppu.vram[tiledata_addr + 0] << 0) + (ppu.vram[tiledata_addr + 1] << 8);
 }
 
-// ALU full power
 void PPU::Background::offset_per_tile(unsigned x, unsigned y, unsigned &hoffset, unsigned &voffset) {
-  int opt_x = (x + (hscroll & 7)), hval, vval;
-  int opt_x_cond = opt_x - 8;
-  opt_x_cond = ~(opt_x_cond >> 31);
+  unsigned opt_x = (x + (hscroll & 7)), hval, vval;
+  if(opt_x >= 8) {
+    hval = self.bg3.get_tile((opt_x - 8) + (self.bg3.regs.hoffset & ~7), self.bg3.regs.voffset + 0);
+    if(self.regs.bgmode != 4)
+    vval = self.bg3.get_tile((opt_x - 8) + (self.bg3.regs.hoffset & ~7), self.bg3.regs.voffset + 8);
 
-  hval = self.bg3.get_tile((opt_x - 8) + (self.bg3.regs.hoffset & ~7), self.bg3.regs.voffset + 0);
-  int bgmode_mask = self.regs.bgmode - 4;
-  vval = isel_if(bgmode_mask, self.bg3.get_tile((opt_x - 8) + (self.bg3.regs.hoffset & ~7), self.bg3.regs.voffset + 8), vval);
-
-  int mask = hval & opt_valid_bit;
-  int hval_mask = hval & 0x8000;
-
-  hoffset = isel_if((mask && ~hval_mask && !bgmode_mask) & opt_x_cond, opt_x + (hval & ~7), hoffset);
-  voffset = isel_if((mask && hval_mask && !bgmode_mask) & opt_x_cond, y + hval, voffset);
-
-  hoffset = isel_if(((hval & opt_valid_bit) && bgmode_mask) & opt_x_cond, opt_x + (hval & ~7), hoffset);
-  voffset = isel_if(((vval & opt_valid_bit) && bgmode_mask) & opt_x_cond, y + vval, voffset);
+    if(self.regs.bgmode == 4) {
+      if(hval & opt_valid_bit) {
+        if(!(hval & 0x8000)) {
+          hoffset = opt_x + (hval & ~7);
+        } else {
+          voffset = y + hval;
+        }
+      }
+    } else {
+      if(hval & opt_valid_bit) {
+        hoffset = opt_x + (hval & ~7);
+      }
+      if(vval & opt_valid_bit) {
+        voffset = y + vval;
+      }
+    }
+  }
 }
 
 void PPU::Background::scanline() {
@@ -163,14 +167,18 @@ PPU::Background::Background(PPU &self, unsigned id) : self(self), id(id) {
 
   opt_valid_bit = (id == ID::BG1 ? 0x2000 : id == ID::BG2 ? 0x4000 : 0x0000);
 
+  mosaic_table = new uint16*[16];
   for(unsigned m = 0; m < 16; m++) {
+    mosaic_table[m] = new uint16[4096];
     for(unsigned x = 0; x < 4096; x++) {
-        mosaic_table[m][x] = (x / (m + 1)) * (m + 1);
+      mosaic_table[m][x] = (x / (m + 1)) * (m + 1);
     }
   }
 }
 
 PPU::Background::~Background() {
+  for(unsigned m = 0; m < 16; m++) delete[] mosaic_table[m];
+  delete[] mosaic_table;
 }
 
 #endif
