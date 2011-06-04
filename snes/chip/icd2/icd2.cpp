@@ -33,12 +33,6 @@ void ICD2::init() {
 }
 
 void ICD2::load() {
-  function<uint8(unsigned)> reader(&ICD2::mmio_read, &icd2);
-  function<void(unsigned, uint8)> writer(&ICD2::mmio_write, &icd2);
-  bus.map(Bus::MapMode::Direct, 0x00, 0x3f, 0x2181, 0x2182, reader, writer);
-  bus.map(Bus::MapMode::Direct, 0x00, 0x3f, 0x420b, 0x420b, reader, writer);
-  bus.map(Bus::MapMode::Direct, 0x80, 0xbf, 0x2181, 0x2182, reader, writer);
-  bus.map(Bus::MapMode::Direct, 0x80, 0xbf, 0x420b, 0x420b, reader, writer);
 }
 
 void ICD2::unload() {
@@ -54,10 +48,8 @@ void ICD2::power() {
 void ICD2::reset() {
   create(ICD2::Enter, cpu.frequency / 5);
 
-  r2181 = 0x00;
-  r2182 = 0x00;
-
-  r6000 = 0x00;
+  r6000_ly = 0x00;
+  r6000_row = 0x00;
   r6003 = 0x00;
   r6004 = 0xff;
   r6005 = 0xff;
@@ -67,7 +59,9 @@ void ICD2::reset() {
   r7800 = 0x0000;
   mlt_req = 0;
 
-  for(unsigned n = 0; n < 320; n++) vram[n] = 0xff;
+  foreach(byte, lcd.buffer) byte = 0xff;
+  foreach(byte, lcd.output) byte = 0xff;
+  lcd.row = 0;
 
   packetsize = 0;
   joyp_id = 3;

@@ -2,33 +2,50 @@
 
 #include "mode7.cpp"
 
+//V = 0, H = 0
 void PPU::Background::frame() {
 }
 
+//H = 0
 void PPU::Background::scanline() {
+}
+
+//H = 60
+void PPU::Background::begin() {
   bool hires = (self.regs.bgmode == 5 || self.regs.bgmode == 6);
   x = -7;
   y = self.vcounter();
-  tile_counter = (7 - (regs.hoffset & 7)) << hires;
-  for(unsigned n = 0; n < 8; n++) data[n] = 0;
 
-  if(self.vcounter() == 1) {
-    mosaic_vcounter = regs.mosaic + 1;
-    mosaic_voffset = 1;
-  } else if(--mosaic_vcounter == 0) {
-    mosaic_vcounter = regs.mosaic + 1;
-    mosaic_voffset += regs.mosaic + 1;
+  if(y == 1) {
+    mosaic.vcounter = regs.mosaic + 1;
+    mosaic.voffset = 1;
+    cache.hoffset = regs.hoffset;
+    cache.voffset = regs.voffset;
+  } else if(--mosaic.vcounter == 0) {
+    mosaic.vcounter = regs.mosaic + 1;
+    mosaic.voffset += regs.mosaic + 1;
+    cache.hoffset = regs.hoffset;
+    cache.voffset = regs.voffset;
   }
 
-  mosaic_hcounter = regs.mosaic + 1;
-  mosaic_hoffset = 0;
+  tile_counter = (7 - (cache.hoffset & 7)) << hires;
+  for(unsigned n = 0; n < 8; n++) data[n] = 0;
+
+  mosaic.hcounter = regs.mosaic + 1;
+  mosaic.hoffset = 0;
+
+  if(regs.mode == Mode::Mode7) return begin_mode7();
+  if(regs.mosaic == 0) {
+    cache.hoffset = regs.hoffset;
+    cache.voffset = regs.voffset;
+  }
 }
 
 void PPU::Background::get_tile() {
   bool hires = (self.regs.bgmode == 5 || self.regs.bgmode == 6);
 
   unsigned color_depth = (regs.mode == Mode::BPP2 ? 0 : regs.mode == Mode::BPP4 ? 1 : 2);
-  unsigned palette_offset = (self.regs.bgmode == 0 ? (id << 5) : 0);
+  unsigned palette_offset = (self.regs.bgmode == 0 ? id << 5 : 0);
   unsigned palette_size = 2 << color_depth;
   unsigned tile_mask = 0x0fff >> color_depth;
   unsigned tiledata_index = regs.tiledata_addr >> (4 + color_depth);
@@ -38,18 +55,18 @@ void PPU::Background::get_tile() {
 
   unsigned width = 256 << hires;
 
-  unsigned mask_x = (tile_height == 3 ? width : (width << 1));
-  unsigned mask_y = mask_x;
-  if(regs.screen_size & 1) mask_x <<= 1;
-  if(regs.screen_size & 2) mask_y <<= 1;
-  mask_x--;
-  mask_y--;
+  unsigned hmask = (tile_height == 3 ? width : width << 1);
+  unsigned vmask = hmask;
+  if(regs.screen_size & 1) hmask <<= 1;
+  if(regs.screen_size & 2) vmask <<= 1;
+  hmask--;
+  vmask--;
 
   unsigned px = x << hires;
-  unsigned py = (regs.mosaic == 0 ? y : mosaic_voffset);
+  unsigned py = (regs.mosaic == 0 ? y : mosaic.voffset);
 
-  unsigned hscroll = regs.hoffset;
-  unsigned vscroll = regs.voffset;
+  unsigned hscroll = cache.hoffset;
+  unsigned vscroll = cache.voffset;
   if(hires) {
     hscroll <<= 1;
     if(self.regs.interlace) py = (py << 1) + self.field();
@@ -62,8 +79,8 @@ void PPU::Background::get_tile() {
     uint16 offset_x = (x + (hscroll & 7));
 
     if(offset_x >= 8) {
-      unsigned hval = self.bg3.get_tile((offset_x - 8) + (self.bg3.regs.hoffset & ~7), self.bg3.regs.voffset + 0);
-      unsigned vval = self.bg3.get_tile((offset_x - 8) + (self.bg3.regs.hoffset & ~7), self.bg3.regs.voffset + 8);
+      unsigned hval = self.bg3.get_tile((offset_x - 8) + (self.bg3.cache.hoffset & ~7), self.bg3.cache.voffset + 0);
+      unsigned vval = self.bg3.get_tile((offset_x - 8) + (self.bg3.cache.hoffset & ~7), self.bg3.cache.voffset + 8);
       unsigned valid_mask = (id == ID::BG1 ? 0x2000 : 0x4000);
 
       if(self.regs.bgmode == 4) {
@@ -81,8 +98,8 @@ void PPU::Background::get_tile() {
     }
   }
 
-  hoffset &= mask_x;
-  voffset &= mask_y;
+  hoffset &= hmask;
+  voffset &= vmask;
 
   unsigned screen_x = (regs.screen_size & 1 ? 32 << 5 : 0);
   unsigned screen_y = (regs.screen_size & 2 ? 32 << 5 : 0);
@@ -143,9 +160,8 @@ void PPU::Background::run(bool screen) {
     if(hires == false) return;
   }
 
-  if(regs.mode == Mode::Inactive) return;
   if(regs.main_enable == false && regs.sub_enable == false) return;
-
+  if(regs.mode == Mode::Inactive) return;
   if(regs.mode == Mode::Mode7) return run_mode7();
 
   if(tile_counter-- == 0) {
@@ -154,41 +170,18 @@ void PPU::Background::run(bool screen) {
   }
 
   uint8 palette = get_tile_color();
-  if(x == 0) mosaic_hcounter = 1;
-  if(x >= 0 && --mosaic_hcounter == 0) {
-    mosaic_hcounter = regs.mosaic + 1;
-    mosaic_priority = priority;
-    mosaic_palette = palette ? palette_index + palette : 0;
-    mosaic_tile = tile;
+  if(x == 0) mosaic.hcounter = 1;
+  if(x >= 0 && --mosaic.hcounter == 0) {
+    mosaic.hcounter = regs.mosaic + 1;
+    mosaic.priority = priority;
+    mosaic.palette = palette ? palette_index + palette : 0;
+    mosaic.tile = tile;
   }
   if(screen == Screen::Main) x++;
-  if(mosaic_palette == 0) return;
+  if(mosaic.palette == 0) return;
 
-  if(hires == false) {
-    if(regs.main_enable) {
-      output.main.priority = mosaic_priority;
-      output.main.palette = mosaic_palette;
-      output.main.tile = mosaic_tile;
-    }
-
-    if(regs.sub_enable) {
-      output.sub.priority = mosaic_priority;
-      output.sub.palette = mosaic_palette;
-      output.sub.tile = mosaic_tile;
-    }
-  } else if(screen == Screen::Main) {
-    if(regs.main_enable) {
-      output.main.priority = mosaic_priority;
-      output.main.palette = mosaic_palette;
-      output.main.tile = mosaic_tile;
-    }
-  } else if(screen == Screen::Sub) {
-    if(regs.sub_enable) {
-      output.sub.priority = mosaic_priority;
-      output.sub.palette = mosaic_palette;
-      output.sub.tile = mosaic_tile;
-    }
-  }
+  if(hires == false || screen == Screen::Main) if(regs.main_enable) output.main = mosaic;
+  if(hires == false || screen == Screen::Sub ) if(regs.sub_enable ) output.sub  = mosaic;
 }
 
 unsigned PPU::Background::get_tile_color() {
@@ -224,22 +217,25 @@ void PPU::Background::reset() {
   regs.hoffset = random(0x0000);
   regs.voffset = random(0x0000);
 
+  cache.hoffset = 0;
+  cache.voffset = 0;
+
   output.main.palette = 0;
   output.main.priority = 0;
   output.sub.palette = 0;
   output.sub.priority = 0;
 
+  mosaic.priority = 0;
+  mosaic.palette = 0;
+  mosaic.tile = 0;
+
+  mosaic.vcounter = 0;
+  mosaic.voffset = 0;
+  mosaic.hcounter = 0;
+  mosaic.hoffset = 0;
+
   x = 0;
   y = 0;
-
-  mosaic_vcounter = 0;
-  mosaic_voffset = 0;
-  mosaic_hcounter = 0;
-  mosaic_hoffset = 0;
-
-  mosaic_priority = 0;
-  mosaic_palette = 0;
-  mosaic_tile = 0;
 
   tile_counter = 0;
   tile = 0;
@@ -254,15 +250,15 @@ unsigned PPU::Background::get_tile(unsigned x, unsigned y) {
   unsigned tile_height = (regs.tile_size == TileSize::Size8x8 ? 3 : 4);
   unsigned tile_width = (!hires ? tile_height : 4);
   unsigned width = (!hires ? 256 : 512);
-  unsigned mask_x = (tile_height == 3 ? width : (width << 1));
+  unsigned mask_x = (tile_height == 3 ? width : width << 1);
   unsigned mask_y = mask_x;
   if(regs.screen_size & 1) mask_x <<= 1;
   if(regs.screen_size & 2) mask_y <<= 1;
   mask_x--;
   mask_y--;
 
-  unsigned screen_x = (regs.screen_size & 1 ? (32 << 5) : 0);
-  unsigned screen_y = (regs.screen_size & 2 ? (32 << 5) : 0);
+  unsigned screen_x = (regs.screen_size & 1 ? 32 << 5 : 0);
+  unsigned screen_y = (regs.screen_size & 2 ? 32 << 5 : 0);
   if(regs.screen_size == 3) screen_y <<= 1;
 
   x = (x & mask_x) >> tile_width;

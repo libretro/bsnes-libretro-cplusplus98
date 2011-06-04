@@ -239,9 +239,6 @@ uint8_t* snes_get_memory_data(unsigned id) {
     case SNES_MEMORY_GAME_BOY_RAM:
       if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SuperGameBoy) break;
       return GameBoy::cartridge.ramdata;
-  //case SNES_MEMORY_GAME_BOY_RTC:
-  //  if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SuperGameBoy) break;
-  //  return GameBoy::cartridge.rtcdata;
 
     case SNES_MEMORY_WRAM:
       return SNES::cpu.wram;
@@ -253,6 +250,9 @@ uint8_t* snes_get_memory_data(unsigned id) {
       return SNES::ppu.oam;
     case SNES_MEMORY_CGRAM:
       return SNES::ppu.cgram;
+
+    default:
+      return NULL;
   }
 
   return 0;
@@ -289,10 +289,6 @@ unsigned snes_get_memory_size(unsigned id) {
       if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SuperGameBoy) break;
       size = GameBoy::cartridge.ramsize;
       break;
-  //case SNES_MEMORY_GAME_BOY_RTC:
-  //  if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SuperGameBoy) break;
-  //  size = GameBoy::cartridge.rtcsize;
-  //  break;
 
     case SNES_MEMORY_WRAM:
       size = 128 * 1024;
@@ -309,6 +305,9 @@ unsigned snes_get_memory_size(unsigned id) {
     case SNES_MEMORY_CGRAM:
       size = 512;
       break;
+
+    default:
+      size = 0;
   }
 
   if(size == -1U) size = 0;

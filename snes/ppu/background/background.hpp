@@ -25,6 +25,11 @@ struct Background {
     uint16 voffset;
   } regs;
 
+  struct Cache {
+    uint16 hoffset;
+    uint16 voffset;
+  } cache;
+
   struct Output {
     struct Pixel {
       unsigned priority;  //0 = none (transparent)
@@ -33,18 +38,16 @@ struct Background {
     } main, sub;
   } output;
 
+  struct Mosaic : Output::Pixel {
+    unsigned vcounter;
+    unsigned voffset;
+    unsigned hcounter;
+    unsigned hoffset;
+  } mosaic;
+
   struct {
     signed x;
     signed y;
-
-    unsigned mosaic_vcounter;
-    unsigned mosaic_voffset;
-    unsigned mosaic_hcounter;
-    unsigned mosaic_hoffset;
-
-    unsigned mosaic_priority;
-    uint8 mosaic_palette;
-    uint16 mosaic_tile;
 
     unsigned tile_counter;
     unsigned tile;
@@ -56,6 +59,7 @@ struct Background {
 
   void frame();
   void scanline();
+  void begin();
   void run(bool screen);
   void reset();
 
@@ -63,6 +67,7 @@ struct Background {
   unsigned get_tile_color();
   unsigned get_tile(unsigned x, unsigned y);
   signed clip(signed n);
+  void begin_mode7();
   void run_mode7();
 
   void serialize(serializer&);
