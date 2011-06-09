@@ -76,9 +76,6 @@ alwaysinline uint8 SMP::op_busread(uint16 addr) {
 }
 
 alwaysinline void SMP::op_buswrite(uint16 addr, uint8 data) {
-  ram_write(addr, data);  //all writes, even to MMIO registers, appear on bus
-  if((addr & 0xfff0) != 0x00f0) return;
-
   switch(addr) {
   case 0xf0:  //TEST
     if(regs.p.p) break;  //writes only valid when P flag is clear
@@ -176,6 +173,8 @@ alwaysinline void SMP::op_buswrite(uint16 addr, uint8 data) {
   case 0xff:  //T2OUT -- read-only registers
     break;
   }
+
+  ram_write(addr, data);  //all writes, even to MMIO registers, appear on bus
 }
 
 void SMP::op_io() {
