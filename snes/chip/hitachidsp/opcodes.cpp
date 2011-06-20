@@ -341,12 +341,12 @@ void HitachiDSP::exec() {
   else if((opcode & 0xffff) == 0xfc00) {
     //1111 1100 0000 0000
     //halt
-    state = State::Idle;
+    state.i = State::Idle;
   }
 
   else {
     print("Hitachi DSP: invalid opcode @ ", hex<4>(regs.pc - 1), " = ", hex<4>(opcode), "\n");
-    state = State::Idle;
+    state.i = State::Idle;
   }
 }
 

@@ -3,8 +3,8 @@ snes_objects += snes-system
 snes_objects += snes-cartridge snes-cheat
 snes_objects += snes-memory snes-cpucore snes-smpcore
 snes_objects += snes-cpu snes-smp snes-dsp snes-ppu
-snes_objects += snes-nss snes-icd2 snes-superfx snes-sa1 snes-necdsp
-snes_objects += snes-bsx snes-srtc snes-sdd1 snes-spc7110 snes-sufamiturbo snes-cx4
+snes_objects += snes-nss snes-icd2 snes-superfx snes-sa1 snes-necdsp snes-hitachidsp
+snes_objects += snes-bsx snes-srtc snes-sdd1 snes-spc7110 snes-sufamiturbo
 snes_objects += snes-obc1 snes-st0018
 snes_objects += snes-msu1 snes-serial snes-link
 snes_objects += $(gameboy_objects)
@@ -50,11 +50,11 @@ obj/snes-icd2.o    : $(snes)/chip/icd2/icd2.cpp $(call rwildcard,$(snes)/chip/ic
 obj/snes-superfx.o : $(snes)/chip/superfx/superfx.cpp $(call rwildcard,$(snes)/chip/superfx/)
 obj/snes-sa1.o     : $(snes)/chip/sa1/sa1.cpp $(call rwildcard,$(snes)/chip/sa1/)
 obj/snes-necdsp.o  : $(snes)/chip/necdsp/necdsp.cpp $(call rwildcard,$(snes)/chip/necdsp/)
+obj/snes-hitachidsp.o : $(snes)/chip/hitachidsp/hitachidsp.cpp $(call rwildcard,$(snes)/chip/hitachidsp/)
 obj/snes-bsx.o     : $(snes)/chip/bsx/bsx.cpp $(snes)/chip/bsx/*
 obj/snes-srtc.o    : $(snes)/chip/srtc/srtc.cpp $(snes)/chip/srtc/*
 obj/snes-sdd1.o    : $(snes)/chip/sdd1/sdd1.cpp $(snes)/chip/sdd1/*
 obj/snes-spc7110.o : $(snes)/chip/spc7110/spc7110.cpp $(snes)/chip/spc7110/*
-obj/snes-cx4.o     : $(snes)/chip/cx4/cx4.cpp $(snes)/chip/cx4/*
 obj/snes-obc1.o    : $(snes)/chip/obc1/obc1.cpp $(snes)/chip/obc1/*
 obj/snes-st0018.o  : $(snes)/chip/st0018/st0018.cpp $(snes)/chip/st0018/*
 obj/snes-msu1.o    : $(snes)/chip/msu1/msu1.cpp $(snes)/chip/msu1/*

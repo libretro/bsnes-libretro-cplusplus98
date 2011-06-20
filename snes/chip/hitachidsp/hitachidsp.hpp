@@ -8,7 +8,7 @@ public:
   uint8  dataRAM[3072];
   uint24 stack[8];
   uint16 opcode;
-  enum class State : unsigned { Idle, DMA, Execute } state;
+  struct State { enum e { Idle, DMA, Execute } i; } state;
   #include "registers.hpp"
 
   static void Enter();

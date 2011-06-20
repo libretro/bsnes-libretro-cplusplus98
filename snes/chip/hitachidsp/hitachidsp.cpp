@@ -13,11 +13,11 @@ void HitachiDSP::Enter() { hitachidsp.enter(); }
 
 void HitachiDSP::enter() {
   while(true) {
-    if(scheduler.sync == Scheduler::SynchronizeMode::All) {
+    if(scheduler.sync.i == Scheduler::SynchronizeMode::All) {
       scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
     }
 
-    switch(state) {
+    switch(state.i) {
     case State::Idle:
       step(1);
       break;
@@ -26,7 +26,7 @@ void HitachiDSP::enter() {
         bus.write(regs.dma_target + n, bus.read(regs.dma_source + n));
         step(2);
       }
-      state = State::Idle;
+      state.i = State::Idle;
       break;
     case State::Execute:
       unsigned offset = regs.program_offset + regs.pc * 2;
@@ -57,7 +57,7 @@ void HitachiDSP::power() {
 
 void HitachiDSP::reset() {
   create(HitachiDSP::Enter, frequency);
-  state = State::Idle;
+  state.i = State::Idle;
 
   regs.n = 0;
   regs.z = 0;

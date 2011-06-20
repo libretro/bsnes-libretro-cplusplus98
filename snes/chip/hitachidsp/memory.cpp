@@ -11,7 +11,7 @@ void HitachiDSP::bus_write(unsigned addr, uint8 data) {
 
 uint8 HitachiDSP::rom_read(unsigned addr) {
   if(co_active() == cpu.thread) {
-    if(state == State::Idle) return cartridge.rom.read(addr);
+    if(state.i == State::Idle) return cartridge.rom.read(addr);
     if((addr & 0x40ffe0) == 0x00ffe0) return regs.vector[addr & 0x1f];
     return cpu.regs.mdr;
   }
@@ -56,7 +56,7 @@ uint8 HitachiDSP::dsp_read(unsigned addr) {
   case 0x1f53: case 0x1f54: case 0x1f55: case 0x1f56:
   case 0x1f57: case 0x1f58: case 0x1f59: case 0x1f5a:
   case 0x1f5b: case 0x1f5c: case 0x1f5d: case 0x1f5e:
-  case 0x1f5f: return ((state != State::Idle) << 6) | ((state == State::Idle) << 1);
+  case 0x1f5f: return ((state.i != State::Idle) << 6) | ((state.i == State::Idle) << 1);
   }
 
   //Vector
@@ -93,7 +93,7 @@ void HitachiDSP::dsp_write(unsigned addr, uint8 data) {
   case 0x1f45: regs.dma_target = (regs.dma_target & 0xffff00) | (data <<  0); return;
   case 0x1f46: regs.dma_target = (regs.dma_target & 0xff00ff) | (data <<  8); return;
   case 0x1f47: regs.dma_target = (regs.dma_target & 0x00ffff) | (data << 16);
-    if(state == State::Idle) state = State::DMA;
+    if(state.i == State::Idle) state.i = State::DMA;
     return;
   case 0x1f48: regs.r1f48 = data & 0x01; return;
   case 0x1f49: regs.program_offset = (regs.program_offset & 0xffff00) | (data <<  0); return;
@@ -103,9 +103,9 @@ void HitachiDSP::dsp_write(unsigned addr, uint8 data) {
   case 0x1f4d: regs.page_number = (regs.page_number & 0x7f00) | ((data & 0xff) << 0); return;
   case 0x1f4e: regs.page_number = (regs.page_number & 0x00ff) | ((data & 0x7f) << 8); return;
   case 0x1f4f: regs.program_counter = data;
-    if(state == State::Idle) {
+    if(state.i == State::Idle) {
       regs.pc = regs.page_number * 256 + regs.program_counter;
-      state = State::Execute;
+      state.i = State::Execute;
     }
     return;
   case 0x1f50: regs.r1f50 = data & 0x77; return;
