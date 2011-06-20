@@ -39,7 +39,7 @@ namespace std {
     const_iterator begin() const { return _M_array; }
     const_iterator end  () const { return begin() + size(); }
   };
-};
+}
 
 #endif
 

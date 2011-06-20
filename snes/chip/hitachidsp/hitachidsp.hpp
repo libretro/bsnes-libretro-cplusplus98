@@ -9,6 +9,7 @@ public:
   uint24 stack[8];
   uint16 opcode;
   struct State { enum e { Idle, DMA, Execute } i; } state;
+  //enum class State : unsigned { Idle, DMA, Execute } state;
   #include "registers.hpp"
 
   static void Enter();
