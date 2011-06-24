@@ -1,6 +1,21 @@
 struct Scheduler : property<Scheduler> {
-  struct SynchronizeMode{ enum e{ None, CPU, All } i; } sync;
-  struct ExitReason{ enum e{ UnknownEvent, FrameEvent, SynchronizeEvent, DebuggerEvent } i; };
+  struct SynchronizeMode {
+    enum e {
+      None,
+      CPU,
+      All
+    } i;
+  } sync;
+
+  struct ExitReason {
+    enum e {
+       UnknownEvent,
+       FrameEvent,
+       SynchronizeEvent,
+       DebuggerEvent
+    } i;
+  };
+
   ExitReason exit_reason;
 
   cothread_t host_thread;  //program thread (used to exit emulation)
