@@ -3,7 +3,7 @@ public:
   static const uint8 iplrom[64];
   uint8 apuram[64 * 1024];
 
-  enum{ Threaded = true };
+  enum { Threaded = true };
   alwaysinline void step(unsigned clocks);
   alwaysinline void synchronize_cpu();
   alwaysinline void synchronize_dsp();
