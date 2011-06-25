@@ -19,6 +19,9 @@ ifeq ($(platform),)
   ifeq ($(uname),)
     platform := win
     delete = del $(subst /,\,$1)
+  else ifneq ($(findstring MINGW32,$(uname -a)),)
+    platform := win
+    delete = del $(subst /,\,$1)
   else ifneq ($(findstring Darwin,$(uname)),)
     platform := osx
     delete = rm -f $1
