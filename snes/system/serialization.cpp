@@ -71,7 +71,7 @@ void System::serialize_all(serializer &s) {
   if(cartridge.has_serial()) serial.serialize(s);
 }
 
-//perform dry-run state save.
+//perform dry-run state save:
 //determines exactly how many bytes are needed to save state for this cartridge,
 //as amount varies per game (eg different RAM sizes, special chips, etc.)
 void System::serialize_init() {

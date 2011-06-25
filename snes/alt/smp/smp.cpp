@@ -40,7 +40,7 @@ void SMP::enter() {
 }
 
 void SMP::power() {
-  Processor::frequency = system.apu_frequency();
+  Processor::frequency = system.apu_frequency;
   Processor::clock = 0;
 
   timer0.target = 0;

@@ -14,7 +14,7 @@ void Audio::coprocessor_enable(bool state) {
 
 void Audio::coprocessor_frequency(double input_frequency) {
   double output_frequency;
-  output_frequency = system.apu_frequency() / 768.0;
+  output_frequency = system.apu_frequency / 768.0;
   r_step = input_frequency / output_frequency;
   r_frac = 0;
 }

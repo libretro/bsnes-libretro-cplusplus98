@@ -107,7 +107,7 @@ void snes_run(void) {
 }
 
 unsigned snes_serialize_size(void) {
-  return SNES::system.serialize_size();
+  return SNES::system.serialize_size;
 }
 
 bool snes_serialize(uint8_t *data, unsigned size) {

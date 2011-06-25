@@ -232,12 +232,12 @@ void System::reset() {
   if(cartridge.has_superfx()) cpu.coprocessors.append(&superfx);
   if(cartridge.has_sa1()) cpu.coprocessors.append(&sa1);
   if(cartridge.has_necdsp()) cpu.coprocessors.append(&necdsp);
+  if(cartridge.has_hitachidsp()) cpu.coprocessors.append(&hitachidsp);
   if(cartridge.has_msu1()) cpu.coprocessors.append(&msu1);
   if(cartridge.has_serial()) cpu.coprocessors.append(&serial);
   if(cartridge.has_link()) cpu.coprocessors.append(&link);
 
   scheduler.init();
-
   input.port_set_device(0, config.controller_port1.i);
   input.port_set_device(1, config.controller_port2.i);
   input.update();

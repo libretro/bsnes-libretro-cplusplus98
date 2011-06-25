@@ -279,7 +279,7 @@ void DSP::power() {
 }
 
 void DSP::reset() {
-  create(Enter, system.apu_frequency());
+  create(Enter, system.apu_frequency);
 
   REG(flg) = 0xe0;
 

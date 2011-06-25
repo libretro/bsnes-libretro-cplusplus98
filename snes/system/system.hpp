@@ -3,8 +3,20 @@ class Interface;
 class System : property<System> {
 public:
   Interface *interface;
-  struct Region{ enum e{ NTSC = 0, PAL = 1, Autodetect = 2 } i; };
-  struct ExpansionPortDevice{ enum e{ None = 0, BSX = 1 } i; };
+  struct Region {
+    enum e {
+      NTSC = 0,
+      PAL = 1,
+      Autodetect = 2
+    } i;
+  };
+
+  struct ExpansionPortDevice {
+    enum e {
+      None = 0,
+      BSX = 1
+    } i;
+  };
 
   void run();
   void runtosave();
@@ -22,9 +34,9 @@ public:
   //return *active* system information (settings are cached upon power-on)
   Region region;
   ExpansionPortDevice expansion;
-  readonly<unsigned> cpu_frequency;
-  readonly<unsigned> apu_frequency;
-  readonly<unsigned> serialize_size;
+  unsigned cpu_frequency;
+  unsigned apu_frequency;
+  unsigned serialize_size;
 
   serializer serialize();
   bool unserialize(serializer&);

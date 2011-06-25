@@ -132,7 +132,7 @@ void CPU::power() {
 }
 
 void CPU::reset() {
-  create(Enter, system.cpu_frequency());
+  create(Enter, system.cpu_frequency);
   coprocessors.reset();
   PPUcounter::reset();
 
