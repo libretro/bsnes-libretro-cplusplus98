@@ -61,6 +61,7 @@ extern "C" {
 #define SNES_DEVICE_SUPER_SCOPE  4
 #define SNES_DEVICE_JUSTIFIER    5
 #define SNES_DEVICE_JUSTIFIERS   6
+#define SNES_DEVICE_SERIAL_CABLE 7
 
 // These constants represent the button and axis inputs on various controllers,
 // for use with the snes_input_state_t callback.

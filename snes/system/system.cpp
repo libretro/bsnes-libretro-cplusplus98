@@ -21,7 +21,6 @@ void System::run() {
 
   scheduler.enter();
   if(scheduler.exit_reason.i == Scheduler::ExitReason::FrameEvent) {
-    input.update();
     video.update();
   }
 }
@@ -59,7 +58,6 @@ void System::runthreadtosave() {
     scheduler.enter();
     if(scheduler.exit_reason.i == Scheduler::ExitReason::SynchronizeEvent) break;
     if(scheduler.exit_reason.i == Scheduler::ExitReason::FrameEvent) {
-      input.update();
       video.update();
     }
   }
@@ -84,15 +82,13 @@ void System::init(Interface *interface_) {
   obc1.init();
   st0018.init();
   msu1.init();
-  serial.init();
   link.init();
 
   video.init();
   audio.init();
-  input.init();
 
-  input.port_set_device(0, config.controller_port1.i);
-  input.port_set_device(1, config.controller_port2.i);
+  input.connect(0, config.controller_port1.i);
+  input.connect(1, config.controller_port2.i);
 }
 
 void System::term() {
@@ -124,7 +120,6 @@ void System::load() {
   if(cartridge.has_obc1()) obc1.load();
   if(cartridge.has_st0018()) st0018.load();
   if(cartridge.has_msu1()) msu1.load();
-  if(cartridge.has_serial()) serial.load();
   if(cartridge.has_link()) link.load();
 
   serialize_init();
@@ -149,7 +144,6 @@ void System::unload() {
   if(cartridge.has_obc1()) obc1.unload();
   if(cartridge.has_st0018()) st0018.unload();
   if(cartridge.has_msu1()) msu1.unload();
-  if(cartridge.has_serial()) serial.unload();
   if(cartridge.has_link()) link.unload();
 }
 
@@ -186,7 +180,6 @@ void System::power() {
   if(cartridge.has_obc1()) obc1.power();
   if(cartridge.has_st0018()) st0018.power();
   if(cartridge.has_msu1()) msu1.power();
-  if(cartridge.has_serial()) serial.power();
   if(cartridge.has_link()) link.power();
 
   if(cartridge.mode.i == Cartridge::Mode::SuperGameBoy) cpu.coprocessors.append(&icd2);
@@ -195,11 +188,11 @@ void System::power() {
   if(cartridge.has_necdsp()) cpu.coprocessors.append(&necdsp);
   if(cartridge.has_hitachidsp()) cpu.coprocessors.append(&hitachidsp);
   if(cartridge.has_msu1()) cpu.coprocessors.append(&msu1);
-  if(cartridge.has_serial()) cpu.coprocessors.append(&serial);
   if(cartridge.has_link()) cpu.coprocessors.append(&link);
 
   scheduler.init();
-  input.update();
+  input.connect(0, config.controller_port1.i);
+  input.connect(1, config.controller_port2.i);
 }
 
 void System::reset() {
@@ -225,7 +218,6 @@ void System::reset() {
   if(cartridge.has_obc1()) obc1.reset();
   if(cartridge.has_st0018()) st0018.reset();
   if(cartridge.has_msu1()) msu1.reset();
-  if(cartridge.has_serial()) serial.reset();
   if(cartridge.has_link()) link.reset();
 
   if(cartridge.mode.i == Cartridge::Mode::SuperGameBoy) cpu.coprocessors.append(&icd2);
@@ -234,13 +226,11 @@ void System::reset() {
   if(cartridge.has_necdsp()) cpu.coprocessors.append(&necdsp);
   if(cartridge.has_hitachidsp()) cpu.coprocessors.append(&hitachidsp);
   if(cartridge.has_msu1()) cpu.coprocessors.append(&msu1);
-  if(cartridge.has_serial()) cpu.coprocessors.append(&serial);
   if(cartridge.has_link()) cpu.coprocessors.append(&link);
 
   scheduler.init();
-  input.port_set_device(0, config.controller_port1.i);
-  input.port_set_device(1, config.controller_port2.i);
-  input.update();
+  input.connect(0, config.controller_port1.i);
+  input.connect(1, config.controller_port2.i);
 }
 
 void System::scanline() {

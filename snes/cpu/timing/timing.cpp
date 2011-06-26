@@ -12,10 +12,7 @@ void CPU::add_clocks(unsigned clocks) {
   unsigned ticks = clocks >> 1;
   while(ticks--) {
     tick();
-    if(hcounter() & 2) {
-      input.tick();
-      poll_interrupts();
-    }
+    if(hcounter() & 2) poll_interrupts();
   }
 
   step(clocks);
@@ -40,7 +37,7 @@ void CPU::scanline() {
   //forcefully sync S-CPU to other processors, in case chips are not communicating
   synchronize_ppu();
   synchronize_smp();
-  synchronize_coprocessor();
+  synchronize_coprocessors();
   system.scanline();
 
   if(vcounter() == 0) {

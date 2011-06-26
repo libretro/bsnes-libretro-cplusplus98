@@ -34,6 +34,8 @@ string& string::append(signed int value) { append(integer(value)); return *this;
 string& string::append(unsigned int value) { append(decimal(value)); return *this; }
 string& string::append(double value) { append(fp(value)); return *this; }
 
+bool string::beginswith(const char *str) const { return strstr(data, str) == data; }
+
 string::operator const char*() const {
   return data;
 }

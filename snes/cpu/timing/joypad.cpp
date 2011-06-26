@@ -6,10 +6,15 @@ void CPU::step_auto_joypad_poll() {
     status.auto_joypad_active = status.auto_joypad_counter <= 15;
 
     if(status.auto_joypad_active && status.auto_joypad_poll) {
-      if(status.auto_joypad_counter == 0) input.poll();
+      if(status.auto_joypad_counter == 0) {
+        input.port1->latch(1);
+        input.port2->latch(1);
+        input.port1->latch(0);
+        input.port2->latch(0);
+      }
 
-      uint8 port0 = input.port_read(0);
-      uint8 port1 = input.port_read(1);
+      uint2 port0 = input.port1->data();
+      uint2 port1 = input.port2->data();
 
       status.joy1 = (status.joy1 << 1) | (bool)(port0 & 1);
       status.joy2 = (status.joy2 << 1) | (bool)(port1 & 1);

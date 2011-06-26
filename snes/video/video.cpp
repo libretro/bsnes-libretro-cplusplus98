@@ -47,14 +47,24 @@ void Video::draw_cursor(uint16_t color, int x, int y) {
 }
 
 void Video::update() {
-  switch(input.port[1].device.i) {
-    case Input::Device::SuperScope: draw_cursor(0x001f, input.port[1].superscope.x, input.port[1].superscope.y); break;
-    case Input::Device::Justifiers: draw_cursor(0x02e0, input.port[1].justifier.x2, input.port[1].justifier.y2); //fallthrough
-    case Input::Device::Justifier:  draw_cursor(0x001f, input.port[1].justifier.x1, input.port[1].justifier.y1); break;
-    case Input::Device::None:
-    case Input::Device::Joypad:
-    case Input::Device::Mouse:
-    case Input::Device::Multitap: break;
+  switch(config.controller_port2.i) {
+    case Input::Device::SuperScope:
+      if(dynamic_cast<SuperScope*>(input.port2)) {
+        SuperScope &device = (SuperScope&)*input.port2;
+        draw_cursor(0x7c00, device.x, device.y);
+      }
+      break;
+    case Input::Device::Justifier:
+    case Input::Device::Justifiers:
+      if(dynamic_cast<Justifier*>(input.port2)) {
+        Justifier &device = (Justifier&)*input.port2;
+        draw_cursor(0x001f, device.x1, device.y1);
+        if(device.chained == false) break;
+        draw_cursor(0x02e0, device.x2, device.y2);
+      }
+      break;
+    default:
+      break;
   }
 
   uint16_t *data = (uint16_t*)ppu.output;

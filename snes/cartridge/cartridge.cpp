@@ -29,7 +29,6 @@ void Cartridge::load(Mode::e cartridge_mode, const lstring &xml_list) {
   has_obc1       = false;
   has_st0018     = false;
   has_msu1       = false;
-  has_serial     = false;
   has_link       = false;
 
   nvram.reset();

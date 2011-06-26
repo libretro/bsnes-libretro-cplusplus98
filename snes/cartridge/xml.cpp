@@ -1,5 +1,8 @@
 #ifdef CARTRIDGE_CPP
 
+#define READ_FUNC uint8 (unsigned)
+#define WRITE_FUNC void (unsigned, uint8)
+
 void Cartridge::parse_xml(const lstring &list) {
   mapping.reset();
   parse_xml_cartridge(list[0]);
@@ -49,7 +52,6 @@ void Cartridge::parse_xml_cartridge(const char *data) {
         if(node.name == "obc1") xml_parse_obc1(node);
         if(node.name == "setarisc") xml_parse_setarisc(node);
         if(node.name == "msu1") xml_parse_msu1(node);
-        if(node.name == "serial") xml_parse_serial(node);
         if(node.name == "link") xml_parse_link(node);
       }
     }
@@ -73,8 +75,8 @@ void Cartridge::xml_parse_rom(xml_element &root) {
       foreach(attr, leaf.attribute) {
         if(attr.name == "address") xml_parse_address(m, attr.content);
         if(attr.name == "mode") xml_parse_mode(m, attr.content);
-        if(attr.name == "offset") m.offset = hex(attr.content);
-        if(attr.name == "size") m.size = hex(attr.content);
+        if(attr.name == "offset") m.offset = xml_parse_hex(attr.content);
+        if(attr.name == "size") m.size = xml_parse_hex(attr.content);
       }
       if(m.size == 0) m.size = rom.size();
       mapping.append(m);
@@ -84,7 +86,7 @@ void Cartridge::xml_parse_rom(xml_element &root) {
 
 void Cartridge::xml_parse_ram(xml_element &root) {
   foreach(attr, root.attribute) {
-    if(attr.name == "size") ram_size = hex(attr.content);
+    if(attr.name == "size") ram_size = xml_parse_hex(attr.content);
   }
 
   foreach(leaf, root.element) {
@@ -93,8 +95,8 @@ void Cartridge::xml_parse_ram(xml_element &root) {
       foreach(attr, leaf.attribute) {
         if(attr.name == "address") xml_parse_address(m, attr.content);
         if(attr.name == "mode") xml_parse_mode(m, attr.content);
-        if(attr.name == "offset") m.offset = hex(attr.content);
-        if(attr.name == "size") m.size = hex(attr.content);
+        if(attr.name == "offset") m.offset = xml_parse_hex(attr.content);
+        if(attr.name == "size") m.size = xml_parse_hex(attr.content);
       }
       if(m.size == 0) m.size = ram_size;
       mapping.append(m);
@@ -121,7 +123,7 @@ void Cartridge::xml_parse_nss(xml_element &root) {
         unsigned value = 0x0000;
         foreach(attr, leaf.attribute) {
           if(attr.name == "name") name = attr.parse();
-          if(attr.name == "value") value = (uint16)hex(attr.content);
+          if(attr.name == "value") value = (uint16)xml_parse_hex(attr.content);
         }
         information.nss.option[number].append(string( hex<4>(value), ":", name ));
       }
@@ -142,7 +144,7 @@ void Cartridge::xml_parse_icd2(xml_element &root) {
 
   foreach(node, root.element) {
     if(node.name == "map") {
-      Mapping m(function<uint8 (unsigned)>( &ICD2::read, &icd2 ), function<void (unsigned, uint8)>( &ICD2::write, &icd2 ));
+      Mapping m(function<READ_FUNC>( &ICD2::read, &icd2 ), function<WRITE_FUNC>( &ICD2::write, &icd2 ));
       foreach(attr, node.attribute) {
         if(attr.name == "address") xml_parse_address(m, attr.content);
       }
@@ -162,15 +164,15 @@ void Cartridge::xml_parse_superfx(xml_element &root) {
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
             if(attr.name == "mode") xml_parse_mode(m, attr.content);
-            if(attr.name == "offset") m.offset = hex(attr.content);
-            if(attr.name == "size") m.size = hex(attr.content);
+            if(attr.name == "offset") m.offset = xml_parse_hex(attr.content);
+            if(attr.name == "size") m.size = xml_parse_hex(attr.content);
           }
           mapping.append(m);
         }
       }
     } else if(node.name == "ram") {
       foreach(attr, node.attribute) {
-        if(attr.name == "size") ram_size = hex(attr.content);
+        if(attr.name == "size") ram_size = xml_parse_hex(attr.content);
       }
 
       foreach(leaf, node.element) {
@@ -179,8 +181,8 @@ void Cartridge::xml_parse_superfx(xml_element &root) {
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
             if(attr.name == "mode") xml_parse_mode(m, attr.content);
-            if(attr.name == "offset") m.offset = hex(attr.content);
-            if(attr.name == "size") m.size = hex(attr.content);
+            if(attr.name == "offset") m.offset = xml_parse_hex(attr.content);
+            if(attr.name == "size") m.size = xml_parse_hex(attr.content);
           }
           if(m.size == 0) m.size = ram_size;
           mapping.append(m);
@@ -189,7 +191,7 @@ void Cartridge::xml_parse_superfx(xml_element &root) {
     } else if(node.name == "mmio") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m( function<uint8(unsigned)>( &SuperFX::mmio_read, &superfx ), function<void(unsigned, uint8)>( &SuperFX::mmio_write, &superfx ));
+          Mapping m(function<READ_FUNC>( &SuperFX::mmio_read, &superfx ), function<WRITE_FUNC>( &SuperFX::mmio_write, &superfx ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -209,12 +211,12 @@ void Cartridge::xml_parse_sa1(xml_element &root) {
         if(subnode.name == "rom") {
           foreach(leaf, subnode.element) {
             if(leaf.name == "map") {
-              Mapping m(function<uint8(unsigned)>(&SA1::mmc_read, &sa1), function<void(unsigned, uint8)>( &SA1::mmc_write, &sa1 ));
+              Mapping m(function<READ_FUNC>( &SA1::mmc_read, &sa1 ), function<WRITE_FUNC>( &SA1::mmc_write, &sa1 ));
               foreach(attr, leaf.attribute) {
                 if(attr.name == "address") xml_parse_address(m, attr.content);
                 if(attr.name == "mode") xml_parse_mode(m, attr.content);
-                if(attr.name == "offset") m.offset = hex(attr.content);
-                if(attr.name == "size") m.size = hex(attr.content);
+                if(attr.name == "offset") m.offset = xml_parse_hex(attr.content);
+                if(attr.name == "size") m.size = xml_parse_hex(attr.content);
               }
               mapping.append(m);
             }
@@ -222,7 +224,7 @@ void Cartridge::xml_parse_sa1(xml_element &root) {
         } else if(subnode.name == "ram") {
           foreach(leaf, subnode.element) {
             if(leaf.name == "map") {
-              Mapping m(function<uint8(unsigned)>( &SA1::mmc_cpu_read, &sa1 ), function<void(unsigned,uint8)>( &SA1::mmc_cpu_write, &sa1 ));
+              Mapping m(function<READ_FUNC>( &SA1::mmc_cpu_read, &sa1 ), function<WRITE_FUNC>( &SA1::mmc_cpu_write, &sa1 ));
               foreach(attr, leaf.attribute) {
                 if(attr.name == "address") xml_parse_address(m, attr.content);
               }
@@ -238,8 +240,8 @@ void Cartridge::xml_parse_sa1(xml_element &root) {
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
             if(attr.name == "mode") xml_parse_mode(m, attr.content);
-            if(attr.name == "offset") m.offset = hex(attr.content);
-            if(attr.name == "size") m.size = hex(attr.content);
+            if(attr.name == "offset") m.offset = xml_parse_hex(attr.content);
+            if(attr.name == "size") m.size = xml_parse_hex(attr.content);
           }
           if(m.size == 0) m.size = 2048;
           mapping.append(m);
@@ -247,7 +249,7 @@ void Cartridge::xml_parse_sa1(xml_element &root) {
       }
     } else if(node.name == "bwram") {
       foreach(attr, node.attribute) {
-        if(attr.name == "size") ram_size = hex(attr.content);
+        if(attr.name == "size") ram_size = xml_parse_hex(attr.content);
       }
 
       foreach(leaf, node.element) {
@@ -256,8 +258,8 @@ void Cartridge::xml_parse_sa1(xml_element &root) {
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
             if(attr.name == "mode") xml_parse_mode(m, attr.content);
-            if(attr.name == "offset") m.offset = hex(attr.content);
-            if(attr.name == "size") m.size = hex(attr.content);
+            if(attr.name == "offset") m.offset = xml_parse_hex(attr.content);
+            if(attr.name == "size") m.size = xml_parse_hex(attr.content);
           }
           if(m.size == 0) m.size = ram_size;
           mapping.append(m);
@@ -266,7 +268,7 @@ void Cartridge::xml_parse_sa1(xml_element &root) {
     } else if(node.name == "mmio") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m(function<uint8(unsigned)>( &SA1::mmio_read, &sa1 ), function<void(unsigned,uint8)>( &SA1::mmio_write, &sa1 ));
+          Mapping m(function<READ_FUNC>( &SA1::mmio_read, &sa1 ), function<WRITE_FUNC>( &SA1::mmio_write, &sa1 ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -289,11 +291,11 @@ void Cartridge::xml_parse_necdsp(xml_element &root) {
   string sha256;
 
   foreach(attr, root.attribute) {
-    if(attr.name == "revision") {
-      if(attr.content == "upd7725" ) necdsp.revision.i = NECDSP::Revision::uPD7725;
-      if(attr.content == "upd96050") necdsp.revision.i = NECDSP::Revision::uPD96050;
+    if(attr.name == "model") {
+      if(attr.content == "uPD7725" ) necdsp.revision.i = NECDSP::Revision::uPD7725;
+      if(attr.content == "uPD96050") necdsp.revision.i = NECDSP::Revision::uPD96050;
     } else if(attr.name == "frequency") {
-      necdsp.frequency = decimal(attr.content);
+      necdsp.frequency = xml_parse_unsigned(attr.content);
     } else if(attr.name == "program") {
       program = attr.content;
     } else if(attr.name == "sha256") {
@@ -331,7 +333,7 @@ void Cartridge::xml_parse_necdsp(xml_element &root) {
     if(node.name == "dr") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m(function<uint8(unsigned)>( &NECDSP::dr_read, &necdsp ), function<void(unsigned, uint8)>( &NECDSP::dr_write, &necdsp ));
+          Mapping m(function<READ_FUNC>( &NECDSP::dr_read, &necdsp ), function<WRITE_FUNC>( &NECDSP::dr_write, &necdsp ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -341,7 +343,7 @@ void Cartridge::xml_parse_necdsp(xml_element &root) {
     } else if(node.name == "sr") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m(function<uint8(unsigned)>( &NECDSP::sr_read, &necdsp ), function<void (unsigned, uint8)>( &NECDSP::sr_write, &necdsp ));
+          Mapping m(function<READ_FUNC>( &NECDSP::sr_read, &necdsp ), function<WRITE_FUNC>( &NECDSP::sr_write, &necdsp ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -351,7 +353,7 @@ void Cartridge::xml_parse_necdsp(xml_element &root) {
     } else if(node.name == "dp") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m(function<uint8(unsigned)>( &NECDSP::dp_read, &necdsp ), function<void(unsigned, uint8)>( &NECDSP::dp_write, &necdsp ));
+          Mapping m(function<READ_FUNC>( &NECDSP::dp_read, &necdsp ), function<WRITE_FUNC>( &NECDSP::dp_write, &necdsp ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -378,24 +380,24 @@ void Cartridge::xml_parse_hitachidsp(xml_element &root) {
 
   for(unsigned n = 0; n < 1024; n++) hitachidsp.dataROM[n] = 0x000000;
 
-  string program, sha256;
+  string dataROM, sha256;
 
   foreach(attr, root.attribute) {
     if(attr.name == "frequency") {
-      hitachidsp.frequency = decimal(attr.content);
-    } else if(attr.name == "program") {
-      program = attr.content;
+      hitachidsp.frequency = xml_parse_unsigned(attr.content);
+    } else if(attr.name == "data") {
+      dataROM = attr.content;
     } else if(attr.name == "sha256") {
       sha256 = attr.content;
     }
   }
 
-  string path = string( dir(system.interface->path(Slot::Base, ".dsp")), program );
+  string path(dir(system.interface->path(Slot::Base, ".dsp")), dataROM);
   file fp;
   if(fp.open(path, file::mode_read) == false) {
-    system.interface->message(string( "Warning: Hitachi DSP program ", program, " is missing." ));
+    system.interface->message(string( "Warning: Hitachi DSP data ", dataROM, " is missing." ));
   } else if(fp.size() != 1024 * 3) {
-    system.interface->message(string( "Warning: Hitachi DSP program ", program, " is of the wrong file size." ));
+    system.interface->message(string( "Warning: Hitachi DSP data ", dataROM, " is of the wrong file size." ));
     fp.close();
   } else {
     for(unsigned n = 0; n < 1024; n++) hitachidsp.dataROM[n] = fp.readl(3);
@@ -417,7 +419,7 @@ void Cartridge::xml_parse_hitachidsp(xml_element &root) {
       foreach(n, hash) filehash.append(hex<2>(n));
 
       if(sha256 != filehash) {
-        system.interface->message(string( "Warning: Hitachi DSP program ", program, " SHA256 sum is incorrect." ));
+        system.interface->message(string( "Warning: Hitachi DSP data ", dataROM, " SHA256 sum is incorrect." ));
       }
     }
 
@@ -425,24 +427,28 @@ void Cartridge::xml_parse_hitachidsp(xml_element &root) {
   }
 
   foreach(node, root.element) {
-    if(node.name == "rom") foreach(leaf, node.element) {
-      if(leaf.name == "map") {
-        Mapping m(function<uint8 (unsigned)>( &HitachiDSP::rom_read, &hitachidsp ), function<void (unsigned, uint8)>( &HitachiDSP::rom_write, &hitachidsp ));
+    if(node.name == "rom") {
+      foreach(leaf, node.element) {
+        if(leaf.name == "map") {
+          Mapping m(function<READ_FUNC>( &HitachiDSP::rom_read, &hitachidsp ), function<WRITE_FUNC>( &HitachiDSP::rom_write, &hitachidsp ));
+          foreach(attr, leaf.attribute) {
+            if(attr.name == "address") xml_parse_address(m, attr.content);
+            if(attr.name == "mode") xml_parse_mode(m, attr.content);
+            if(attr.name == "offset") m.offset = xml_parse_hex(attr.content);
+            if(attr.name == "size") m.size = xml_parse_hex(attr.content);
+          }
+          mapping.append(m);
+        }
+      }
+    }
+    if(node.name == "mmio") {
+      foreach(leaf, node.element) {
+        Mapping m(function<READ_FUNC>( &HitachiDSP::dsp_read, &hitachidsp ), function<WRITE_FUNC>( &HitachiDSP::dsp_write, &hitachidsp ));
         foreach(attr, leaf.attribute) {
           if(attr.name == "address") xml_parse_address(m, attr.content);
-          if(attr.name == "mode") xml_parse_mode(m, attr.content);
-          if(attr.name == "offset") m.offset = hex(attr.content);
-          if(attr.name == "size") m.size = hex(attr.content);
         }
         mapping.append(m);
       }
-    }
-    if(node.name == "mmio") foreach(leaf, node.element) {
-      Mapping m(function<uint8 (unsigned)>( &HitachiDSP::dsp_read, &hitachidsp ), function<void (unsigned, uint8)>( &HitachiDSP::dsp_write, &hitachidsp ));
-      foreach(attr, leaf.attribute) {
-        if(attr.name == "address") xml_parse_address(m, attr.content);
-      }
-      mapping.append(m);
     }
   }
 }
@@ -458,8 +464,8 @@ void Cartridge::xml_parse_bsx(xml_element &root) {
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
             if(attr.name == "mode") xml_parse_mode(m, attr.content);
-            if(attr.name == "offset") m.offset = hex(attr.content);
-            if(attr.name == "size") m.size = hex(attr.content);
+            if(attr.name == "offset") m.offset = xml_parse_hex(attr.content);
+            if(attr.name == "size") m.size = xml_parse_hex(attr.content);
           }
           mapping.append(m);
         }
@@ -467,7 +473,7 @@ void Cartridge::xml_parse_bsx(xml_element &root) {
     } else if(node.name == "mcu") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m(function<uint8(unsigned)>( &BSXCartridge::mcu_read, &bsxcartridge ), function<void(unsigned,uint8)>( &BSXCartridge::mcu_write, &bsxcartridge ));
+          Mapping m(function<READ_FUNC>( &BSXCartridge::mcu_read, &bsxcartridge ), function<WRITE_FUNC>( &BSXCartridge::mcu_write, &bsxcartridge ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -477,7 +483,7 @@ void Cartridge::xml_parse_bsx(xml_element &root) {
     } else if(node.name == "mmio") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m(function<uint8(unsigned)>( &BSXCartridge::mmio_read, &bsxcartridge ), function<void (unsigned, uint8)>( &BSXCartridge::mmio_write, &bsxcartridge ));
+          Mapping m(function<READ_FUNC>( &BSXCartridge::mmio_read, &bsxcartridge ), function<WRITE_FUNC>( &BSXCartridge::mmio_write, &bsxcartridge ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -510,8 +516,8 @@ void Cartridge::xml_parse_sufamiturbo(xml_element &root) {
               foreach(attr, leaf.attribute) {
                 if(attr.name == "address") xml_parse_address(m, attr.content);
                 if(attr.name == "mode") xml_parse_mode(m, attr.content);
-                if(attr.name == "offset") m.offset = hex(attr.content);
-                if(attr.name == "size") m.size = hex(attr.content);
+                if(attr.name == "offset") m.offset = xml_parse_hex(attr.content);
+                if(attr.name == "size") m.size = xml_parse_hex(attr.content);
               }
               if(m.size == 0) m.size = memory.size();
               if(m.size) mapping.append(m);
@@ -521,7 +527,7 @@ void Cartridge::xml_parse_sufamiturbo(xml_element &root) {
           unsigned ram_size = 0;
 
           foreach(attr, slot.attribute) {
-            if(attr.name == "size") ram_size = hex(attr.content);
+            if(attr.name == "size") ram_size = xml_parse_hex(attr.content);
           }
 
           foreach(leaf, slot.element) {
@@ -531,8 +537,8 @@ void Cartridge::xml_parse_sufamiturbo(xml_element &root) {
               foreach(attr, leaf.attribute) {
                 if(attr.name == "address") xml_parse_address(m, attr.content);
                 if(attr.name == "mode") xml_parse_mode(m, attr.content);
-                if(attr.name == "offset") m.offset = hex(attr.content);
-                if(attr.name == "size") m.size = hex(attr.content);
+                if(attr.name == "offset") m.offset = xml_parse_hex(attr.content);
+                if(attr.name == "size") m.size = xml_parse_hex(attr.content);
               }
               if(m.size == 0) m.size = ram_size;
               if(m.size) mapping.append(m);
@@ -549,7 +555,7 @@ void Cartridge::xml_parse_srtc(xml_element &root) {
 
   foreach(node, root.element) {
     if(node.name == "map") {
-      Mapping m(function<uint8(unsigned)>( &SRTC::read, &srtc ), function<void(unsigned, uint8)>( &SRTC::write, &srtc ));
+      Mapping m(function<READ_FUNC>( &SRTC::read, &srtc ), function<WRITE_FUNC>( &SRTC::write, &srtc ));
       foreach(attr, node.attribute) {
         if(attr.name == "address") xml_parse_address(m, attr.content);
       }
@@ -565,7 +571,7 @@ void Cartridge::xml_parse_sdd1(xml_element &root) {
     if(node.name == "mcu") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m(function<uint8(unsigned)>( &SDD1::mcu_read, &sdd1 ), function<void(unsigned, uint8)>( &SDD1::mcu_write, &sdd1 ));
+          Mapping m(function<READ_FUNC>( &SDD1::mcu_read, &sdd1 ), function<WRITE_FUNC>( &SDD1::mcu_write, &sdd1 ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -575,7 +581,7 @@ void Cartridge::xml_parse_sdd1(xml_element &root) {
     } else if(node.name == "mmio") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m(function<uint8(unsigned)>( &SDD1::mmio_read, &sdd1 ), function<void(unsigned, uint8)>( &SDD1::mmio_write, &sdd1 ));
+          Mapping m(function<READ_FUNC>( &SDD1::mmio_read, &sdd1 ), function<WRITE_FUNC>( &SDD1::mmio_write, &sdd1 ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -594,7 +600,7 @@ void Cartridge::xml_parse_spc7110(xml_element &root) {
     if(node.name == "dcu") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m(function<uint8(unsigned)>( &SPC7110::dcu_read, &spc7110 ), function<void(unsigned, uint8)>( &SPC7110::dcu_write, &spc7110 ));
+          Mapping m(function<READ_FUNC>( &SPC7110::dcu_read, &spc7110 ), function<WRITE_FUNC>( &SPC7110::dcu_write, &spc7110 ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -604,10 +610,10 @@ void Cartridge::xml_parse_spc7110(xml_element &root) {
     } else if(node.name == "mcu") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m(function<uint8(unsigned)>( &SPC7110::mcu_read, &spc7110 ), function<void(unsigned, uint8)>( &SPC7110::mcu_write, &spc7110 ));
+          Mapping m(function<READ_FUNC>( &SPC7110::mcu_read, &spc7110 ), function<WRITE_FUNC>( &SPC7110::mcu_write, &spc7110 ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
-            if(attr.name == "offset") spc7110.data_rom_offset = hex(attr.content);
+            if(attr.name == "offset") spc7110.data_rom_offset = xml_parse_hex(attr.content);
           }
           mapping.append(m);
         }
@@ -615,7 +621,7 @@ void Cartridge::xml_parse_spc7110(xml_element &root) {
     } else if(node.name == "mmio") {
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m(function<uint8(unsigned)>( &SPC7110::mmio_read, &spc7110 ), function<void(unsigned, uint8)>( &SPC7110::mmio_write, &spc7110 ));
+          Mapping m(function<READ_FUNC>( &SPC7110::mmio_read, &spc7110 ), function<WRITE_FUNC>( &SPC7110::mmio_write, &spc7110 ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -624,17 +630,17 @@ void Cartridge::xml_parse_spc7110(xml_element &root) {
       }
     } else if(node.name == "ram") {
       foreach(attr, node.attribute) {
-        if(attr.name == "size") ram_size = hex(attr.content);
+        if(attr.name == "size") ram_size = xml_parse_hex(attr.content);
       }
 
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m(function<uint8(unsigned)>( &SPC7110::ram_read, &spc7110 ), function<void(unsigned,uint8)>( &SPC7110::ram_write, &spc7110 ));
+          Mapping m(function<READ_FUNC>( &SPC7110::ram_read, &spc7110 ), function<WRITE_FUNC>( &SPC7110::ram_write, &spc7110 ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
             if(attr.name == "mode") xml_parse_mode(m, attr.content);
-            if(attr.name == "offset") m.offset = hex(attr.content);
-            if(attr.name == "size") m.size = hex(attr.content);
+            if(attr.name == "offset") m.offset = xml_parse_hex(attr.content);
+            if(attr.name == "size") m.size = xml_parse_hex(attr.content);
           }
           mapping.append(m);
         }
@@ -644,7 +650,7 @@ void Cartridge::xml_parse_spc7110(xml_element &root) {
 
       foreach(leaf, node.element) {
         if(leaf.name == "map") {
-          Mapping m(function<uint8(unsigned)>( &SPC7110::mmio_read, &spc7110 ), function<void(unsigned, uint8)>( &SPC7110::mmio_write, &spc7110 ));
+          Mapping m(function<READ_FUNC>( &SPC7110::mmio_read, &spc7110 ), function<WRITE_FUNC>( &SPC7110::mmio_write, &spc7110 ));
           foreach(attr, leaf.attribute) {
             if(attr.name == "address") xml_parse_address(m, attr.content);
           }
@@ -660,7 +666,7 @@ void Cartridge::xml_parse_obc1(xml_element &root) {
 
   foreach(node, root.element) {
     if(node.name == "map") {
-      Mapping m(function<uint8(unsigned)>( &OBC1::read, &obc1 ), function<void(unsigned, uint8)>( &OBC1::write, &obc1 ));
+      Mapping m(function<READ_FUNC>( &OBC1::read, &obc1 ), function<WRITE_FUNC>( &OBC1::write, &obc1 ));
       foreach(attr, node.attribute) {
         if(attr.name == "address") xml_parse_address(m, attr.content);
       }
@@ -674,7 +680,7 @@ void Cartridge::xml_parse_setarisc(xml_element &root) {
 
   foreach(node, root.element) {
     if(node.name == "map") {
-      Mapping m(function<uint8(unsigned)>( &ST0018::mmio_read, &st0018 ), function<void(unsigned, uint8)>( &ST0018::mmio_write, &st0018 ));
+      Mapping m(function<READ_FUNC>( &ST0018::mmio_read, &st0018 ), function<WRITE_FUNC>( &ST0018::mmio_write, &st0018 ));
       foreach(attr, node.attribute) {
         if(attr.name == "address") xml_parse_address(m, attr.content);
       }
@@ -688,17 +694,13 @@ void Cartridge::xml_parse_msu1(xml_element &root) {
 
   foreach(node, root.element) {
     if(node.name == "map") {
-      Mapping m(function<uint8(unsigned)>( &MSU1::mmio_read, &msu1 ), function<void(unsigned, uint8)>( &MSU1::mmio_write, &msu1 ));
+      Mapping m(function<READ_FUNC>( &MSU1::mmio_read, &msu1 ), function<WRITE_FUNC>( &MSU1::mmio_write, &msu1 ));
       foreach(attr, node.attribute) {
         if(attr.name == "address") xml_parse_address(m, attr.content);
       }
       mapping.append(m);
     }
   }
-}
-
-void Cartridge::xml_parse_serial(xml_element &root) {
-  has_serial = true;
 }
 
 void Cartridge::xml_parse_link(xml_element &root) {
@@ -707,19 +709,28 @@ void Cartridge::xml_parse_link(xml_element &root) {
   link.program = "";
 
   foreach(attr, root.attribute) {
-    if(attr.name == "frequency") link.frequency = decimal(attr.content);
+    if(attr.name == "frequency") link.frequency = xml_parse_unsigned(attr.content);
     if(attr.name == "program") link.program = attr.content;
   }
 
   foreach(node, root.element) {
     if(node.name == "map") {
-      Mapping m(function<uint8(unsigned)>(&Link::read, &link), function<void (unsigned, uint8)>(&Link::write, &link));
+      Mapping m(function<READ_FUNC>( &Link::read, &link ), function<WRITE_FUNC>( &Link::write, &link ));
       foreach(attr, node.attribute) {
         if(attr.name == "address") xml_parse_address(m, attr.content);
       }
       mapping.append(m);
     }
   }
+}
+
+unsigned Cartridge::xml_parse_hex(const string &s) {
+  return hex(s);
+}
+
+unsigned Cartridge::xml_parse_unsigned(const string &s) {
+  if(s.beginswith("0x")) return hex(s);
+  return integer(s);
 }
 
 void Cartridge::xml_parse_address(Mapping &m, const string &data) {
@@ -759,13 +770,13 @@ Cartridge::Mapping::Mapping() {
 }
 
 Cartridge::Mapping::Mapping(Memory &memory) {
-  read = function<uint8(unsigned)>( &Memory::read, &memory );
-  write = function<void(unsigned,uint8)>( &Memory::write, &memory );
+  read = function<READ_FUNC>( &Memory::read, &memory );
+  write = function<WRITE_FUNC>( &Memory::write, &memory );
   mode.i = Bus::MapMode::Direct;
   banklo = bankhi = addrlo = addrhi = offset = size = 0;
 }
 
-Cartridge::Mapping::Mapping(const function<uint8 (unsigned)> &read_, const function<void (unsigned, uint8)> &write_) {
+Cartridge::Mapping::Mapping(const function<READ_FUNC> &read_, const function<WRITE_FUNC> &write_) {
   read = read_;
   write = write_;
   mode.i = Bus::MapMode::Direct;
