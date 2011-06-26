@@ -5,46 +5,34 @@
 #include <nall/gameboy/cartridge.hpp>
 using namespace nall;
 
-struct Interface : public SNES::Interface {
-  snes_video_refresh_t pvideo_refresh;
-  snes_audio_sample_t paudio_sample;
-  snes_input_poll_t pinput_poll;
-  snes_input_state_t pinput_state;
-  string basename;
+void SNES::Interface::video_refresh(const uint16_t *data, bool hires, bool interlace, bool overscan) {
+  unsigned width = hires ? 512 : 256;
+  unsigned height = overscan ? 239 : 224;
+  if(interlace) height <<= 1;
+  data += 9 * 1024;  //skip front porch
+  pvideo_refresh(data, width, height);
+  pinput_poll();
+}
 
-  void video_refresh(const uint16_t *data, bool hires, bool interlace, bool overscan) {
-    unsigned width = hires ? 512 : 256;
-    unsigned height = overscan ? 239 : 224;
-    if(interlace) height <<= 1;
-    data += 9 * 1024;  //skip front porch
-    return pvideo_refresh(data, width, height);
-  }
+void SNES::Interface::audio_sample(uint16_t left, uint16_t right) {
+  return paudio_sample(left, right);
+}
 
-  void audio_sample(uint16_t left, uint16_t right) {
-    return paudio_sample(left, right);
-  }
+int16_t SNES::Interface::input_poll(bool port, SNES::Input::Device::e device, unsigned index, unsigned id) {
+  return pinput_state(port, (unsigned)device, index, id);
+}
 
-  void input_poll() {
-    return pinput_poll();
-  }
+void SNES::Interface::message(const string &text) {
+  fprintf(stderr, "%s\n", (const char*)text);
+}
 
-  int16_t input_poll(bool port, SNES::Input::Device::e device, unsigned index, unsigned id) {
-    return pinput_state(port, (unsigned)device, index, id);
-  }
+string SNES::Interface::path(SNES::Cartridge::Slot::e slot, const string &hint) {
+  return string(basename, hint);
+}
 
-  void message(const string &text) {
-    fprintf(stderr, "%s\n", (const char*)text);
-  }
+SNES::Interface::Interface() : pvideo_refresh(0), paudio_sample(0), pinput_poll(0), pinput_state(0) {}
 
-  string path(SNES::Cartridge::Slot::e slot, const string &hint) {
-    return string(basename, hint);
-  }
-
-  Interface() : pvideo_refresh(0), paudio_sample(0), pinput_poll(0), pinput_state(0) {
-  }
-};
-
-static Interface interface;
+static SNES::Interface interface;
 
 const char* snes_library_id(void) {
   static string id(SNES::Info::Name, " (", SNES::Info::Profile, ") v", SNES::Info::Version);
