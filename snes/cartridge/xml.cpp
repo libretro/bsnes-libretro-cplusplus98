@@ -397,7 +397,7 @@ void Cartridge::xml_parse_hitachidsp(xml_element &root) {
   if(fp.open(path, file::mode_read) == false) {
     system.interface->message(string( "Warning: Hitachi DSP data ", dataROM, " is missing." ));
   } else if(fp.size() != 1024 * 3) {
-    system.interface->message(string( "Warning: Hitachi DSP data ", dataROM, " is of the wrong file size." ));
+    system.interface->message(string( "Warning: Hitachi DSP data ", dataROM, " is of the wrong file size (got: ", (unsigned)fp.size(), " bytes)" ));
     fp.close();
   } else {
     for(unsigned n = 0; n < 1024; n++) hitachidsp.dataROM[n] = fp.readl(3);

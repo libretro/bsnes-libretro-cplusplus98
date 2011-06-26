@@ -17,24 +17,23 @@ struct Interface : public SNES::Interface {
     unsigned height = overscan ? 239 : 224;
     if(interlace) height <<= 1;
     data += 9 * 1024;  //skip front porch
-    if(pvideo_refresh) return pvideo_refresh(data, width, height);
+    return pvideo_refresh(data, width, height);
   }
 
   void audio_sample(uint16_t left, uint16_t right) {
-    if(paudio_sample) return paudio_sample(left, right);
+    return paudio_sample(left, right);
   }
 
   void input_poll() {
-    if(pinput_poll) return pinput_poll();
+    return pinput_poll();
   }
 
   int16_t input_poll(bool port, SNES::Input::Device::e device, unsigned index, unsigned id) {
-    if(pinput_state) return pinput_state(port, (unsigned)device, index, id);
-    return 0;
+    return pinput_state(port, (unsigned)device, index, id);
   }
 
   void message(const string &text) {
-    print(text, "\n");
+    fprintf(stderr, "%s\n", (const char*)text);
   }
 
   string path(SNES::Cartridge::Slot::e slot, const string &hint) {
