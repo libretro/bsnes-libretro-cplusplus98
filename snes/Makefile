@@ -77,7 +77,7 @@ ifeq ($(platform),x)
 	$(CXX) -o out/libsnes.so -fPIC -shared -Wl,-soname,libsnes.so.1 $(snes_objects) obj/libsnes.o $(link)
 else ifeq ($(platform),osx)
 	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o
-	$(CXX) -o out/libsnes.dylib -install_name $(prefix)/lib/libsnes.dylib -shared -dynamiclib $(snes_objects) obj/libsnes.o $(link)
+	$(CXX) -o out/libsnes.dylib -install_name $(prefix)/lib/libsnes.dylib -dynamiclib $(snes_objects) obj/libsnes.o $(link)
 else ifeq ($(platform),win)
 	$(CXX) -o out/snes.dll -static-libgcc -static-libstdc++ -shared -Wl,--out-implib,libsnes.a $(snes_objects) obj/libsnes.o $(link)
 endif
