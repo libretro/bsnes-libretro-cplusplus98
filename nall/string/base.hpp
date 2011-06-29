@@ -25,14 +25,6 @@ namespace nall {
     inline string& append(unsigned int value);
     inline string& append(double value);
 
-    /*
-    inline bool equals(const char*) const;
-    inline bool iequals(const char*) const;
-
-    inline bool wildcard(const char*) const;
-    inline bool iwildcard(const char*) const;
-    */
-
     inline bool beginswith(const char*) const;
 
     template<typename T> inline string& operator= (const T& value);
