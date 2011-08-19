@@ -19,7 +19,7 @@ ifeq ($(platform),)
   ifeq ($(uname),)
     platform := win
     delete = del $(subst /,\,$1)
-  else ifneq ($(findstring MINGW32,$(uname -a)),)
+  else ifneq ($(findstring MINGW32,$(uname)),)
     platform := win
     delete = del $(subst /,\,$1)
   else ifneq ($(findstring Darwin,$(uname)),)

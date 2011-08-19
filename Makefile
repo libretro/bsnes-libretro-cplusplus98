@@ -8,6 +8,11 @@ ifneq ($(platform),win)
    fpic = -fPIC
 endif
 
+ifeq ($(platform),win)
+   CC = gcc
+   CXX = g++
+endif
+
 ifeq ($(DEBUG),1)
    extraflags = -O0 -g -I. -I$(snes) $(fpic)
 else
