@@ -19,6 +19,7 @@ struct CPU : Processor, MMIO {
     unsigned clock;
     bool halt;
     bool stop;
+    bool ei;
     bool ime;
 
     //$ff00  JOYP
