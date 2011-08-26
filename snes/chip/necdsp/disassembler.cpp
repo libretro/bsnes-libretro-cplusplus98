@@ -98,7 +98,7 @@ string NECDSP::disassemble(uint14 ip) {
     }
 
     if(dphm) {
-      output.append(string("\n      m", hex<1>(dphm)));
+      output.append("\n      m", hex<1>(dphm));
     }
 
     if(rpdcr == 1) {
@@ -160,7 +160,7 @@ string NECDSP::disassemble(uint14 ip) {
       default:    output.append("??????  "); break;
     }
 
-    output.append(string("$", hex<4>(jp)));
+    output.append("$", hex<4>(jp));
   }
 
   if(type == 3) {  //LD
@@ -168,7 +168,7 @@ string NECDSP::disassemble(uint14 ip) {
     uint16 id = opcode >> 6;
     uint4 dst = opcode >> 0;
 
-    output.append(string("$", hex<4>(id), ","));
+    output.append("$", hex<4>(id), ",");
 
     switch(dst) {
       case  0: output.append("non"); break;

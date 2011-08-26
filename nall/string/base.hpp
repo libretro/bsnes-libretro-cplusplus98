@@ -25,6 +25,19 @@ namespace nall {
     inline string& append(unsigned int value);
     inline string& append(double value);
 
+    // <_______<
+    template <typename T1, typename T2>
+    inline string& append(const T1 &t1, const T2 &t2) { append(t1), append(t2); return *this; }
+
+    template <typename T1, typename T2, typename T3>
+    inline string& append(const T1 &t1, const T2 &t2, const T3 &t3) { append(t1), append(t2, t3); return *this; }
+
+    template <typename T1, typename T2, typename T3, typename T4>
+    inline string& append(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4) { append(t1); append(t2, t3, t4); return *this; }
+
+    template <typename T1, typename T2, typename T3, typename T4, typename T5>
+    inline string& append(const T1 &t1, const T2 &t2, const T3 &t3, const T4 &t4, const T5 &t5) { append(t1); append(t2, t3, t4, t5); return *this; }
+
     inline bool beginswith(const char*) const;
 
     template<typename T> inline string& operator= (const T& value);

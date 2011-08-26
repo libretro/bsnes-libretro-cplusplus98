@@ -253,6 +253,8 @@ uint8 SDD1::Decomp::OL::decompress() {
     }
     return r1;
   }
+
+  return 0; // Not verifed.
 }
 
 //core
