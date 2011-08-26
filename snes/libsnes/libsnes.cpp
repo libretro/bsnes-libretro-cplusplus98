@@ -179,14 +179,17 @@ bool snes_load_cartridge_sufami_turbo(
 
 bool snes_load_cartridge_super_game_boy(
   const char *rom_xml, const uint8_t *rom_data, unsigned rom_size,
-  const char *dmg_xml, const uint8_t *dmg_data, unsigned dmg_size
+  const char *dmg_xml, const uint8_t *dmg_data_, unsigned dmg_size
 ) {
   snes_cheat_reset();
   if(rom_data) SNES::cartridge.rom.copy(rom_data, rom_size);
   string xmlrom = (rom_xml && *rom_xml) ? string(rom_xml) : SNESCartridge(rom_data, rom_size).xmlMemoryMap;
-  if(dmg_data) {
+  if(dmg_data_) {
+    uint8_t *dmg_data = new uint8_t[dmg_size]; // GameBoyCartridge might reorder data ...
+    memcpy(dmg_data, dmg_data_, dmg_size);
     string xmldmg = (dmg_xml && *dmg_xml) ? string(dmg_xml) : GameBoyCartridge(dmg_data, dmg_size).xml;
     GameBoy::cartridge.load(xmldmg, dmg_data, dmg_size);
+    delete [] dmg_data;
   }
   SNES::cartridge.load(SNES::Cartridge::Mode::SuperGameBoy, lstring( xmlrom, "" ));
   SNES::system.power();
