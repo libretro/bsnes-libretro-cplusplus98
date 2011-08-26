@@ -1,6 +1,8 @@
 #ifndef NALL_STRING_UTILITY_HPP
 #define NALL_STRING_UTILITY_HPP
 
+#include <nall/sha256.hpp>
+
 namespace nall {
 
 inline unsigned strlcpy(string &dest, const char *src, unsigned length) {
@@ -248,6 +250,18 @@ inline string fp(double value) {
   temp.reserve(fp(0, value));
   fp(temp(), value);
   return temp;
+}
+
+inline string sha256(const uint8_t *data, unsigned size) {
+  sha256_ctx sha;
+  uint8_t hash[32];
+  sha256_init(&sha);
+  sha256_chunk(&sha, data, size);
+  sha256_final(&sha);
+  sha256_hash(&sha, hash);
+  string result;
+  foreach(byte, hash) result.append(hex<2>(byte));
+  return result;
 }
 
 }

@@ -7,7 +7,7 @@ struct Interface {
   Interface();
 
   void video_refresh(const uint16_t *data, bool hires, bool interlace, bool overscan);
-  void audio_sample(uint16_t l_sample, uint16_t r_sample);
+  void audio_sample(int16_t l_sample, int16_t r_sample);
   int16_t input_poll(bool port, Input::Device::e device, unsigned index, unsigned id);
 
   void message(const string &text);
