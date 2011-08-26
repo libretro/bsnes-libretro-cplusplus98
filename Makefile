@@ -2,7 +2,7 @@ include nall/Makefile
 snes := snes
 gameboy := gameboy
 profile := performance
-link := -Wl,--no-undefined
+link :=
 
 ifneq ($(platform),win)
    fpic = -fPIC
