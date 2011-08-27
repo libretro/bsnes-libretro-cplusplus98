@@ -19,6 +19,9 @@
 #include <time.h>
 
 #if defined(_WIN32)
+#if defined(_WIN64)
+  #define interface struct
+#endif
   #include <io.h>
   #include <direct.h>
   #include <shlobj.h>
