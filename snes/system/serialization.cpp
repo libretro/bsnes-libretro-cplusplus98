@@ -44,8 +44,12 @@ bool System::unserialize(serializer &s) {
 //========
 
 void System::serialize(serializer &s) {
-  s.integer((unsigned&)region);
-  s.integer((unsigned&)expansion);
+  unsigned region_ = (unsigned)region.i;
+  unsigned expansion_ = (unsigned)expansion.i;
+  s.integer(region_);
+  s.integer(expansion_);
+  region.i = (Region::e)region_;
+  expansion.i = (ExpansionPortDevice::e)expansion_;
 }
 
 void System::serialize_all(serializer &s) {

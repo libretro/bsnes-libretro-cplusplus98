@@ -6,7 +6,10 @@ void HitachiDSP::serialize(serializer &s) {
   s.array(dataRAM);
   foreach(n, stack) s.integer(n);
   s.integer(opcode);
-  s.integer((unsigned&)state);
+
+  unsigned state_ = (unsigned)state.i;
+  s.integer(state_);
+  state.i = (State::e)state_;
 
   s.integer(regs.pc);
   s.integer(regs.p);
