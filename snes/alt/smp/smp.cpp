@@ -135,6 +135,13 @@ void SMP::serialize(serializer &s) {
   s.integer(timer2.stage1_ticks);
   s.integer(timer2.stage2_ticks);
   s.integer(timer2.stage3_ticks);
+
+  s.integer(rd);
+  s.integer(wr);
+  s.integer(dp);
+  s.integer(sp);
+  s.integer(ya);
+  s.integer(bit);
 }
 
 SMP::SMP() {
