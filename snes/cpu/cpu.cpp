@@ -125,7 +125,7 @@ void CPU::enable() {
 
 void CPU::power() {
   cpu_version = config.cpu.version;
-  for(auto &n : wram) n = random(config.cpu.wram_init_value);
+  foreach(n, wram) n = random(config.cpu.wram_init_value);
 
   regs.a = regs.x = regs.y = 0x0000;
   regs.s = 0x01ff;
