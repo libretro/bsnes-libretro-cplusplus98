@@ -79,7 +79,8 @@ struct Interface : public SNES::Interface {
 static Interface interface;
 
 const char* snes_library_id(void) {
-  return "bsnes v083";
+  static string version("bsnes v083 (", SNES::Info::Profile, ")");
+  return version;
 }
 
 unsigned snes_library_revision_major(void) {
