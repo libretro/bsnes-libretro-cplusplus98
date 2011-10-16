@@ -7,34 +7,27 @@
 
 namespace nall {
 
-inline optional<unsigned> strpos(const char *str, const char *key) {
-  unsigned ssl = strlen(str), ksl = strlen(key);
-  if(ksl > ssl) return optional<unsigned>(false, 0);
+template<bool Insensitive, bool Quoted>
+optional<unsigned> ustrpos(const char *str, const char *key) {
+  const char *base = str;
 
-  for(unsigned i = 0; i <= ssl - ksl; i++) {
-    if(!memcmp(str + i, key, ksl)) return optional<unsigned>(true, i);
-  }
-
-  return optional<unsigned>(false, 0);
-}
-
-inline optional<unsigned> qstrpos(const char *str, const char *key) {
-  unsigned ssl = strlen(str), ksl = strlen(key);
-  if(ksl > ssl) return optional<unsigned>(false, 0);
-
-  for(unsigned i = 0; i <= ssl - ksl;) {
-    uint8_t x = str[i];
-    if(x == '\"' || x == '\'') {
-      uint8_t z = i++;
-      while(str[i] != x && i < ssl) i++;
-      if(i >= ssl) i = z;
+  while(*str) {
+    if(quoteskip<Quoted>(str)) continue;
+    for(unsigned n = 0;; n++) {
+      if(key[n] == 0) return optional<unsigned>(true, (unsigned)(str - base));
+      if(str[n] == 0) return optional<unsigned>(false, 0);
+      if(!chrequal<Insensitive>(str[n], key[n])) break;
     }
-    if(!memcmp(str + i, key, ksl)) return optional<unsigned>(true, i);
-    i++;
+    str++;
   }
 
   return optional<unsigned>(false, 0);
 }
+
+optional<unsigned> strpos(const char *str, const char *key) { return ustrpos<false, false>(str, key); }
+optional<unsigned> istrpos(const char *str, const char *key) { return ustrpos<true, false>(str, key); }
+optional<unsigned> qstrpos(const char *str, const char *key) { return ustrpos<false, true>(str, key); }
+optional<unsigned> iqstrpos(const char *str, const char *key) { return ustrpos<true, true>(str, key); }
 
 }
 

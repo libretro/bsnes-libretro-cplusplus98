@@ -44,8 +44,6 @@ public:
   unsigned opcode_number;
   unsigned opcode_cycle;
 
-  unsigned rd, wr, dp, sp, ya, bit;
-
   struct Regs {
     uint16 pc;
     uint8 sp;
@@ -56,6 +54,8 @@ public:
     uint8 x;
     Flags p;
   } regs;
+
+  unsigned rd, wr, dp, sp, ya, bit;
 
   struct Status {
     //$00f1

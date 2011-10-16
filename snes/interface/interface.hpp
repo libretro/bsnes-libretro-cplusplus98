@@ -1,23 +1,40 @@
-#ifndef SNES_INTERFACE_HPP
-#define SNES_INTERFACE_HPP
-
-#include <snes/libsnes/libsnes.hpp>
-
 struct Interface {
-  Interface();
+  virtual void videoRefresh(const uint32_t *data, bool hires, bool interlace, bool overscan);
+  virtual void audioSample(int16_t lsample, int16_t rsample);
+  virtual int16_t inputPoll(bool port, Input::Device::e device, unsigned index, unsigned id);
 
-  void video_refresh(const uint16_t *data, bool hires, bool interlace, bool overscan);
-  void audio_sample(int16_t l_sample, int16_t r_sample);
-  int16_t input_poll(bool port, Input::Device::e device, unsigned index, unsigned id);
+  virtual void initialize(Interface*);
 
-  void message(const string &text);
-  string path(Cartridge::Slot::e slot, const string &hint);
+  virtual void connect(bool port, Input::Device::e device);
 
-  snes_video_refresh_t pvideo_refresh;
-  snes_audio_sample_t paudio_sample;
-  snes_input_poll_t pinput_poll;
-  snes_input_state_t pinput_state;
-  string basename;
+  struct CartridgeData {
+    string markup;
+    const uint8_t *data;
+    unsigned size;
+  };
+
+  virtual bool cartridgeLoaded();
+  virtual void loadCartridge(const CartridgeData &base);
+  virtual void loadSatellaviewSlottedCartridge(const CartridgeData &base, const CartridgeData &slot);
+  virtual void loadSatellaviewCartridge(const CartridgeData &base, const CartridgeData &slot);
+  virtual void loadSufamiTurboCartridge(const CartridgeData &base, const CartridgeData &slotA, const CartridgeData &slotB);
+  virtual void loadSuperGameBoyCartridge(const CartridgeData &base, const CartridgeData &slot);
+  virtual void unloadCartridge();
+
+  Cartridge::Information& information();
+  linear_vector<Cartridge::NonVolatileRAM>& memory();
+
+  virtual void power();
+  virtual void reset();
+  virtual void run();
+
+  virtual serializer serialize();
+  virtual bool unserialize(serializer&);
+
+  void setCheats(const lstring &list = lstring());
+
+  virtual string path(Cartridge::Slot::e slot, const string &hint) = 0;
+  virtual void message(const string &text);
 };
 
-#endif
+extern Interface *interface;

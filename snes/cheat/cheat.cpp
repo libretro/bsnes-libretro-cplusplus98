@@ -16,27 +16,22 @@ void Cheat::enable(bool state) {
 
 void Cheat::synchronize() {
   memset(override, 0x00, 16 * 1024 * 1024);
-  code_enabled = false;
+  code_enabled = size() > 0;
 
   for(unsigned i = 0; i < size(); i++) {
     const CheatCode &code = operator[](i);
-    if(code.enabled == false) continue;
 
-    for(unsigned n = 0; n < code.addr.size(); n++) {
-      code_enabled = true;
+    unsigned addr = mirror(code.addr);
+    override[addr] = true;
+    if((addr & 0xffe000) == 0x7e0000) {
+      //mirror $7e:0000-1fff to $00-3f|80-bf:0000-1fff
+      unsigned mirroraddr;
+      for(unsigned x = 0; x <= 0x3f; x++) {
+        mirroraddr = ((0x00 + x) << 16) + (addr & 0x1fff);
+        override[mirroraddr] = true;
 
-      unsigned addr = mirror(code.addr[n]);
-      override[addr] = true;
-      if((addr & 0xffe000) == 0x7e0000) {
-        //mirror $7e:0000-1fff to $00-3f|80-bf:0000-1fff
-        unsigned mirroraddr;
-        for(unsigned x = 0; x <= 0x3f; x++) {
-          mirroraddr = ((0x00 + x) << 16) + (addr & 0x1fff);
-          override[mirroraddr] = true;
-
-          mirroraddr = ((0x80 + x) << 16) + (addr & 0x1fff);
-          override[mirroraddr] = true;
-        }
+        mirroraddr = ((0x80 + x) << 16) + (addr & 0x1fff);
+        override[mirroraddr] = true;
       }
     }
   }
@@ -49,12 +44,8 @@ uint8 Cheat::read(unsigned addr) const {
 
   for(unsigned i = 0; i < size(); i++) {
     const CheatCode &code = operator[](i);
-    if(code.enabled == false) continue;
-
-    for(unsigned n = 0; n < code.addr.size(); n++) {
-      if(addr == mirror(code.addr[n])) {
-        return code.data[n];
-      }
+    if(addr == mirror(code.addr)) {
+      return code.data;
     }
   }
 

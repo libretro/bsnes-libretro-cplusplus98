@@ -4,7 +4,7 @@ void HitachiDSP::serialize(serializer &s) {
   Processor::serialize(s);
 
   s.array(dataRAM);
-  foreach(n, stack) s.integer(n);
+  for(auto &n : stack) s.integer(n);
   s.integer(opcode);
 
   unsigned state_ = (unsigned)state.i;
@@ -25,7 +25,7 @@ void HitachiDSP::serialize(serializer &s) {
   s.integer(regs.ramdata);
   s.integer(regs.busaddr);
   s.integer(regs.ramaddr);
-  foreach(n, regs.gpr) s.integer(n);
+  for(auto &n : regs.gpr) s.integer(n);
 
   s.integer(regs.dma_source);
   s.integer(regs.dma_length);

@@ -26,7 +26,7 @@ void Input::connect(bool port, Input::Device::e id) {
   }
 }
 
-Input::Input() {
+Input::Input() : port1(0), port2(0) {
   connect(Controller::Port1, Input::Device::Joypad);
   connect(Controller::Port2, Input::Device::Joypad);
 }

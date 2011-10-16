@@ -11,10 +11,25 @@
 #include <nall/vector.hpp>
 
 namespace nall {
-  class string;
+  struct string;
+  struct cstring;
 
-  class string {
-  public:
+  struct cstring {
+    inline operator const char*() const;
+    inline unsigned length() const;
+    inline bool operator==(const char*) const;
+    inline bool operator!=(const char*) const;
+    inline optional<unsigned> position(const char *key) const;
+    inline optional<unsigned> iposition(const char *key) const;
+    inline cstring& operator=(const char *data);
+    inline cstring(const char *data);
+    inline cstring();
+
+  protected:
+    const char *data;
+  };
+
+  struct string {
     inline void reserve(unsigned);
     inline unsigned length() const;
 
@@ -24,6 +39,11 @@ namespace nall {
     inline string& append(signed int value);
     inline string& append(unsigned int value);
     inline string& append(double value);
+
+    inline char* begin() { return &data[0]; }
+    inline char* end() { return &data[length()]; }
+    inline const char* begin() const { return &data[0]; }
+    inline const char* end() const { return &data[length()]; }
 
     // <_______<
     template <typename T1, typename T2>
@@ -115,8 +135,7 @@ namespace nall {
      return t;
   }
 
-  class lstring : public linear_vector<string> {
-  public:
+  struct lstring : public linear_vector<string> {
     template<typename T> inline lstring& operator<<(const T& value);
 
     inline optional<unsigned> find(const char*);
@@ -134,6 +153,9 @@ namespace nall {
     lstring(const string &, const string &, const string &, const string &, const string &, const string &, const string &);
     lstring(const string &, const string &, const string &, const string &, const string &, const string &, const string &, const string &);
     
+    inline bool operator==(const lstring&) const;
+    inline bool operator!=(const lstring&) const;
+
     lstring(const lstring & str);
     lstring(std::initializer_list<string>);
   };
@@ -168,6 +190,14 @@ namespace nall {
   inline unsigned strlcpy(char *dest, const char *src, unsigned length);
   inline unsigned strlcat(char *dest, const char *src, unsigned length);
 
+  //strpos.hpp
+  inline optional<unsigned> strpos(const char *str, const char *key);
+  inline optional<unsigned> istrpos(const char *str, const char *key);
+  inline optional<unsigned> qstrpos(const char *str, const char *key);
+  inline optional<unsigned> iqstrpos(const char *str, const char *key);
+  template<bool Insensitive, bool Quoted> inline optional<unsigned> ustrpos(const char *str, const char *key);
+  inline optional<unsigned> ustrpos(const char *str, const char *key) { return ustrpos<false, false>(str, key); }
+
   //trim.hpp
   inline char* ltrim(char *str, const char *key = " ");
   inline char* rtrim(char *str, const char *key = " ");
@@ -181,7 +211,9 @@ namespace nall {
   inline unsigned strlcat(string &dest, const char *src, unsigned length);
   inline string substr(const char *src, unsigned start = 0, unsigned length = 0);
   inline string& strtr(string &dest, const char *before, const char *after);
-  
+  template<bool Quoted, typename T> inline bool quoteskip(T *&p);
+  template<bool Insensitive> inline bool chrequal(char x, char y);
+
   inline string integer(intmax_t value);
   template<unsigned length> inline string linteger(intmax_t value);
   template<unsigned length> inline string rinteger(intmax_t value);

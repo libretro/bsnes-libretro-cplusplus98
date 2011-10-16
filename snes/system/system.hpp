@@ -1,8 +1,6 @@
-class Interface;
+struct Interface;
 
-class System : property<System> {
-public:
-  Interface *interface;
+struct System : property<System> {
   struct Region {
     enum e {
       NTSC = 0,
@@ -21,7 +19,7 @@ public:
   void run();
   void runtosave();
 
-  void init(Interface*);
+  void init();
   void term();
   void load();
   void unload();

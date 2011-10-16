@@ -1,35 +1,37 @@
+#ifndef SNES_HPP
+#define SNES_HPP
+
 namespace SNES {
   namespace Info {
     static const char Name[] = "bsnes";
-    static const char Version[] = "082";
-    static const unsigned SerializerVersion = 21;
+    static const char Version[] = "083";
+    static const unsigned SerializerVersion = 22;
   }
 }
 
 /*
   bsnes - SNES emulator
   author: byuu
-  license: GPLv2
+  license: GPLv3
+  project started: 2004-10-14
 */
 
 #include <libco/libco.h>
 
-//#include <nall/memory_debug.hpp>
+#include <nall/string.hpp>
+#include <nall/platform.hpp>
 #include <nall/algorithm.hpp>
 #include <nall/array.hpp>
-#include <nall/detect.hpp>
 #include <nall/dl.hpp>
 #include <nall/endian.hpp>
 #include <nall/file.hpp>
 #include <nall/foreach.hpp>
 #include <nall/function.hpp>
 #include <nall/moduloarray.hpp>
-#include <nall/platform.hpp>
 #include <nall/priorityqueue.hpp>
 #include <nall/property.hpp>
 #include <nall/serializer.hpp>
 #include <nall/stdint.hpp>
-#include <nall/string.hpp>
 #include <nall/utility.hpp>
 #include <nall/varint.hpp>
 #include <nall/vector.hpp>
@@ -148,9 +150,6 @@ namespace SNES {
   #include <snes/ppu/counter/counter-inline.hpp>
 }
 
-namespace nall {
-  template<> struct has_size<SNES::MappedRAM> { enum { value = true }; };
-  template<> struct has_size<SNES::StaticRAM> { enum { value = true }; };
-}
-
 #undef debugvirtual
+
+#endif

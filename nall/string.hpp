@@ -4,6 +4,7 @@
 #include <nall/C++98.hpp>
 #include <nall/utility.hpp>
 
+#include <nall/array.hpp>
 #include <nall/string/base.hpp>
 #include <nall/string/bsv.hpp>
 #include <nall/string/core.hpp>
@@ -21,6 +22,9 @@
 #include <nall/string/utility.hpp>
 #include <nall/string/variadic.hpp>
 #include <nall/string/xml.hpp>
+
+#include <nall/string/bml.hpp>
+#include <nall/string/cstring.hpp>
 
 namespace nall {
   template<> struct has_length<string> { enum { value = true }; };

@@ -1,5 +1,4 @@
-class Debugger {
-public:
+struct Debugger {
   struct BreakEvent{ enum e{
     None,
     BreakpointHit,

@@ -6,12 +6,12 @@
 #define CARTRIDGE_CPP
 namespace SNES {
 
-#include "xml.cpp"
+#include "markup.cpp"
 #include "serialization.cpp"
 
 Cartridge cartridge;
 
-void Cartridge::load(Mode::e cartridge_mode, const lstring &xml_list) {
+void Cartridge::load(Mode::e cartridge_mode, const char *markup) {
   mode.i = cartridge_mode;
   region.i = Region::NTSC;
   ram_size = 0;
@@ -33,8 +33,8 @@ void Cartridge::load(Mode::e cartridge_mode, const lstring &xml_list) {
 
   nvram.reset();
 
-  parse_xml(xml_list);
-//print(xml_list[0], "\n\n");
+  parse_markup(markup);
+//print(markup, "\n\n");
 
   if(ram_size > 0) {
     ram.map(allocate<uint8>(ram_size, 0xff), ram_size);
@@ -46,16 +46,21 @@ void Cartridge::load(Mode::e cartridge_mode, const lstring &xml_list) {
 
   crc32 = crc32_calculate(rom.data(), rom.size());
 
-  sha256_ctx sha;
-  uint8_t shahash[32];
-  sha256_init(&sha);
-  sha256_chunk(&sha, rom.data(), rom.size());
-  sha256_final(&sha);
-  sha256_hash(&sha, shahash);
-
-  string hash;
-  foreach(n, shahash) hash.append(hex<2>(n));
-  sha256 = hash;
+  switch(mode.i) {
+  case Mode::Normal:
+  case Mode::BsxSlotted:
+    sha256 = nall::sha256(rom.data(), rom.size());
+    break;
+  case Mode::Bsx:
+    sha256 = nall::sha256(bsxflash.memory.data(), bsxflash.memory.size());
+    break;
+  case Mode::SufamiTurbo:
+    sha256 = nall::sha256(sufamiturbo.slotA.rom.data(), sufamiturbo.slotA.rom.size());
+    break;
+  case Mode::SuperGameBoy:
+    sha256 = GameBoy::cartridge.sha256();
+    break;
+  }
 
   system.load();
   loaded = true;

@@ -1,5 +1,4 @@
-class PPU : public Processor, public PPUcounter {
-public:
+struct PPU : public Processor, public PPUcounter {
   uint8 vram[64 * 1024];
   uint8 oam[544];
   uint8 cgram[512];
@@ -23,8 +22,8 @@ public:
   ~PPU();
 
 private:
-  uint16 *surface;
-  uint16 *output;
+  uint32 *surface;
+  uint32 *output;
 
   uint8 ppu1_version;
   uint8 ppu2_version;

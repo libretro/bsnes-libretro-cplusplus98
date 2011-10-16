@@ -126,6 +126,12 @@ namespace nall {
     ~linear_vector() {
       reset();
     }
+
+    //iteration
+    T* begin() { return &pool[0]; }
+    T* end() { return &pool[objectsize]; }
+    const T* begin() const { return &pool[0]; }
+    const T* end() const { return &pool[objectsize]; }
   };
 
   //pointer_vector
@@ -240,6 +246,22 @@ namespace nall {
     ~pointer_vector() {
       reset();
     }
+
+    //iteration
+    struct iterator {
+      bool operator!=(const iterator &source) const { return index != source.index; }
+      T& operator*() { return vector.operator[](index); }
+      iterator& operator++() { index++; return *this; }
+      iterator(const pointer_vector &vector, unsigned index) : vector(vector), index(index) {}
+    private:
+      const pointer_vector &vector;
+      unsigned index;
+    };
+
+    iterator begin() { return iterator(*this, 0); }
+    iterator end() { return iterator(*this, objectsize); }
+    const iterator begin() const { return iterator(*this, 0); }
+    const iterator end() const { return iterator(*this, objectsize); }
   };
 
   template<typename T> struct has_size< linear_vector<T> > { enum { value = true }; };

@@ -13,8 +13,10 @@ public:
   virtual void loadCartridge(const string &markup, const uint8_t *data, unsigned size);
   virtual void unloadCartridge();
 
-  enum class Memory : unsigned {
-    RAM
+  struct Memory {
+     enum e {
+        RAM
+     } i;
   };
 
   virtual unsigned memorySize(Memory);

@@ -264,6 +264,24 @@ inline string sha256(const uint8_t *data, unsigned size) {
   return result;
 }
 
+template<bool Insensitive>
+inline bool chrequal(char x, char y) {
+  if(Insensitive) return chrlower(x) == chrlower(y);
+  return x == y;
+}
+
+template<bool Quoted, typename T>
+inline bool quoteskip(T *&p) {
+  if(Quoted == false) return false;
+  if(*p != '\'' && *p != '\"') return false;
+
+  while(*p == '\'' || *p == '\"') {
+    char x = *p++;
+    while(*p && *p++ != x);
+  }
+  return true;
+}
+
 }
 
 #endif
