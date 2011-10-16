@@ -16,7 +16,7 @@ endif
 ifeq ($(DEBUG),1)
    extraflags = -O0 -g -I. -I$(snes) $(fpic)
 else
-   extraflags = -O3 -fomit-frame-pointer -fno-tree-vectorize -I. -I$(snes) $(fpic)
+   extraflags = -O3 -fomit-frame-pointer -I. -I$(snes) $(fpic)
 endif
 
 ifeq ($(PROFILING),gen)

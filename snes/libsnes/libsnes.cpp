@@ -38,6 +38,7 @@ struct Interface : public SNES::Interface {
   }
 
   int16_t inputPoll(bool port, SNES::Input::Device::e device, unsigned index, unsigned id) {
+    if(id > 11) return 0;
     if(pinput_state) return pinput_state(port, (unsigned)device, index, id);
     return 0;
   }
