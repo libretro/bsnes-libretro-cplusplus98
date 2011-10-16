@@ -14,6 +14,7 @@ namespace SNES {
 
 #include <libco/libco.h>
 
+//#include <nall/memory_debug.hpp>
 #include <nall/algorithm.hpp>
 #include <nall/array.hpp>
 #include <nall/detect.hpp>
@@ -116,6 +117,7 @@ namespace SNES {
     }
 
     inline Processor() : thread(0) {}
+    inline ~Processor() { if (thread) co_delete(thread); }
   };
 
   struct ChipDebugger {
