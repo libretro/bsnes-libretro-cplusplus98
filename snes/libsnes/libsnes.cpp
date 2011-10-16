@@ -19,6 +19,8 @@ void SNES::Interface::audio_sample(int16_t left, int16_t right) {
 }
 
 int16_t SNES::Interface::input_poll(bool port, SNES::Input::Device::e device, unsigned index, unsigned id) {
+  if (id > 11) // Core queries for bit 12-15 as well. Not good ;D
+     return 0;
   return pinput_state(port, (unsigned)device, index, id);
 }
 
