@@ -33,8 +33,8 @@ void System::runthreadtosave() {
   }
 }
 
-void System::init(Interface *interface_) {
-  interface = interface_;
+void System::init() {
+  assert(interface != 0);
 }
 
 void System::load() {

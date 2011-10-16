@@ -1,12 +1,35 @@
 class Interface {
 public:
-  virtual void lcd_scanline() {}
-  virtual void joyp_write(bool p15, bool p14) {}
+  virtual void lcdScanline();
+  virtual void joypWrite(bool p15, bool p14);
+ 
+  virtual void videoRefresh(const uint8_t *data);
+  virtual void audioSample(int16_t center, int16_t left, int16_t right);
+  virtual bool inputPoll(unsigned id);
+ 
+  virtual void initialize(Interface*);
 
-  virtual void video_refresh(const uint8_t *data) {}
-  virtual void audio_sample(int16_t center, int16_t left, int16_t right) {}
-  virtual void input_poll() {}
-  virtual bool input_poll(unsigned id) { return true; }
+  virtual bool cartridgeLoaded();
+  virtual void loadCartridge(const string &markup, const uint8_t *data, unsigned size);
+  virtual void unloadCartridge();
 
-  virtual void message(const string &text) { print(text, "\n"); }
+  enum class Memory : unsigned {
+    RAM
+  };
+
+  virtual unsigned memorySize(Memory);
+  virtual uint8_t* memoryData(Memory);
+
+  virtual void power();
+  virtual void run();
+
+  virtual serializer serialize();
+  virtual bool unserialize(serializer&);
+
+  virtual void setCheats(const lstring &list = lstring());
+
+  virtual void message(const string &text);
 };
+
+extern Interface *interface;
+

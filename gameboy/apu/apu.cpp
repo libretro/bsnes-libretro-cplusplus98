@@ -46,7 +46,7 @@ void APU::main() {
     noise.run();
     master.run();
 
-    system.interface->audio_sample(master.center, master.left, master.right);
+    interface->audioSample(master.center, master.left, master.right);
     if(++clock >= 0) co_switch(scheduler.active_thread = cpu.thread);
   }
 }
@@ -55,7 +55,7 @@ void APU::power() {
   create(Main, 4194304);
   for(unsigned n = 0xff10; n <= 0xff3f; n++) bus.mmio[n] = this;
 
-  foreach(n, mmio_data) n = 0x00;
+  for(auto &n : mmio_data) n = 0x00;
   sequencer_base = 0;
   sequencer_step = 0;
 
@@ -80,10 +80,10 @@ uint8 APU::mmio_read(uint16 addr) {
 
   if(addr == 0xff26) {
     uint8 data = master.enable << 7;
-    if(square1.counter && square1.length) data |= 0x01;
-    if(square2.counter && square2.length) data |= 0x02;
-    if(   wave.counter &&    wave.length) data |= 0x04;
-    if(  noise.counter &&   noise.length) data |= 0x08;
+    if(square1.enable) data |= 0x01;
+    if(square2.enable) data |= 0x02;
+    if(   wave.enable) data |= 0x04;
+    if(  noise.enable) data |= 0x08;
     return data | table[addr - 0xff10];
   }
 

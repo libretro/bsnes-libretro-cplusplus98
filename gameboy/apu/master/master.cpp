@@ -1,6 +1,11 @@
 #ifdef APU_CPP
 
 void APU::Master::run() {
+  static int16_t volume[] = {
+    -16384, -14336, -12288, -10240,  -8192,  -6144,  -4096,  -2048,
+     +2048,  +4096,  +6144,  +8192, +10240, +12288, +14336, +16384,
+  };
+
   if(enable == false) {
     center = 0;
     left   = 0;
@@ -14,13 +19,7 @@ void APU::Master::run() {
   sample +=    apu.wave.output;
   sample +=   apu.noise.output;
   sample >>= 2;
-  center = sclamp<16>(sample);
-
-  if(left_enable == false && right_enable == false) {
-    left  = center;
-    right = center;
-    return;
-  }
+  center = volume[sample];
 
   sample = 0;
   channels = 0;
@@ -29,7 +28,7 @@ void APU::Master::run() {
   if(channel3_left_enable) { sample +=    apu.wave.output; channels++; }
   if(channel4_left_enable) { sample +=   apu.noise.output; channels++; }
   if(channels) sample /= channels;
-  left = sclamp<16>(sample);
+  left = volume[sample];
 
   switch(left_volume) {
     case 0: left >>= 3;                       break;  // 12.5%
@@ -41,7 +40,6 @@ void APU::Master::run() {
     case 6: left -= (left >> 3);              break;  // 87.5%
   //case 7:                                   break;  //100.0%
   }
-  if(left_enable == false) left = 0;
 
   sample = 0;
   channels = 0;
@@ -50,7 +48,7 @@ void APU::Master::run() {
   if(channel3_right_enable) { sample +=    apu.wave.output; channels++; }
   if(channel4_right_enable) { sample +=   apu.noise.output; channels++; }
   if(channels) sample /= channels;
-  right = sclamp<16>(sample);
+  right = volume[sample];
 
   switch(right_volume) {
     case 0: right >>= 3;                         break;  // 12.5%
@@ -62,18 +60,17 @@ void APU::Master::run() {
     case 6: right -= (right >> 3);               break;  // 87.5%
   //case 7:                                      break;  //100.0%
   }
-  if(right_enable == false) right = 0;
 }
 
 void APU::Master::write(unsigned r, uint8 data) {
-  if(r == 0) {
-    left_enable  = data & 0x80;
-    left_volume  = (data >> 4) & 7;
-    right_enable = data & 0x08;
-    right_volume = (data >> 0) & 7;
+  if(r == 0) {  //$ff24  NR50
+    left_in_enable  = data & 0x80;
+    left_volume     = (data >> 4) & 7;
+    right_in_enable = data & 0x08;
+    right_volume    = (data >> 0) & 7;
   }
 
-  if(r == 1) {
+  if(r == 1) {  //$ff25  NR51
     channel4_left_enable  = data & 0x80;
     channel3_left_enable  = data & 0x40;
     channel2_left_enable  = data & 0x20;
@@ -84,15 +81,15 @@ void APU::Master::write(unsigned r, uint8 data) {
     channel1_right_enable = data & 0x01;
   }
 
-  if(r == 2) {
+  if(r == 2) {  //$ff26  NR52
     enable = data & 0x80;
   }
 }
 
 void APU::Master::power() {
-  left_enable = 0;
+  left_in_enable = 0;
   left_volume = 0;
-  right_enable = 0;
+  right_in_enable = 0;
   right_volume = 0;
   channel4_left_enable  = 0;
   channel3_left_enable  = 0;
@@ -110,9 +107,9 @@ void APU::Master::power() {
 }
 
 void APU::Master::serialize(serializer &s) {
-  s.integer(left_enable);
+  s.integer(left_in_enable);
   s.integer(left_volume);
-  s.integer(right_enable);
+  s.integer(right_in_enable);
   s.integer(right_volume);
   s.integer(channel4_left_enable);
   s.integer(channel3_left_enable);

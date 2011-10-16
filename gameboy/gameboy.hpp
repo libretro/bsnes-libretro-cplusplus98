@@ -1,18 +1,22 @@
-//bgameboy
-//author: byuu
-//project started: 2010-12-27
+#ifndef GAMEBOY_HPP
+#define GAMEBOY_HPP
 
 namespace GameBoy {
   namespace Info {
     static const char Name[] = "bgameboy";
-    static const char Version[] = "000.21";
-    static unsigned SerializerVersion = 2;
+    static const unsigned SerializerVersion = 2;
   }
 }
 
+/*
+  bgameboy - Game Boy emulator
+  author: byuu
+  license: GPLv3
+  project started: 2010-12-27
+*/
+
 #include <libco/libco.h>
 
-#include <nall/foreach.hpp>
 #include <nall/platform.hpp>
 #include <nall/property.hpp>
 #include <nall/random.hpp>
@@ -94,4 +98,7 @@ namespace GameBoy {
   #include <gameboy/cpu/cpu.hpp>
   #include <gameboy/apu/apu.hpp>
   #include <gameboy/lcd/lcd.hpp>
+  #include <gameboy/cheat/cheat.hpp>
 };
+
+#endif
