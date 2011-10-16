@@ -2,3 +2,5 @@
 *.o
 *.a
 *.dll
+*.rej
+*.orig
