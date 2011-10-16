@@ -84,6 +84,7 @@ namespace GameBoy {
     }
 
     inline Processor() : thread(0) {}
+    virtual inline ~Processor() { if (thread) co_delete(thread); }
   };
 
   #include <gameboy/memory/memory.hpp>
