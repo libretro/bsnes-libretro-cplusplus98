@@ -1,12 +1,15 @@
 #ifdef CARTRIDGE_CPP
 
+#define READER(f, o) function<uint8 (unsigned)>(f, o)
+#define WRITER(f, o) function<void (unsigned, uint8)>(f, o)
+
 void Cartridge::parse_markup(const char *markup) {
   mapping.reset();
   information.nss.setting.reset();
 
   BML::Document document(markup);
-  auto &cartridge = document["cartridge"];
-  region = cartridge["region"].value != "PAL" ? Region::NTSC : Region::PAL;
+  BML::Node &cartridge = document["cartridge"];
+  region.i = cartridge["region"].value != "PAL" ? Region::NTSC : Region::PAL;
 
   parse_markup_rom(cartridge["rom"]);
   parse_markup_ram(cartridge["ram"]);
@@ -39,9 +42,9 @@ void Cartridge::parse_markup_map(Mapping &m, BML::Node &map) {
   m.size = parse_markup_integer(map["size"].value);
 
   string data = map["mode"].value;
-  if(data == "direct") m.mode = Bus::MapMode::Direct;
-  if(data == "linear") m.mode = Bus::MapMode::Linear;
-  if(data == "shadow") m.mode = Bus::MapMode::Shadow;
+  if(data == "direct") m.mode.i = Bus::MapMode::Direct;
+  if(data == "linear") m.mode.i = Bus::MapMode::Linear;
+  if(data == "shadow") m.mode.i = Bus::MapMode::Shadow;
 
   lstring part;
   part.split(":", map["address"].value);
@@ -105,20 +108,20 @@ void Cartridge::parse_markup_nss(BML::Node &root) {
       if(leaf.name != "option") continue;
       string name = leaf["name"].value;
       unsigned value = parse_markup_integer(leaf["value"].value);
-      information.nss.option[number].append({ hex<4>(value), ":", name });
+      information.nss.option[number].append(string( hex<4>(value), ":", name ));
     }
   }
 }
 
 void Cartridge::parse_markup_icd2(BML::Node &root) {
   if(root.exists() == false) return;
-  if(mode != Mode::SuperGameBoy) return;
+  if(mode.i != Mode::SuperGameBoy) return;
 
   icd2.revision = max(1, parse_markup_integer(root["revision"].value));
 
   foreach(node, root) {
     if(node.name != "map") continue;
-    Mapping m({ &ICD2::read, &icd2 }, { &ICD2::write, &icd2 });
+    Mapping m(READER( &ICD2::read, &icd2 ), WRITER( &ICD2::write, &icd2 ));
     parse_markup_map(m, node);
     mapping.append(m);
   }
@@ -153,7 +156,7 @@ void Cartridge::parse_markup_superfx(BML::Node &root) {
     if(node.name == "mmio") {
       foreach(leaf, node) {
         if(leaf.name != "map") continue;
-        Mapping m({ &SuperFX::mmio_read, &superfx }, { &SuperFX::mmio_write, &superfx });
+        Mapping m(READER( &SuperFX::mmio_read, &superfx ), WRITER( &SuperFX::mmio_write, &superfx ));
         parse_markup_map(m, leaf);
         mapping.append(m);
       }
@@ -165,22 +168,22 @@ void Cartridge::parse_markup_sa1(BML::Node &root) {
   if(root.exists() == false) return;
   has_sa1 = true;
 
-  auto &mcurom = root["mcu"]["rom"];
-  auto &mcuram = root["mcu"]["ram"];
-  auto &iram = root["iram"];
-  auto &bwram = root["bwram"];
-  auto &mmio = root["mmio"];
+  BML::Node &mcurom = root["mcu"]["rom"];
+  BML::Node &mcuram = root["mcu"]["ram"];
+  BML::Node &iram = root["iram"];
+  BML::Node &bwram = root["bwram"];
+  BML::Node &mmio = root["mmio"];
 
   foreach(node, mcurom) {
     if(node.name != "map") continue;
-    Mapping m({ &SA1::mmc_read, &sa1 }, { &SA1::mmc_write, &sa1 });
+    Mapping m(READER( &SA1::mmc_read, &sa1 ), WRITER( &SA1::mmc_write, &sa1 ));
     parse_markup_map(m, node);
     mapping.append(m);
   }
 
   foreach(node, mcuram) {
     if(node.name != "map") continue;
-    Mapping m({ &SA1::mmc_cpu_read, &sa1 }, { &SA1::mmc_cpu_write, &sa1 });
+    Mapping m(READER( &SA1::mmc_cpu_read, &sa1 ), WRITER( &SA1::mmc_cpu_write, &sa1 ));
     parse_markup_map(m, node);
     mapping.append(m);
   }
@@ -204,7 +207,7 @@ void Cartridge::parse_markup_sa1(BML::Node &root) {
 
   foreach(node, mmio) {
     if(node.name != "map") continue;
-    Mapping m({ &SA1::mmio_read, &sa1 }, { &SA1::mmio_write, &sa1 });
+    Mapping m(READER( &SA1::mmio_read, &sa1 ), WRITER( &SA1::mmio_write, &sa1 ));
     parse_markup_map(m, node);
     mapping.append(m);
   }
@@ -219,23 +222,23 @@ void Cartridge::parse_markup_necdsp(BML::Node &root) {
 
   necdsp.frequency = parse_markup_integer(root["frequency"].value);
   if(necdsp.frequency == 0) necdsp.frequency = 8000000;
-  necdsp.revision
+  necdsp.revision.i
   = root["model"].value == "uPD7725"  ? NECDSP::Revision::uPD7725
   : root["model"].value == "uPD96050" ? NECDSP::Revision::uPD96050
   : NECDSP::Revision::uPD7725;
   string firmware = root["firmware"].value;
   string sha256 = root["sha256"].value;
 
-  string path = { dir(interface->path(Slot::Base, ".dsp")), firmware };
-  unsigned promsize = (necdsp.revision == NECDSP::Revision::uPD7725 ? 2048 : 16384);
-  unsigned dromsize = (necdsp.revision == NECDSP::Revision::uPD7725 ? 1024 :  2048);
+  string path( dir(interface->path(Slot::Base, ".dsp")), firmware );
+  unsigned promsize = (necdsp.revision.i == NECDSP::Revision::uPD7725 ? 2048 : 16384);
+  unsigned dromsize = (necdsp.revision.i == NECDSP::Revision::uPD7725 ? 1024 :  2048);
   unsigned filesize = promsize * 3 + dromsize * 2;
 
   file fp;
-  if(fp.open(path, file::mode::read) == false) {
-    interface->message({ "Warning: NEC DSP firmware ", firmware, " is missing." });
+  if(fp.open(path, file::mode_read) == false) {
+    interface->message(string( "Warning: NEC DSP firmware ", firmware, " is missing." ));
   } else if(fp.size() != filesize) {
-    interface->message({ "Warning: NEC DSP firmware ", firmware, " is of the wrong file size." });
+    interface->message(string( "Warning: NEC DSP firmware ", firmware, " is of the wrong file size." ));
     fp.close();
   } else {
     for(unsigned n = 0; n < promsize; n++) necdsp.programROM[n] = fp.readm(3);
@@ -248,7 +251,7 @@ void Cartridge::parse_markup_necdsp(BML::Node &root) {
       fp.read(data, filesize);
 
       if(sha256 != nall::sha256(data, filesize)) {
-        interface->message({ "Warning: NEC DSP firmware ", firmware, " SHA256 sum is incorrect." });
+        interface->message(string( "Warning: NEC DSP firmware ", firmware, " SHA256 sum is incorrect." ));
       }
     }
 
@@ -258,21 +261,21 @@ void Cartridge::parse_markup_necdsp(BML::Node &root) {
   foreach(node, root) {
     if(node.name == "dr") {
       foreach(leaf, node) {
-        Mapping m({ &NECDSP::dr_read, &necdsp }, { &NECDSP::dr_write, &necdsp });
+        Mapping m(READER( &NECDSP::dr_read, &necdsp ), WRITER( &NECDSP::dr_write, &necdsp ));
         parse_markup_map(m, leaf);
         mapping.append(m);
       }
     }
     if(node.name == "sr") {
       foreach(leaf, node) {
-        Mapping m({ &NECDSP::sr_read, &necdsp }, { &NECDSP::sr_write, &necdsp });
+        Mapping m(READER( &NECDSP::sr_read, &necdsp ), WRITER( &NECDSP::sr_write, &necdsp ));
         parse_markup_map(m, leaf);
         mapping.append(m);
       }
     }
     if(node.name == "dp") {
       foreach(leaf, node) {
-        Mapping m({ &NECDSP::dp_read, &necdsp }, { &NECDSP::dp_write, &necdsp });
+        Mapping m(READER( &NECDSP::dp_read, &necdsp ), WRITER( &NECDSP::dp_write, &necdsp ));
         parse_markup_map(m, leaf);
         mapping.append(m);
       }
@@ -291,12 +294,12 @@ void Cartridge::parse_markup_hitachidsp(BML::Node &root) {
   string firmware = root["firmware"].value;
   string sha256 = root["sha256"].value;
 
-  string path = { dir(interface->path(Slot::Base, ".dsp")), firmware };
+  string path( dir(interface->path(Slot::Base, ".dsp")), firmware );
   file fp;
-  if(fp.open(path, file::mode::read) == false) {
-    interface->message({ "Warning: Hitachi DSP firmware ", firmware, " is missing." });
+  if(fp.open(path, file::mode_read) == false) {
+    interface->message(string( "Warning: Hitachi DSP firmware ", firmware, " is missing." ));
   } else if(fp.size() != 1024 * 3) {
-    interface->message({ "Warning: Hitachi DSP firmware ", firmware, " is of the wrong file size." });
+    interface->message(string( "Warning: Hitachi DSP firmware ", firmware, " is of the wrong file size." ));
     fp.close();
   } else {
     for(unsigned n = 0; n < 1024; n++) hitachidsp.dataROM[n] = fp.readl(3);
@@ -308,7 +311,7 @@ void Cartridge::parse_markup_hitachidsp(BML::Node &root) {
       fp.read(data, 3072);
 
       if(sha256 != nall::sha256(data, 3072)) {
-        interface->message({ "Warning: Hitachi DSP firmware ", firmware, " SHA256 sum is incorrect." });
+        interface->message(string( "Warning: Hitachi DSP firmware ", firmware, " SHA256 sum is incorrect." ));
       }
     }
 
@@ -319,14 +322,14 @@ void Cartridge::parse_markup_hitachidsp(BML::Node &root) {
     if(node.name == "rom") {
       foreach(leaf, node) {
         if(leaf.name != "map") continue;
-        Mapping m({ &HitachiDSP::rom_read, &hitachidsp }, { &HitachiDSP::rom_write, &hitachidsp });
+        Mapping m(READER( &HitachiDSP::rom_read, &hitachidsp ), WRITER( &HitachiDSP::rom_write, &hitachidsp ));
         parse_markup_map(m, leaf);
         mapping.append(m);
       }
     }
     if(node.name == "mmio") {
       foreach(leaf, node) {
-        Mapping m({ &HitachiDSP::dsp_read, &hitachidsp }, { &HitachiDSP::dsp_write, &hitachidsp });
+        Mapping m(READER( &HitachiDSP::dsp_read, &hitachidsp ), WRITER( &HitachiDSP::dsp_write, &hitachidsp ));
         parse_markup_map(m, leaf);
         mapping.append(m);
       }
@@ -336,7 +339,7 @@ void Cartridge::parse_markup_hitachidsp(BML::Node &root) {
 
 void Cartridge::parse_markup_bsx(BML::Node &root) {
   if(root.exists() == false) return;
-  if(mode != Mode::BsxSlotted && mode != Mode::Bsx) return;
+  if(mode.i != Mode::BsxSlotted && mode.i != Mode::Bsx) return;
 
   foreach(node, root["slot"]) {
     if(node.name != "map") continue;
@@ -347,14 +350,14 @@ void Cartridge::parse_markup_bsx(BML::Node &root) {
 
   foreach(node, root["mmio"]) {
     if(node.name != "map") continue;
-    Mapping m({ &BSXCartridge::mmio_read, &bsxcartridge }, { &BSXCartridge::mmio_write, &bsxcartridge });
+    Mapping m(READER( &BSXCartridge::mmio_read, &bsxcartridge ), WRITER( &BSXCartridge::mmio_write, &bsxcartridge ));
     parse_markup_map(m, node);
     mapping.append(m);
   }
 
   foreach(node, root["mcu"]) {
     if(node.name != "map") continue;
-    Mapping m({ &BSXCartridge::mcu_read, &bsxcartridge }, { &BSXCartridge::mcu_write, &bsxcartridge });
+    Mapping m(READER( &BSXCartridge::mcu_read, &bsxcartridge ), WRITER( &BSXCartridge::mcu_write, &bsxcartridge ));
     parse_markup_map(m, node);
     mapping.append(m);
   }
@@ -362,7 +365,7 @@ void Cartridge::parse_markup_bsx(BML::Node &root) {
 
 void Cartridge::parse_markup_sufamiturbo(BML::Node &root) {
   if(root.exists() == false) return;
-  if(mode != Mode::SufamiTurbo) return;
+  if(mode.i != Mode::SufamiTurbo) return;
 
   foreach(slot, root) {
     if(slot.name != "slot") continue;
@@ -399,7 +402,7 @@ void Cartridge::parse_markup_srtc(BML::Node &root) {
 
   foreach(node, root) {
     if(node.name != "map") continue;
-    Mapping m({ &SRTC::read, &srtc }, { &SRTC::write, &srtc });
+    Mapping m(READER( &SRTC::read, &srtc ), WRITER( &SRTC::write, &srtc ));
     parse_markup_map(m, node);
     mapping.append(m);
   }
@@ -411,14 +414,14 @@ void Cartridge::parse_markup_sdd1(BML::Node &root) {
 
   foreach(node, root["mmio"]) {
     if(node.name != "map") continue;
-    Mapping m({ &SDD1::mmio_read, &sdd1 }, { &SDD1::mmio_write, &sdd1 });
+    Mapping m(READER( &SDD1::mmio_read, &sdd1 ), WRITER( &SDD1::mmio_write, &sdd1 ));
     parse_markup_map(m, node);
     mapping.append(m);
   }
 
   foreach(node, root["mcu"]) {
     if(node.name != "map") continue;
-    Mapping m({ &SDD1::mcu_read, &sdd1 }, { &SDD1::mcu_write, &sdd1 });
+    Mapping m(READER( &SDD1::mcu_read, &sdd1 ), WRITER( &SDD1::mcu_write, &sdd1 ));
     parse_markup_map(m, node);
     mapping.append(m);
   }
@@ -428,23 +431,23 @@ void Cartridge::parse_markup_spc7110(BML::Node &root) {
   if(root.exists() == false) return;
   has_spc7110 = true;
 
-  auto &ram = root["ram"];
-  auto &mmio = root["mmio"];
-  auto &mcu = root["mcu"];
-  auto &dcu = root["dcu"];
-  auto &rtc = root["rtc"];
+  BML::Node &ram = root["ram"];
+  BML::Node &mmio = root["mmio"];
+  BML::Node &mcu = root["mcu"];
+  BML::Node &dcu = root["dcu"];
+  BML::Node &rtc = root["rtc"];
 
   ram_size = parse_markup_integer(ram["size"].value);
   foreach(node, ram) {
     if(node.name != "map") continue;
-    Mapping m({ &SPC7110::ram_read, &spc7110 }, { &SPC7110::ram_write, &spc7110 });
+    Mapping m(READER( &SPC7110::ram_read, &spc7110 ), WRITER( &SPC7110::ram_write, &spc7110 ));
     parse_markup_map(m, node);
     mapping.append(m);
   }
 
   foreach(node, mmio) {
     if(node.name != "map") continue;
-    Mapping m({ &SPC7110::mmio_read, &spc7110 }, { &SPC7110::mmio_write, &spc7110 });
+    Mapping m(READER( &SPC7110::mmio_read, &spc7110 ), WRITER( &SPC7110::mmio_write, &spc7110 ));
     parse_markup_map(m, node);
     mapping.append(m);
   }
@@ -453,21 +456,21 @@ void Cartridge::parse_markup_spc7110(BML::Node &root) {
   if(spc7110.data_rom_offset == 0) spc7110.data_rom_offset = 0x100000;
   foreach(node, mcu) {
     if(node.name != "map") continue;
-    Mapping m({ &SPC7110::mcu_read, &spc7110 }, { &SPC7110::mcu_write, &spc7110 });
+    Mapping m(READER( &SPC7110::mcu_read, &spc7110 ), WRITER( &SPC7110::mcu_write, &spc7110 ));
     parse_markup_map(m, node);
     mapping.append(m);
   }
 
   foreach(node, dcu) {
     if(node.name != "map") continue;
-    Mapping m({ &SPC7110::dcu_read, &spc7110 }, { &SPC7110::dcu_write, &spc7110 });
+    Mapping m(READER( &SPC7110::dcu_read, &spc7110 ), WRITER( &SPC7110::dcu_write, &spc7110 ));
     parse_markup_map(m, node);
     mapping.append(m);
   }
 
   foreach(node, rtc) {
     if(node.name != "map") continue;
-    Mapping m({ &SPC7110::mmio_read, &spc7110 }, { &SPC7110::mmio_write, &spc7110 });
+    Mapping m(READER( &SPC7110::mmio_read, &spc7110 ), WRITER( &SPC7110::mmio_write, &spc7110 ));
     parse_markup_map(m, node);
     mapping.append(m);
   }
@@ -479,7 +482,7 @@ void Cartridge::parse_markup_obc1(BML::Node &root) {
 
   foreach(node, root) {
     if(node.name != "map") continue;
-    Mapping m({ &OBC1::read, &obc1 }, { &OBC1::write, &obc1 });
+    Mapping m(READER( &OBC1::read, &obc1 ), WRITER( &OBC1::write, &obc1 ));
     parse_markup_map(m, node);
     mapping.append(m);
   }
@@ -491,7 +494,7 @@ void Cartridge::parse_markup_setarisc(BML::Node &root) {
 
   foreach(node, root) {
     if(node.name != "map") continue;
-    Mapping m({ &ST0018::mmio_read, &st0018 }, { &ST0018::mmio_write, &st0018 });
+    Mapping m(READER( &ST0018::mmio_read, &st0018 ), WRITER( &ST0018::mmio_write, &st0018 ));
     parse_markup_map(m, node);
     mapping.append(m);
   }
@@ -501,7 +504,7 @@ void Cartridge::parse_markup_msu1(BML::Node &root) {
   if(root.exists() == false) {
     has_msu1 = file::exists(interface->path(Cartridge::Slot::Base, ".msu"));
     if(has_msu1) {
-      Mapping m({ &MSU1::mmio_read, &msu1 }, { &MSU1::mmio_write, &msu1 });
+      Mapping m(READER( &MSU1::mmio_read, &msu1 ), WRITER( &MSU1::mmio_write, &msu1 ));
       m.banklo = 0x00, m.bankhi = 0x3f, m.addrlo = 0x2000, m.addrhi = 0x2007;
       mapping.append(m);
       m.banklo = 0x80, m.bankhi = 0xbf, m.addrlo = 0x2000, m.addrhi = 0x2007;
@@ -514,7 +517,7 @@ void Cartridge::parse_markup_msu1(BML::Node &root) {
 
   foreach(node, root) {
     if(node.name != "map") continue;
-    Mapping m({ &MSU1::mmio_read, &msu1 }, { &MSU1::mmio_write, &msu1 });
+    Mapping m(READER( &MSU1::mmio_read, &msu1 ), WRITER( &MSU1::mmio_write, &msu1 ));
     parse_markup_map(m, node);
     mapping.append(m);
   }
@@ -529,7 +532,7 @@ void Cartridge::parse_markup_link(BML::Node &root) {
 
   foreach(node, root) {
     if(node.name != "map") continue;
-    Mapping m({ &Link::read, &link }, { &Link::write, &link });
+    Mapping m(READER( &Link::read, &link ), WRITER( &Link::write, &link ));
     parse_markup_map(m, node);
     mapping.append(m);
   }
@@ -541,8 +544,8 @@ Cartridge::Mapping::Mapping() {
 }
 
 Cartridge::Mapping::Mapping(Memory &memory) {
-  read = { &Memory::read, &memory };
-  write = { &Memory::write, &memory };
+  read = READER( &Memory::read, &memory );
+  write = WRITER( &Memory::write, &memory );
   mode.i = Bus::MapMode::Direct;
   banklo = bankhi = addrlo = addrhi = offset = size = 0;
 }

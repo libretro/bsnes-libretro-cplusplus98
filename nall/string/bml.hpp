@@ -110,6 +110,10 @@ public:
     return node;
   }
 
+  inline Node& operator[](unsigned i) {
+    return children[i];
+  }
+
   inline bool exists() const { return name; }
   unsigned size() const { return children.size(); }
   Node* begin() { return children.begin(); }
@@ -148,6 +152,9 @@ private:
 };
 
 }
+
+template<> struct has_size<BML::Node> { enum { value = true }; };
+
 }
 
 #endif
