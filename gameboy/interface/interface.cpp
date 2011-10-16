@@ -39,12 +39,12 @@ void Interface::unloadCartridge() {
 }
 
 unsigned Interface::memorySize(Memory memory) {
-  if(memory == Memory::RAM) return cartridge.ramsize;
+  if(memory.i == Memory::RAM) return cartridge.ramsize;
   return 0u;
 }
 
 uint8_t* Interface::memoryData(Memory memory) {
-  if(memory == Memory::RAM) return cartridge.ramdata;
+  if(memory.i == Memory::RAM) return cartridge.ramdata;
   return 0u;
 }
 
@@ -55,7 +55,7 @@ void Interface::power() {
 void Interface::run() {
   do {
     system.run();
-  } while(scheduler.exit_reason() != Scheduler::ExitReason::FrameEvent);
+  } while(scheduler.exit_reason.i != Scheduler::ExitReason::FrameEvent);
 }
 
 serializer Interface::serialize() {
@@ -69,13 +69,14 @@ bool Interface::unserialize(serializer &s) {
 
 void Interface::setCheats(const lstring &list) {
   cheat.reset();
-  for(auto &code : list) {
+  foreach(code, list) {
     lstring codelist;
     codelist.split("+", code);
-    for(auto &part : codelist) {
+    foreach(part, codelist) {
       unsigned addr, data, comp;
       if(Cheat::decode(part, addr, data, comp)) {
-        cheat.append({ addr, data, comp });
+        CheatCode code = { addr, data, comp };
+        cheat.append(code);
       }
     }
   }

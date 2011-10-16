@@ -36,14 +36,14 @@ void Cartridge::load(const string &markup, const uint8_t *data, unsigned size) {
   BML::Document document(markup);
 
   const string &mapperid = document["cartridge"]["mapper"].value;
-  if(mapperid == "none" ) info.mapper = Mapper::MBC0;
-  if(mapperid == "MBC1" ) info.mapper = Mapper::MBC1;
-  if(mapperid == "MBC2" ) info.mapper = Mapper::MBC2;
-  if(mapperid == "MBC3" ) info.mapper = Mapper::MBC3;
-  if(mapperid == "MBC5" ) info.mapper = Mapper::MBC5;
-  if(mapperid == "MMM01") info.mapper = Mapper::MMM01;
-  if(mapperid == "HuC1" ) info.mapper = Mapper::HuC1;
-  if(mapperid == "HuC3" ) info.mapper = Mapper::HuC3;
+  if(mapperid == "none" ) info.mapper.i = Mapper::MBC0;
+  if(mapperid == "MBC1" ) info.mapper.i = Mapper::MBC1;
+  if(mapperid == "MBC2" ) info.mapper.i = Mapper::MBC2;
+  if(mapperid == "MBC3" ) info.mapper.i = Mapper::MBC3;
+  if(mapperid == "MBC5" ) info.mapper.i = Mapper::MBC5;
+  if(mapperid == "MMM01") info.mapper.i = Mapper::MMM01;
+  if(mapperid == "HuC1" ) info.mapper.i = Mapper::HuC1;
+  if(mapperid == "HuC3" ) info.mapper.i = Mapper::HuC3;
 
   info.rtc = document["cartridge"]["rtc"].exists();
   info.rumble = document["cartridge"]["rumble"].exists();

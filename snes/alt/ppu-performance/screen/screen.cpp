@@ -115,7 +115,7 @@ uint16 PPU::Screen::get_pixel_sub(unsigned x) {
 }
 
 void PPU::Screen::render() {
-  uint16 *data = self.output + self.vcounter() * 1024;
+  uint32 *data = self.output + self.vcounter() * 1024;
   if(self.interlace() && self.field()) data += 512;
 
   if(!self.regs.pseudo_hires && self.regs.bgmode != 5 && self.regs.bgmode != 6) {

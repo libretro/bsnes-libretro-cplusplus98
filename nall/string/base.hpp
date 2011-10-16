@@ -120,6 +120,9 @@ namespace nall {
     inline string& rtrim_once(const char *key = " ");
     inline string& trim_once (const char *key = " ");
 
+    inline bool wildcard(const char*) const;
+    inline bool iwildcard(const char*) const;
+
   protected:
     char *data;
     unsigned size;
@@ -168,6 +171,8 @@ namespace nall {
   inline bool stribegin(const char *str, const char *key);
   inline bool strend (const char *str, const char *key);
   inline bool striend(const char *str, const char *key);
+  inline bool wildcard(const char *str, const char *pattern);
+  inline bool iwildcard(const char *str, const char *pattern);
 
   //convert.hpp
   inline char* strlower(char *str);

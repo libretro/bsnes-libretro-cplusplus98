@@ -71,7 +71,7 @@ void APU::Wave::power() {
   counter = 0;
 
   random_lfsr r;
-  for(auto &n : pattern) n = r() & 15;
+  foreach(n, pattern) n = r() & 15;
 
   output = 0;
   length = 0;
