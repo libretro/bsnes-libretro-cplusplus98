@@ -2,7 +2,7 @@
 
 namespace SNES {
 
-Interface *interface = 0;
+Interface *snes_interface = 0;
 
 void Interface::videoRefresh(const uint32_t *data, bool hires, bool interlace, bool overscan) {
 }
@@ -15,7 +15,7 @@ int16_t Interface::inputPoll(bool port, Input::Device::e device, unsigned index,
 }
 
 void Interface::initialize(Interface *derived_interface) {
-  interface = derived_interface;
+  snes_interface = derived_interface;
   system.init();
 }
 

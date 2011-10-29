@@ -81,7 +81,7 @@ void Video::update() {
     }
   }
 
-  interface->videoRefresh(ppu.surface, hires, ppu.interlace(), ppu.overscan());
+  snes_interface->videoRefresh(ppu.surface, hires, ppu.interlace(), ppu.overscan());
 
   hires = false;
 }
