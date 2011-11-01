@@ -16,12 +16,12 @@ void MSU1::serialize(serializer &s) {
   s.integer(mmio.audio_play);
 
   if(datafile.open()) datafile.close();
-  if(datafile.open(snes_interface->path(Cartridge::Slot::Base, ".msu"), file::mode_read)) {
+  if(datafile.open(interface->path(Cartridge::Slot::Base, ".msu"), file::mode_read)) {
     datafile.seek(mmio.data_offset);
   }
 
   if(audiofile.open()) audiofile.close();
-  if(audiofile.open(snes_interface->path(Cartridge::Slot::Base, string("-", (unsigned)mmio.audio_track, ".pcm")), file::mode_read)) {
+  if(audiofile.open(interface->path(Cartridge::Slot::Base, string("-", (unsigned)mmio.audio_track, ".pcm")), file::mode_read)) {
     audiofile.seek(mmio.audio_offset);
   }
 }

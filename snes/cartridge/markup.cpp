@@ -229,16 +229,16 @@ void Cartridge::parse_markup_necdsp(BML::Node &root) {
   string firmware = root["firmware"].value;
   string sha256 = root["sha256"].value;
 
-  string path( dir(snes_interface->path(Slot::Base, ".dsp")), firmware );
+  string path( dir(interface->path(Slot::Base, ".dsp")), firmware );
   unsigned promsize = (necdsp.revision.i == NECDSP::Revision::uPD7725 ? 2048 : 16384);
   unsigned dromsize = (necdsp.revision.i == NECDSP::Revision::uPD7725 ? 1024 :  2048);
   unsigned filesize = promsize * 3 + dromsize * 2;
 
   file fp;
   if(fp.open(path, file::mode_read) == false) {
-    snes_interface->message(string( "Warning: NEC DSP firmware ", firmware, " is missing." ));
+    interface->message(string( "Warning: NEC DSP firmware ", firmware, " is missing." ));
   } else if(fp.size() != filesize) {
-    snes_interface->message(string( "Warning: NEC DSP firmware ", firmware, " is of the wrong file size." ));
+    interface->message(string( "Warning: NEC DSP firmware ", firmware, " is of the wrong file size." ));
     fp.close();
   } else {
     for(unsigned n = 0; n < promsize; n++) necdsp.programROM[n] = fp.readm(3);
@@ -251,7 +251,7 @@ void Cartridge::parse_markup_necdsp(BML::Node &root) {
       fp.read(data, filesize);
 
       if(sha256 != nall::sha256(data, filesize)) {
-        snes_interface->message(string( "Warning: NEC DSP firmware ", firmware, " SHA256 sum is incorrect." ));
+        interface->message(string( "Warning: NEC DSP firmware ", firmware, " SHA256 sum is incorrect." ));
       }
     }
 
@@ -294,12 +294,12 @@ void Cartridge::parse_markup_hitachidsp(BML::Node &root) {
   string firmware = root["firmware"].value;
   string sha256 = root["sha256"].value;
 
-  string path( dir(snes_interface->path(Slot::Base, ".dsp")), firmware );
+  string path( dir(interface->path(Slot::Base, ".dsp")), firmware );
   file fp;
   if(fp.open(path, file::mode_read) == false) {
-    snes_interface->message(string( "Warning: Hitachi DSP firmware ", firmware, " is missing." ));
+    interface->message(string( "Warning: Hitachi DSP firmware ", firmware, " is missing." ));
   } else if(fp.size() != 1024 * 3) {
-    snes_interface->message(string( "Warning: Hitachi DSP firmware ", firmware, " is of the wrong file size." ));
+    interface->message(string( "Warning: Hitachi DSP firmware ", firmware, " is of the wrong file size." ));
     fp.close();
   } else {
     for(unsigned n = 0; n < 1024; n++) hitachidsp.dataROM[n] = fp.readl(3);
@@ -311,7 +311,7 @@ void Cartridge::parse_markup_hitachidsp(BML::Node &root) {
       fp.read(data, 3072);
 
       if(sha256 != nall::sha256(data, 3072)) {
-        snes_interface->message(string( "Warning: Hitachi DSP firmware ", firmware, " SHA256 sum is incorrect." ));
+        interface->message(string( "Warning: Hitachi DSP firmware ", firmware, " SHA256 sum is incorrect." ));
       }
     }
 
@@ -502,7 +502,7 @@ void Cartridge::parse_markup_setarisc(BML::Node &root) {
 
 void Cartridge::parse_markup_msu1(BML::Node &root) {
   if(root.exists() == false) {
-    has_msu1 = file::exists(snes_interface->path(Cartridge::Slot::Base, ".msu"));
+    has_msu1 = file::exists(interface->path(Cartridge::Slot::Base, ".msu"));
     if(has_msu1) {
       Mapping m(READER( &MSU1::mmio_read, &msu1 ), WRITER( &MSU1::mmio_write, &msu1 ));
       m.banklo = 0x00, m.bankhi = 0x3f, m.addrlo = 0x2000, m.addrhi = 0x2007;

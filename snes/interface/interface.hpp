@@ -37,4 +37,4 @@ struct Interface {
   virtual void message(const string &text);
 };
 
-extern Interface *snes_interface;
+extern Interface *interface;
