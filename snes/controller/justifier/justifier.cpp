@@ -105,6 +105,43 @@ void Justifier::latch(bool data) {
   if(latched == 0) active = !active;  //toggle between both controllers, even when unchained
 }
 
+void Justifier::serialize(serializer& s) {
+  Processor::serialize(s);
+  //Save block.
+  uint8 block[Controller::SaveSize] = {0};
+  block[0] = latched ? 1 : 0;
+  block[1] = counter;
+  block[2] = active ? 1 : 0;
+  block[3] = trigger1 ? 1 : 0;
+  block[4] = trigger2 ? 1 : 0;
+  block[5] = start1 ? 1 : 0;
+  block[6] = start2 ? 1 : 0;
+  block[7] = (uint16)x1 >> 8;
+  block[8] = ( int16)x1;
+  block[9] = (uint16)x2 >> 8;
+  block[10] = (uint16)x2;
+  block[11] = (uint16)y1 >> 8;
+  block[12] = (uint16)y1;
+  block[13] = (uint16)y2 >> 8;
+  block[14] = (uint16)y2;
+  s.array(block, Controller::SaveSize);
+  if(s.mode() == nall::serializer::Load) {
+    latched = (block[0] != 0);
+    counter = block[1];
+    active = (block[2] != 0);
+    trigger1 = (block[3] != 0);
+    trigger2 = (block[4] != 0);
+    start1 = (block[5] != 0);
+    start2 = (block[6] != 0);
+    x1 = (int16)(((uint16)block[7] << 8) | (uint16)block[8]);
+    x2 = (int16)(((uint16)block[9] << 8) | (uint16)block[10]);
+    y1 = (int16)(((uint16)block[11] << 8) | (uint16)block[12]);
+    y2 = (int16)(((uint16)block[13] << 8) | (uint16)block[14]);
+  }
+}
+
+
+
 Justifier::Justifier(bool port, bool chained) : Controller(port), chained(chained) {
   create(Controller::Enter, 21477272);
   latched = 0;

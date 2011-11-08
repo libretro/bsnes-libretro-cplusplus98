@@ -61,6 +61,19 @@ void Mouse::latch(bool data) {
   counter = 0;
 }
 
+void Mouse::serialize(serializer& s) {
+  Processor::serialize(s);
+  //Save block.
+  uint8 block[Controller::SaveSize] = {0};
+  block[0] = latched ? 1 : 0;
+  block[1] = counter;
+  s.array(block, Controller::SaveSize);
+  if(s.mode() == nall::serializer::Load) {
+    latched = (block[0] != 0);
+    counter = block[1];
+  }
+}
+
 Mouse::Mouse(bool port) : Controller(port) {
   latched = 0;
   counter = 0;

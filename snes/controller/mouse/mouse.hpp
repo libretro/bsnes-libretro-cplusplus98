@@ -3,6 +3,7 @@ struct Mouse : Controller {
   void latch(bool data);
   Mouse(bool port);
 
+  void serialize(serializer &s);
 private:
   bool latched;
   unsigned counter;

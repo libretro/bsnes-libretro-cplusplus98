@@ -3,6 +3,7 @@ struct Gamepad : Controller {
   void latch(bool data);
   Gamepad(bool port);
 
+  void serialize(serializer &s);
 private:
   bool latched;
   unsigned counter;

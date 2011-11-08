@@ -3,6 +3,7 @@ struct Multitap : Controller {
   void latch(bool data);
   Multitap(bool port);
 
+  void serialize(serializer &s);
 private:
   bool latched;
   unsigned counter1;

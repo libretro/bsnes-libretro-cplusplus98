@@ -60,6 +60,7 @@ void System::serialize_all(serializer &s) {
   smp.serialize(s);
   ppu.serialize(s);
   dsp.serialize(s);
+  input.serialize(s);
 
   if(cartridge.mode.i == Cartridge::Mode::SufamiTurbo) sufamiturbo.serialize(s);
   if(cartridge.mode.i == Cartridge::Mode::SuperGameBoy) icd2.serialize(s);
