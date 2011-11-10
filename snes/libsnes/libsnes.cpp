@@ -71,6 +71,39 @@ struct Interface : public SNES::Interface {
     }
   }
 
+  void setCheats(const lstring &list = lstring()) {
+    if(SNES::cartridge.mode.i == SNES::Cartridge::Mode::SuperGameBoy) {
+      GameBoy::cheat.reset();
+      foreach(code, list) {
+        lstring codelist;
+        codelist.split("+", code);
+        foreach(part, codelist) {
+          unsigned addr, data, comp;
+          if(GameBoy::Cheat::decode(part, addr, data, comp)) {
+            GameBoy::CheatCode code_ = { addr, data, comp };
+            GameBoy::cheat.append(code_);
+          }
+        }
+      }
+      GameBoy::cheat.synchronize();
+      return;
+    }
+
+    SNES::cheat.reset();
+    foreach(code, list) {
+      lstring codelist;
+      codelist.split("+", code);
+      foreach(part, codelist) {
+        unsigned addr, data;
+        if(SNES::Cheat::decode(part, addr, data)) {
+          SNES::CheatCode code_ = { addr, data };
+          SNES::cheat.append(code_);
+        }
+      }
+    }
+    SNES::cheat.synchronize();
+  }
+
   ~Interface() {
     delete[] buffer;
     delete[] palette;
@@ -117,7 +150,7 @@ void snes_set_cartridge_basename(const char *basename) {
 }
 
 void snes_init(void) {
-  interface.initialize(&interface);
+  SNES::interface = &interface;
   SNES::input.connect(SNES::Controller::Port1, SNES::Input::Device::Joypad);
   SNES::input.connect(SNES::Controller::Port2, SNES::Input::Device::Joypad);
 }
@@ -246,7 +279,7 @@ bool snes_load_cartridge_super_game_boy(
     uint8_t *data = new uint8_t[dmg_size];
     memcpy(data, dmg_data, dmg_size);
     string xmldmg = (dmg_xml && *dmg_xml) ? string(dmg_xml) : GameBoyCartridge(data, dmg_size).markup;
-    GameBoy::cartridge.load(xmldmg, data, dmg_size);
+    GameBoy::cartridge.load(GameBoy::System::Revision::SuperGameBoy, xmldmg, data, dmg_size);
     delete[] data;
   }
   SNES::cartridge.load(SNES::Cartridge::Mode::SuperGameBoy, xmlrom);

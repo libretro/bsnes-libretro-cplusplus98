@@ -1,4 +1,12 @@
 struct Video {
+  struct Format { enum e { RGB30, RGB24, RGB16, RGB15 } i; };
+  unsigned *palette;
+
+  unsigned palette30(unsigned color);
+  void generate(Format format);
+  Video();
+  ~Video();
+
 private:
   bool hires;
   unsigned line_width[240];

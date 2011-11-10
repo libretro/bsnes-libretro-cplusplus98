@@ -6,10 +6,23 @@ struct Input {
   } i;
 };
 
-struct System {
+struct System : property<System> {
+  struct Revision {
+    enum e {
+      GameBoy,
+      SuperGameBoy,
+      GameBoyColor,
+    } i;
+  };
+  Revision revision;
+  inline bool dmg() const { return revision.i == Revision::GameBoy; }
+  inline bool sgb() const { return revision.i == Revision::SuperGameBoy; }
+  inline bool cgb() const { return revision.i == Revision::GameBoyColor; }
+
   struct BootROM {
-    static const uint8 dmg[256];
-    static const uint8 sgb[256];
+    static const uint8 dmg[ 256];
+    static const uint8 sgb[ 256];
+    static const uint8 cgb[2048];
   } bootROM;
 
   void run();
@@ -17,7 +30,7 @@ struct System {
   void runthreadtosave();
 
   void init();
-  void load();
+  void load(Revision::e);
   void power();
 
   unsigned clocks_executed;

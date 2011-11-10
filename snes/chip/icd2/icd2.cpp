@@ -59,8 +59,8 @@ void ICD2::reset() {
   r7800 = 0x0000;
   mlt_req = 0;
 
-  foreach(byte, lcd.buffer) byte = 0;
-  foreach(byte, lcd.output) byte = 0;
+  foreach(n, lcd.buffer) n = 0;
+  foreach(n, lcd.output) n = 0;
   lcd.row = 0;
 
   packetsize = 0;
@@ -69,8 +69,9 @@ void ICD2::reset() {
   joyp14lock = 0;
   pulselock = true;
 
-  GameBoy::Interface::initialize(this);
-  GameBoy::Interface::power();
+  GameBoy::interface = this;
+  GameBoy::system.init();
+  GameBoy::system.power();
 }
 
 }
