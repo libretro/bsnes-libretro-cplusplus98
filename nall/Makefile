@@ -21,7 +21,7 @@ ifeq ($(platform),)
     delete = del $(subst /,\,$1)
   else ifneq ($(findstring CYGWIN,$(uname)),)
     platform := win
-    delete := del $(subst /,\,$1)
+    delete = del $(subst /,\,$1)
   else ifneq ($(findstring MINGW32,$(uname)),)
     platform := win
     delete = del $(subst /,\,$1)
