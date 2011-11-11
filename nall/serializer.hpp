@@ -57,7 +57,7 @@ namespace nall {
         for(unsigned n = 0; n < size; n++) idata[isize++] = value >> (n << 3);
       } else if(imode == Load) {
         value = 0;
-        for(unsigned n = 0; n < size; n++) value |= idata[isize++] << (n << 3);
+        for(unsigned n = 0; n < size; n++) value |= static_cast<T>(idata[isize++]) << (n << 3);
       } else if(imode == Size) {
         isize += size;
       }
