@@ -151,6 +151,7 @@ void snes_set_cartridge_basename(const char *basename) {
 
 void snes_init(void) {
   SNES::interface = &interface;
+  SNES::system.init();
   SNES::input.connect(SNES::Controller::Port1, SNES::Input::Device::Joypad);
   SNES::input.connect(SNES::Controller::Port2, SNES::Input::Device::Joypad);
 }
