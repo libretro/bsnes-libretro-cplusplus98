@@ -5,3 +5,11 @@
 *.rej
 *.orig
 *~
+*.user
+Release
+Debug
+x64
+ipch
+*.suo
+*.opensdf
+*.sdf
