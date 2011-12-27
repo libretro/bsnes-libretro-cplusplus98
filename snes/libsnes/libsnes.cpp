@@ -1,3 +1,4 @@
+#define LIBSNES_CORE
 #include "libsnes.hpp"
 #include <snes/snes.hpp>
 
@@ -112,71 +113,71 @@ struct Interface : public SNES::Interface {
 
 static Interface interface;
 
-const char* snes_library_id(void) {
+EXPORT const char* snes_library_id(void) {
   static string version("bsnes v084 (", SNES::Info::Profile, ")");
   return version;
 }
 
-unsigned snes_library_revision_major(void) {
+EXPORT unsigned snes_library_revision_major(void) {
   return 1;
 }
 
-unsigned snes_library_revision_minor(void) {
+EXPORT unsigned snes_library_revision_minor(void) {
   return 3;
 }
 
-void snes_set_video_refresh(snes_video_refresh_t video_refresh) {
+EXPORT void snes_set_video_refresh(snes_video_refresh_t video_refresh) {
   interface.pvideo_refresh = video_refresh;
 }
 
-void snes_set_audio_sample(snes_audio_sample_t audio_sample) {
+EXPORT void snes_set_audio_sample(snes_audio_sample_t audio_sample) {
   interface.paudio_sample = audio_sample;
 }
 
-void snes_set_input_poll(snes_input_poll_t input_poll) {
+EXPORT void snes_set_input_poll(snes_input_poll_t input_poll) {
   interface.pinput_poll = input_poll;
 }
 
-void snes_set_input_state(snes_input_state_t input_state) {
+EXPORT void snes_set_input_state(snes_input_state_t input_state) {
   interface.pinput_state = input_state;
 }
 
-void snes_set_controller_port_device(bool port, unsigned device) {
+EXPORT void snes_set_controller_port_device(bool port, unsigned device) {
   SNES::input.connect(port, (SNES::Input::Device::e)device);
 }
 
-void snes_set_cartridge_basename(const char *basename) {
+EXPORT void snes_set_cartridge_basename(const char *basename) {
   interface.basename = basename;
 }
 
-void snes_init(void) {
+EXPORT void snes_init(void) {
   SNES::interface = &interface;
   SNES::system.init();
   SNES::input.connect(SNES::Controller::Port1, SNES::Input::Device::Joypad);
   SNES::input.connect(SNES::Controller::Port2, SNES::Input::Device::Joypad);
 }
 
-void snes_term(void) {
+EXPORT void snes_term(void) {
   SNES::system.term();
 }
 
-void snes_power(void) {
+EXPORT void snes_power(void) {
   SNES::system.power();
 }
 
-void snes_reset(void) {
+EXPORT void snes_reset(void) {
   SNES::system.reset();
 }
 
-void snes_run(void) {
+EXPORT void snes_run(void) {
   SNES::system.run();
 }
 
-unsigned snes_serialize_size(void) {
+EXPORT unsigned snes_serialize_size(void) {
   return SNES::system.serialize_size;
 }
 
-bool snes_serialize(uint8_t *data, unsigned size) {
+EXPORT bool snes_serialize(uint8_t *data, unsigned size) {
   SNES::system.runtosave();
   serializer s = SNES::system.serialize();
   if(s.size() > size) return false;
@@ -184,7 +185,7 @@ bool snes_serialize(uint8_t *data, unsigned size) {
   return true;
 }
 
-bool snes_unserialize(const uint8_t *data, unsigned size) {
+EXPORT bool snes_unserialize(const uint8_t *data, unsigned size) {
   serializer s(data, size);
   return SNES::system.unserialize(s);
 }
@@ -197,12 +198,12 @@ struct CheatList {
 
 static linear_vector<CheatList> cheatList;
 
-void snes_cheat_reset(void) {
+EXPORT void snes_cheat_reset(void) {
   cheatList.reset();
   interface.setCheats();
 }
 
-void snes_cheat_set(unsigned index, bool enable, const char *code) {
+EXPORT void snes_cheat_set(unsigned index, bool enable, const char *code) {
   cheatList[index].enable = enable;
   cheatList[index].code = code;
   lstring list;
@@ -212,7 +213,7 @@ void snes_cheat_set(unsigned index, bool enable, const char *code) {
   interface.setCheats(list);
 }
 
-bool snes_load_cartridge_normal(
+EXPORT bool snes_load_cartridge_normal(
   const char *rom_xml, const uint8_t *rom_data, unsigned rom_size
 ) {
   snes_cheat_reset();
@@ -223,7 +224,7 @@ bool snes_load_cartridge_normal(
   return true;
 }
 
-bool snes_load_cartridge_bsx_slotted(
+EXPORT bool snes_load_cartridge_bsx_slotted(
   const char *rom_xml, const uint8_t *rom_data, unsigned rom_size,
   const char *bsx_xml, const uint8_t *bsx_data, unsigned bsx_size
 ) {
@@ -237,7 +238,7 @@ bool snes_load_cartridge_bsx_slotted(
   return true;
 }
 
-bool snes_load_cartridge_bsx(
+EXPORT bool snes_load_cartridge_bsx(
   const char *rom_xml, const uint8_t *rom_data, unsigned rom_size,
   const char *bsx_xml, const uint8_t *bsx_data, unsigned bsx_size
 ) {
@@ -251,7 +252,7 @@ bool snes_load_cartridge_bsx(
   return true;
 }
 
-bool snes_load_cartridge_sufami_turbo(
+EXPORT bool snes_load_cartridge_sufami_turbo(
   const char *rom_xml, const uint8_t *rom_data, unsigned rom_size,
   const char *sta_xml, const uint8_t *sta_data, unsigned sta_size,
   const char *stb_xml, const uint8_t *stb_data, unsigned stb_size
@@ -268,7 +269,7 @@ bool snes_load_cartridge_sufami_turbo(
   return true;
 }
 
-bool snes_load_cartridge_super_game_boy(
+EXPORT bool snes_load_cartridge_super_game_boy(
   const char *rom_xml, const uint8_t *rom_data, unsigned rom_size,
   const char *dmg_xml, const uint8_t *dmg_data, unsigned dmg_size
 ) {
@@ -288,15 +289,15 @@ bool snes_load_cartridge_super_game_boy(
   return true;
 }
 
-void snes_unload_cartridge(void) {
+EXPORT void snes_unload_cartridge(void) {
   SNES::cartridge.unload();
 }
 
-bool snes_get_region(void) {
+EXPORT bool snes_get_region(void) {
   return SNES::system.region.i == SNES::System::Region::NTSC ? 0 : 1;
 }
 
-uint8_t* snes_get_memory_data(unsigned id) {
+EXPORT uint8_t* snes_get_memory_data(unsigned id) {
   if(SNES::cartridge.loaded() == false) return 0;
 
   switch(id) {
@@ -340,7 +341,7 @@ uint8_t* snes_get_memory_data(unsigned id) {
   return 0;
 }
 
-unsigned snes_get_memory_size(unsigned id) {
+EXPORT unsigned snes_get_memory_size(unsigned id) {
   if(SNES::cartridge.loaded() == false) return 0;
   unsigned size = 0;
 

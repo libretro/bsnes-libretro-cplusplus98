@@ -39,7 +39,7 @@ obj/snes-system.o    : $(snes)/system/system.cpp $(call rwildcard,$(snes)/system
 obj/snes-controller.o: $(snes)/controller/controller.cpp $(call rwildcard,$(snes)/controller/)
 obj/snes-memory.o    : $(snes)/memory/memory.cpp $(call rwildcard,$(snes)/memory/)
 obj/snes-cpucore.o   : $(snes)/cpu/core/core.cpp $(call rwildcard,$(snes)/cpu/core/)
-obj/snes-smpcore.o   : $(snes)/smp/core/core.cpp $(call rwildcard,$(snes)/smp/core/)
+obj/snes-smpcore.o   : $(snes)/smp/core/smp_core.cpp $(call rwildcard,$(snes)/smp/core/)
 obj/snes-cpu.o       : $(snescpu)/cpu.cpp $(call rwildcard,$(snescpu)/)
 obj/snes-smp.o       : $(snessmp)/smp.cpp $(call rwildcard,$(snessmp)/)
 obj/snes-dsp.o       : $(snesdsp)/dsp.cpp $(call rwildcard,$(snesdsp)/)

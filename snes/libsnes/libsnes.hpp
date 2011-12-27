@@ -7,6 +7,12 @@
 extern "C" {
 #endif
 
+#if defined(_MSC_VER) && defined(LIBSNES_CORE)
+#define EXPORT __declspec(dllexport)
+#else
+#define EXPORT
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////
 // LIBSNES Super Nintendo emulation API
 //
@@ -376,7 +382,7 @@ typedef int16_t (*snes_input_state_t)(bool port, unsigned device,
 //
 //       A human-readable string describing this implementation.
 
-const char* snes_library_id(void);
+EXPORT const char* snes_library_id(void);
 
 
 // snes_library_revision_major:
@@ -397,7 +403,7 @@ const char* snes_library_id(void);
 //
 //      An integer, the major API version of this libsnes implementation.
 
-unsigned snes_library_revision_major(void);
+EXPORT unsigned snes_library_revision_major(void);
 
 // snes_library_revision_minor:
 //
@@ -421,7 +427,7 @@ unsigned snes_library_revision_major(void);
 //
 //      An integer, the minor API version of this libsnes implementation.
 
-unsigned snes_library_revision_minor(void);
+EXPORT unsigned snes_library_revision_minor(void);
 
 // snes_init:
 //
@@ -430,7 +436,7 @@ unsigned snes_library_revision_minor(void);
 //    This function must be called exactly once before any other library
 //    functions are called.
 
-void snes_init(void);
+EXPORT void snes_init(void);
 
 // snes_term:
 //
@@ -439,7 +445,7 @@ void snes_init(void);
 //    This function must be called exactly once. Once called, you should not
 //    call any other libsnes functions besides (perhaps) snes_init().
 
-void snes_term(void);
+EXPORT void snes_term(void);
 
 ////////////////////////////////////////////////////////////////////////////}}}
 
@@ -460,7 +466,7 @@ void snes_term(void);
 //      A pointer to a function matching the snes_video_refresh_t call
 //      signature.
 
-void snes_set_video_refresh(snes_video_refresh_t);
+EXPORT void snes_set_video_refresh(snes_video_refresh_t);
 
 // snes_set_audio_sample
 //
@@ -473,7 +479,7 @@ void snes_set_video_refresh(snes_video_refresh_t);
 //      A pointer to a function matching the snes_audio_sample_t call
 //      signature.
 
-void snes_set_audio_sample(snes_audio_sample_t);
+EXPORT void snes_set_audio_sample(snes_audio_sample_t);
 
 // snes_set_input_poll:
 //
@@ -485,7 +491,7 @@ void snes_set_audio_sample(snes_audio_sample_t);
 //
 //      A pointer to a function matching the snes_input_poll_t call signature.
 
-void snes_set_input_poll(snes_input_poll_t);
+EXPORT void snes_set_input_poll(snes_input_poll_t);
 
 // snes_set_input_state:
 //
@@ -497,7 +503,7 @@ void snes_set_input_poll(snes_input_poll_t);
 //
 //      A pointer to a function matching the snes_input_state_t call signature.
 
-void snes_set_input_state(snes_input_state_t);
+EXPORT void snes_set_input_state(snes_input_state_t);
 
 ////////////////////////////////////////////////////////////////////////////}}}
 
@@ -551,7 +557,7 @@ void snes_set_input_state(snes_input_state_t);
 //                devices, daisy-chained together. Your input state callback
 //                will be passed "id" parameters 0 and 1.
 
-void snes_set_controller_port_device(bool port, unsigned device);
+EXPORT void snes_set_controller_port_device(bool port, unsigned device);
 
 // snes_power:
 //
@@ -565,7 +571,7 @@ void snes_set_controller_port_device(bool port, unsigned device);
 //
 //    This requires that a cartridge is loaded.
 
-void snes_power(void);
+EXPORT void snes_power(void);
 
 // snes_reset:
 //
@@ -579,7 +585,7 @@ void snes_power(void);
 //
 //    This requires that a cartridge is loaded.
 
-void snes_reset(void);
+EXPORT void snes_reset(void);
 
 // snes_run():
 //
@@ -595,7 +601,7 @@ void snes_reset(void);
 //
 //    Optimally, it should never block for more than a few ms at a time.
 
-void snes_run(void);
+EXPORT void snes_run(void);
 
 // snes_get_region():
 //
@@ -615,7 +621,7 @@ void snes_run(void);
 //      One of the SNES_REGION_* constants. SNES_REGION_PAL means 50fps,
 //      SNES_REGION_NTSC means 60fps.
 
-bool snes_get_region(void);
+EXPORT bool snes_get_region(void);
 
 ////////////////////////////////////////////////////////////////////////////}}}
 
@@ -650,7 +656,7 @@ bool snes_get_region(void);
 //      An integer representing the number of bytes required to store the
 //      current emulation state.
 
-unsigned snes_serialize_size(void);
+EXPORT unsigned snes_serialize_size(void);
 
 // snes_serialize:
 //
@@ -677,7 +683,7 @@ unsigned snes_serialize_size(void);
 //      A boolean; True means the emulation state was serialized successfully,
 //      False means a problem was encountered.
 
-bool snes_serialize(uint8_t *data, unsigned size);
+EXPORT bool snes_serialize(uint8_t *data, unsigned size);
 
 // snes_unserialize:
 //
@@ -701,7 +707,7 @@ bool snes_serialize(uint8_t *data, unsigned size);
 //      A boolean; True means the emulation state was loaded successfully,
 //      False means a problem was encountered.
 
-bool snes_unserialize(const uint8_t *data, unsigned size);
+EXPORT bool snes_unserialize(const uint8_t *data, unsigned size);
 
 ////////////////////////////////////////////////////////////////////////////}}}
 
@@ -719,7 +725,7 @@ bool snes_unserialize(const uint8_t *data, unsigned size);
 //
 //    Discards all cheat codes applied to the emulated SNES.
 
-void snes_cheat_reset(void);
+EXPORT void snes_cheat_reset(void);
 
 // snes_cheat_set:
 //
@@ -761,7 +767,7 @@ void snes_cheat_reset(void);
 //          ("1234-ABCD") or ProActionReplay format ("1234AB:CD" or
 //          "1234ABCD").
 
-void snes_cheat_set(unsigned index, bool enabled, const char *code);
+EXPORT void snes_cheat_set(unsigned index, bool enabled, const char *code);
 
 ////////////////////////////////////////////////////////////////////////////}}}
 
@@ -799,7 +805,7 @@ void snes_cheat_set(unsigned index, bool enabled, const char *code);
 //      A boolean; True means the cartridge was loaded correctly, False means
 //      an error occurred.
 
-bool snes_load_cartridge_normal(
+EXPORT bool snes_load_cartridge_normal(
   const char *rom_xml, const uint8_t *rom_data, unsigned rom_size
 );
 
@@ -855,7 +861,7 @@ bool snes_load_cartridge_normal(
 //      A boolean; True means the cartridge was loaded correctly, False means
 //      an error occurred.
 
-bool snes_load_cartridge_bsx(
+EXPORT bool snes_load_cartridge_bsx(
   const char *rom_xml, const uint8_t *rom_data, unsigned rom_size,
   const char *bsx_xml, const uint8_t *bsx_data, unsigned bsx_size
 );
@@ -906,7 +912,7 @@ bool snes_load_cartridge_bsx(
 //      A boolean; True means the cartridge was loaded correctly, False means
 //      an error occurred.
 
-bool snes_load_cartridge_bsx_slotted(
+EXPORT bool snes_load_cartridge_bsx_slotted(
   const char *rom_xml, const uint8_t *rom_data, unsigned rom_size,
   const char *bsx_xml, const uint8_t *bsx_data, unsigned bsx_size
 );
@@ -989,7 +995,7 @@ bool snes_load_cartridge_bsx_slotted(
 //      A boolean; True means the cartridge was loaded correctly, False means
 //      an error occurred.
 
-bool snes_load_cartridge_sufami_turbo(
+EXPORT bool snes_load_cartridge_sufami_turbo(
   const char *rom_xml, const uint8_t *rom_data, unsigned rom_size,
   const char *sta_xml, const uint8_t *sta_data, unsigned sta_size,
   const char *stb_xml, const uint8_t *stb_data, unsigned stb_size
@@ -1058,7 +1064,7 @@ bool snes_load_cartridge_sufami_turbo(
 //      A boolean; True means the cartridge was loaded correctly, False means
 //      an error occurred.
 
-bool snes_load_cartridge_super_game_boy(
+EXPORT bool snes_load_cartridge_super_game_boy(
   const char *rom_xml, const uint8_t *rom_data, unsigned rom_size,
   const char *dmg_xml, const uint8_t *dmg_data, unsigned dmg_size
 );
@@ -1082,7 +1088,7 @@ bool snes_load_cartridge_super_game_boy(
 //          full path to the loaded cartridge is "/path/to/filename.sfc", this
 //          parameter should be set to "/path/to/filename".
 
-void snes_set_cartridge_basename(const char *basename);
+EXPORT void snes_set_cartridge_basename(const char *basename);
 
 // snes_unload_cartridge:
 //
@@ -1090,7 +1096,7 @@ void snes_set_cartridge_basename(const char *basename);
 //
 //    You will be unable to call snes_run() until another cartridge is loaded.
 
-void snes_unload_cartridge(void);
+EXPORT void snes_unload_cartridge(void);
 
 ////////////////////////////////////////////////////////////////////////////}}}
 
@@ -1205,7 +1211,7 @@ void snes_unload_cartridge(void);
 //
 //      If NULL, the loaded cartridge does not store the given type of data.
 
-uint8_t* snes_get_memory_data(unsigned id);
+EXPORT uint8_t* snes_get_memory_data(unsigned id);
 
 // snes_get_memory_size:
 //
@@ -1225,7 +1231,7 @@ uint8_t* snes_get_memory_data(unsigned id);
 //
 //      If 0, the loaded cartridge does not store the given type of data.
 
-unsigned snes_get_memory_size(unsigned id);
+EXPORT unsigned snes_get_memory_size(unsigned id);
 
 ////////////////////////////////////////////////////////////////////////////}}}
 

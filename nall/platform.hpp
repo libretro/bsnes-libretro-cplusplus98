@@ -19,19 +19,16 @@
 #include <time.h>
 
 #if defined(_WIN32)
-#if defined(_WIN64)
+#if defined(_WIN64) || defined(_MSC_VER) // Odd quirk
   #define interface struct
 #endif
   #include <io.h>
   #include <direct.h>
   #include <shlobj.h>
   #undef interface
-  #define dllexport __declspec(dllexport)
 #else
   #include <unistd.h>
-//  #include <pwd.h>
   #include <sys/stat.h>
-  #define dllexport
 #endif
 
 //==================
