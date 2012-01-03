@@ -24,7 +24,6 @@ void SDD1::unload() {
 }
 
 void SDD1::power() {
-  reset();
 }
 
 void SDD1::reset() {

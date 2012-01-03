@@ -1,7 +1,6 @@
 #ifdef CPU_CPP
 
 #include "table.cpp"
-#include "disassembler.cpp"
 
 void CPU::op_xx() {
 }

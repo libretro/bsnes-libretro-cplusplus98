@@ -4,19 +4,17 @@ Audio audio;
 
 void Audio::coprocessor_enable(bool state) {
   coprocessor = state;
+  dspaudio.clear();
 
   dsp_rdoffset = cop_rdoffset = 0;
   dsp_wroffset = cop_wroffset = 0;
   dsp_length = cop_length = 0;
-
-  r_sum_l = r_sum_r = 0;
 }
 
 void Audio::coprocessor_frequency(double input_frequency) {
-  double output_frequency;
-  output_frequency = system.apu_frequency / 768.0;
-  r_step = input_frequency / output_frequency;
-  r_frac = 0;
+  dspaudio.setFrequency(input_frequency);
+  dspaudio.setResampler(nall::DSP::ResampleEngine::Sinc);
+  dspaudio.setResamplerFrequency(system.apu_frequency / 768.0);
 }
 
 void Audio::sample(int16 lsample, int16 rsample) {
@@ -28,29 +26,17 @@ void Audio::sample(int16 lsample, int16 rsample) {
   flush();
 }
 
-void Audio::coprocessor_sample(int16 left, int16 right) {
-  if(r_frac >= 1.0) {
-    r_frac -= 1.0;
-    r_sum_l += left;
-    r_sum_r += right;
-    return;
+void Audio::coprocessor_sample(int16 lsample, int16 rsample) {
+  signed samples[] = { lsample, rsample };
+  dspaudio.sample(samples);
+  while(dspaudio.pending()) {
+    dspaudio.read(samples);
+
+    cop_buffer[cop_wroffset] = ((uint16)samples[0] << 0) + ((uint16)samples[1] << 16);
+    cop_wroffset = (cop_wroffset + 1) & buffer_mask;
+    cop_length = (cop_length + 1) & buffer_mask;
+    flush();
   }
-
-  r_sum_l += static_cast<unsigned int>(left  * r_frac);
-  r_sum_r += static_cast<unsigned int>(right * r_frac);
-
-  uint16 output_left  = sclamp<16>(int(r_sum_l / r_step));
-  uint16 output_right = sclamp<16>(int(r_sum_r / r_step));
-
-  double first = 1.0 - r_frac;
-  r_sum_l = static_cast<unsigned int>(left  * first);
-  r_sum_r = static_cast<unsigned int>(right * first);
-  r_frac = r_step - first;
-
-  cop_buffer[cop_wroffset] = (output_left << 0) + (output_right << 16);
-  cop_wroffset = (cop_wroffset + 1) & buffer_mask;
-  cop_length = (cop_length + 1) & buffer_mask;
-  flush();
 }
 
 void Audio::init() {

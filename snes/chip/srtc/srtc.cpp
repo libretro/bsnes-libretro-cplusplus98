@@ -24,7 +24,6 @@ void SRTC::unload() {
 }
 
 void SRTC::power() {
-  reset();
 }
 
 void SRTC::reset() {

@@ -35,7 +35,7 @@ obj/libsnes.o: $(snes)/libsnes/libsnes.cpp $(snes)/libsnes/*
 obj/libco.o         : libco/libco.c libco/*
 
 obj/snes-interface.o : $(snes)/interface/interface.cpp $(call rwildcard,$(snes)/interface)
-obj/snes-system.o    : $(snes)/system/system.cpp $(call rwildcard,$(snes)/system/) $(call rwildcard,$(snes)/video/) $(call rwildcard,$(snes)/audio/) $(call rwildcard,$(snes)/input/)
+obj/snes-system.o    : $(snes)/system/system.cpp $(call rwildcard,$(snes)/system/)
 obj/snes-controller.o: $(snes)/controller/controller.cpp $(call rwildcard,$(snes)/controller/)
 obj/snes-memory.o    : $(snes)/memory/memory.cpp $(call rwildcard,$(snes)/memory/)
 obj/snes-cpucore.o   : $(snes)/cpu/core/core.cpp $(call rwildcard,$(snes)/cpu/core/)
@@ -69,18 +69,18 @@ obj/snes-sufamiturbo.o: $(snes)/chip/sufamiturbo/sufamiturbo.cpp $(snes)/chip/su
 
 snes_objects := $(patsubst %,obj/%.o,$(snes_objects))
 
-static-library: $(snes_objects) obj/libsnes.o
-	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o
+static-library: obj/libsnes.o $(snes_objects)
+	ar rcs out/libsnes.a obj/libsnes.o $(snes_objects)
 
-library: $(snes_objects) obj/libsnes.o
+library: obj/libsnes.o $(snes_objects)
 ifeq ($(platform),x)
 	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o
-	$(CXX) -o out/libsnes.so -fPIC -shared -Wl,-soname,libsnes.so.1 $(snes_objects) obj/libsnes.o $(link) -ldl -Wl,--version-script=link.T
+	$(CXX) -o out/libsnes.so -fPIC -shared -Wl,-soname,libsnes.so.1 obj/libsnes.o $(snes_objects) $(link) -ldl -Wl,-version-script=link.T -Wl,-no-undefined
 else ifeq ($(platform),osx)
 	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o
-	$(CXX) -o out/libsnes.dylib -install_name $(prefix)/lib/libsnes.dylib -dynamiclib $(snes_objects) obj/libsnes.o $(link)
+	$(CXX) -o out/libsnes.dylib -install_name $(prefix)/lib/libsnes.dylib -dynamiclib obj/libsnes.o $(snes_objects) $(link)
 else ifeq ($(platform),win)
-	$(CXX) -o out/snes.dll -static-libgcc -static-libstdc++ -shared -Wl,--out-implib,libsnes.a $(snes_objects) obj/libsnes.o $(link) -Wl,--version-script=link.T
+	$(CXX) -o out/snes.dll -static-libgcc -static-libstdc++ -shared -Wl,--out-implib,libsnes.a obj/libsnes.o $(snes_objects) $(link) -Wl,-version-script=link.T -Wl,-no-undefined
 endif
 
 library-install:

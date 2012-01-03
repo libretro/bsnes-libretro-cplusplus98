@@ -30,9 +30,9 @@ void Cartridge::load(System::Revision::e revision, const string &markup, const u
   info.romsize = 0;
   info.ramsize = 0;
 
-  BML::Document document(markup);
+  XML::Document document(markup);
 
-  const string &mapperid = document["cartridge"]["mapper"].value;
+  const string &mapperid = document["cartridge"]["mapper"].data;
   if(mapperid == "none" ) info.mapper.i = Mapper::MBC0;
   if(mapperid == "MBC1" ) info.mapper.i = Mapper::MBC1;
   if(mapperid == "MBC2" ) info.mapper.i = Mapper::MBC2;
@@ -42,12 +42,12 @@ void Cartridge::load(System::Revision::e revision, const string &markup, const u
   if(mapperid == "HuC1" ) info.mapper.i = Mapper::HuC1;
   if(mapperid == "HuC3" ) info.mapper.i = Mapper::HuC3;
 
-  info.rtc = document["cartridge"]["rtc"].exists();
-  info.rumble = document["cartridge"]["rumble"].exists();
+  info.rtc = document["cartridge"]["rtc"].data == "true";
+  info.rumble = document["cartridge"]["rumble"].data == "true";
 
-  info.romsize = hex(document["cartridge"]["rom"]["size"].value);
-  info.ramsize = hex(document["cartridge"]["ram"]["size"].value);
-  info.battery = document["cartridge"]["ram"]["non-volatile"].exists();
+  info.romsize = hex(document["cartridge"]["rom"]["size"].data);
+  info.ramsize = hex(document["cartridge"]["ram"]["size"].data);
+  info.battery = document["cartridge"]["ram"]["battery"].data == "true";
 
   switch(info.mapper.i) { default:
     case Mapper::MBC0:  mapper = &mbc0;  break;

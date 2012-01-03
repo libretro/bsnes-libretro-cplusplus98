@@ -24,7 +24,6 @@ void SPC7110::unload() {
 }
 
 void SPC7110::power() {
-  reset();
 }
 
 void SPC7110::reset() {

@@ -13,7 +13,7 @@ struct Interface : public SNES::Interface {
   snes_input_state_t pinput_state;
   string basename;
   uint16_t *buffer;
-  uint32_t *palette;
+  SNES::Video video;
 
   void videoRefresh(const uint32_t *data, bool hires, bool interlace, bool overscan) {
     unsigned width = hires ? 512 : 256;
@@ -26,7 +26,7 @@ struct Interface : public SNES::Interface {
       const uint32_t *sp = data + y * pitch;
       uint16_t *dp = buffer + y * pitch;
       for(unsigned x = 0; x < width; x++) {
-        *dp++ = palette[*sp++];
+        *dp++ = video.palette[*sp++];
       }
     }
 
@@ -54,22 +54,7 @@ struct Interface : public SNES::Interface {
 
   Interface() : pvideo_refresh(0), paudio_sample(0), pinput_poll(0), pinput_state(0) {
     buffer = new uint16_t[512 * 480];
-    palette = new uint32_t[16 * 32768];
-
-    //{llll bbbbb ggggg rrrrr} -> { rrrrr ggggg bbbbb }
-    for(unsigned l = 0; l < 16; l++) {
-      for(unsigned r = 0; r < 32; r++) {
-        for(unsigned g = 0; g < 32; g++) {
-          for(unsigned b = 0; b < 32; b++) {
-            double luma = (double)l / 15.0;
-            unsigned ar = (luma * r + 0.5);
-            unsigned ag = (luma * g + 0.5);
-            unsigned ab = (luma * b + 0.5);
-            palette[(l << 15) + (r << 10) + (g << 5) + (b << 0)] = (ab << 10) + (ag << 5) + (ar << 0);
-          }
-        }
-      }
-    }
+    video.generate(SNES::Video::Format::RGB15);
   }
 
   void setCheats(const lstring &list = lstring()) {
@@ -107,14 +92,13 @@ struct Interface : public SNES::Interface {
 
   ~Interface() {
     delete[] buffer;
-    delete[] palette;
   }
 };
 
 static Interface interface;
 
 EXPORT const char* snes_library_id(void) {
-  static string version("bsnes v084 (", SNES::Info::Profile, ")");
+  static string version("bsnes v085 (", SNES::Info::Profile, ")");
   return version;
 }
 

@@ -48,17 +48,11 @@ void SMP::enter() {
   }
 }
 
-void SMP::op_step() {
-  (this->*opcode_table[op_readpc()])();
-}
-
 void SMP::power() {
   //targets not initialized/changed upon reset
   timer0.target = 0;
   timer1.target = 0;
   timer2.target = 0;
-
-  reset();
 }
 
 void SMP::reset() {
@@ -68,7 +62,7 @@ void SMP::reset() {
   regs.a = 0x00;
   regs.x = 0x00;
   regs.y = 0x00;
-  regs.sp = 0xef;
+  regs.s = 0xef;
   regs.p = 0x02;
 
   foreach(n, apuram) n = random(0x00);

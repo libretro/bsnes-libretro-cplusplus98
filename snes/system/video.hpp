@@ -3,7 +3,7 @@ struct Video {
   unsigned *palette;
 
   unsigned palette30(unsigned color);
-  void generate(Format format);
+  void generate(Format::e format);
   Video();
   ~Video();
 

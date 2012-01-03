@@ -16,24 +16,24 @@ unsigned Video::palette30(unsigned color) {
   return (R << 20) + (G << 10) + (B << 0);
 }
 
-void Video::generate(Format format) {
+void Video::generate(Format::e format) {
   for(unsigned n = 0; n < (1 << 19); n++) palette[n] = palette30(n);
 
-  if(format.i == Format::RGB24) {
+  if(format == Format::RGB24) {
     for(unsigned n = 0; n < (1 << 19); n++) {
       unsigned color = palette[n];
       palette[n] = ((color >> 6) & 0xff0000) + ((color >> 4) & 0x00ff00) + ((color >> 2) & 0x0000ff);
     }
   }
 
-  if(format.i == Format::RGB16) {
+  if(format == Format::RGB16) {
     for(unsigned n = 0; n < (1 << 19); n++) {
       unsigned color = palette[n];
       palette[n] = ((color >> 14) & 0xf800) + ((color >> 9) & 0x07e0) + ((color >> 5) & 0x001f);
     }
   }
 
-  if(format.i == Format::RGB15) {
+  if(format == Format::RGB15) {
     for(unsigned n = 0; n < (1 << 19); n++) {
       unsigned color = palette[n];
       palette[n] = ((color >> 15) & 0x7c00) + ((color >> 10) & 0x03e0) + ((color >> 5) & 0x001f);
@@ -97,23 +97,21 @@ void Video::draw_cursor(uint16_t color, int x, int y) {
 
 void Video::update() {
   switch(config.controller_port2.i) {
-    case Input::Device::SuperScope:
-      if(dynamic_cast<SuperScope*>(input.port2)) {
-        SuperScope &device = (SuperScope&)*input.port2;
-        draw_cursor(0x7c00, device.x, device.y);
-      }
-      break;
-    case Input::Device::Justifier:
-    case Input::Device::Justifiers:
-      if(dynamic_cast<Justifier*>(input.port2)) {
-        Justifier &device = (Justifier&)*input.port2;
-        draw_cursor(0x001f, device.x1, device.y1);
-        if(device.chained == false) break;
-        draw_cursor(0x02e0, device.x2, device.y2);
-      }
-      break;
-    default:
-      break;
+  case Input::Device::SuperScope:
+    if(dynamic_cast<SuperScope*>(input.port2)) {
+      SuperScope &device = (SuperScope&)*input.port2;
+      draw_cursor(0x7c00, device.x, device.y);
+    }
+    break;
+  case Input::Device::Justifier:
+  case Input::Device::Justifiers:
+    if(dynamic_cast<Justifier*>(input.port2)) {
+      Justifier &device = (Justifier&)*input.port2;
+      draw_cursor(0x001f, device.player1.x, device.player1.y);
+      if(device.chained == false) break;
+      draw_cursor(0x02e0, device.player2.x, device.player2.y);
+    }
+    break;
   }
 
   uint32_t *data = (uint32_t*)ppu.output;

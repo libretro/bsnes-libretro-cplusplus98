@@ -4,7 +4,6 @@
 namespace SNES {
 
 #include "memory.cpp"
-#include "disassembler.cpp"
 #include "serialization.cpp"
 NECDSP necdsp;
 
@@ -266,8 +265,6 @@ void NECDSP::power() {
     regs.rp.bits(11);
     regs.dp.bits(11);
   }
-
-  reset();
 }
 
 void NECDSP::reset() {

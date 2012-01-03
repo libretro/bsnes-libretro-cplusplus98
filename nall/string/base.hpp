@@ -32,6 +32,7 @@ namespace nall {
   struct string {
     inline void reserve(unsigned);
     inline unsigned length() const;
+    inline bool empty() const;
 
     inline string& assign(const char*);
     inline string& append(const char*);

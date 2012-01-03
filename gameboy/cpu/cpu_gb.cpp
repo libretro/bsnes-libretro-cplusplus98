@@ -20,7 +20,7 @@ void CPU::main() {
       scheduler.exit(Scheduler::ExitReason::SynchronizeEvent);
     }
 
-    if(trace) print(disassemble(r[PC]), "\n");
+    //if(trace) print(disassemble(r[PC]), "\n");
     interrupt_test();
     uint8 opcode = op_read(r[PC]++);
     (this->*opcode_table[opcode])();

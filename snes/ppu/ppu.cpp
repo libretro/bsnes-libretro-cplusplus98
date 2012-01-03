@@ -98,8 +98,6 @@ void PPU::power() {
   foreach(n, vram) n = random(0x00);
   foreach(n, oam) n = random(0x00);
   foreach(n, cgram) n = random(0x00);
-
-  reset();
 }
 
 void PPU::reset() {

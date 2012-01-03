@@ -15,6 +15,10 @@ unsigned string::length() const {
   return strlen(data);
 }
 
+bool string::empty() const {
+  return !*data;
+}
+
 string& string::assign(const char *s) {
   unsigned length = strlen(s);
   reserve(length);

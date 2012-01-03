@@ -16,7 +16,6 @@ void BSXSatellaview::unload() {
 }
 
 void BSXSatellaview::power() {
-  reset();
 }
 
 void BSXSatellaview::reset() {
