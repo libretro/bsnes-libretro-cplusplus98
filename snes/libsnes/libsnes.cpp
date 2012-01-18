@@ -96,6 +96,7 @@ struct Interface : public SNES::Interface {
 };
 
 static Interface interface;
+static snes_environment_t environment_cb;
 
 EXPORT const char* snes_library_id(void) {
   static string version("bsnes v085 (", SNES::Info::Profile, ")");
@@ -108,6 +109,10 @@ EXPORT unsigned snes_library_revision_major(void) {
 
 EXPORT unsigned snes_library_revision_minor(void) {
   return 3;
+}
+
+EXPORT void snes_set_environment(snes_environment_t environ_cb) {
+  environment_cb = environ_cb;
 }
 
 EXPORT void snes_set_video_refresh(snes_video_refresh_t video_refresh) {
@@ -197,6 +202,14 @@ EXPORT void snes_cheat_set(unsigned index, bool enable, const char *code) {
   interface.setCheats(list);
 }
 
+static void set_timing() {
+  if (environment_cb) {
+    snes_system_timing timing = { 0.0, 32040.5 };
+    timing.fps = snes_get_region() == SNES_REGION_NTSC ? 21477272.0 / 357366.0 : 21281370.0 / 425568.0;
+    environment_cb(SNES_ENVIRONMENT_SET_TIMING, &timing);
+  }
+}
+
 EXPORT bool snes_load_cartridge_normal(
   const char *rom_xml, const uint8_t *rom_data, unsigned rom_size
 ) {
@@ -205,6 +218,7 @@ EXPORT bool snes_load_cartridge_normal(
   string xmlrom = (rom_xml && *rom_xml) ? string(rom_xml) : SnesCartridge(rom_data, rom_size).markup;
   SNES::cartridge.load(SNES::Cartridge::Mode::Normal, xmlrom);
   SNES::system.power();
+  set_timing();
   return true;
 }
 
@@ -219,6 +233,7 @@ EXPORT bool snes_load_cartridge_bsx_slotted(
   string xmlbsx = (bsx_xml && *bsx_xml) ? string(bsx_xml) : SnesCartridge(bsx_data, bsx_size).markup;
   SNES::cartridge.load(SNES::Cartridge::Mode::BsxSlotted, xmlrom);
   SNES::system.power();
+  set_timing();
   return true;
 }
 
@@ -233,6 +248,7 @@ EXPORT bool snes_load_cartridge_bsx(
   string xmlbsx = (bsx_xml && *bsx_xml) ? string(bsx_xml) : SnesCartridge(bsx_data, bsx_size).markup;
   SNES::cartridge.load(SNES::Cartridge::Mode::Bsx, xmlrom);
   SNES::system.power();
+  set_timing();
   return true;
 }
 
@@ -250,6 +266,7 @@ EXPORT bool snes_load_cartridge_sufami_turbo(
   string xmlstb = (stb_xml && *stb_xml) ? string(stb_xml) : SnesCartridge(stb_data, stb_size).markup;
   SNES::cartridge.load(SNES::Cartridge::Mode::SufamiTurbo, xmlrom);
   SNES::system.power();
+  set_timing();
   return true;
 }
 
@@ -270,6 +287,7 @@ EXPORT bool snes_load_cartridge_super_game_boy(
   }
   SNES::cartridge.load(SNES::Cartridge::Mode::SuperGameBoy, xmlrom);
   SNES::system.power();
+  set_timing();
   return true;
 }
 
