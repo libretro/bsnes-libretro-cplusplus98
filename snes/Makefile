@@ -72,10 +72,15 @@ snes_objects := $(patsubst %,obj/%.o,$(snes_objects))
 static-library: obj/libsnes.o $(snes_objects)
 	ar rcs out/libsnes.a obj/libsnes.o $(snes_objects)
 
+DYNAMICLIB = -ldl
+ifeq ($(platform), xbsd)
+   DYNAMICLIB =
+endif
+
 library: obj/libsnes.o $(snes_objects)
 ifeq ($(platform),x)
 	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o
-	$(CXX) -o out/libsnes.so -fPIC -shared -Wl,-soname,libsnes.so.1 obj/libsnes.o $(snes_objects) $(link) -ldl -Wl,-version-script=link.T -Wl,-no-undefined
+	$(CXX) -o out/libsnes.so -fPIC -shared -Wl,-soname,libsnes.so.1 obj/libsnes.o $(snes_objects) $(link) $(DYNAMICLIB) -Wl,-version-script=link.T -Wl,-no-undefined
 else ifeq ($(platform),osx)
 	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o
 	$(CXX) -o out/libsnes.dylib -install_name $(prefix)/lib/libsnes.dylib -dynamiclib obj/libsnes.o $(snes_objects) $(link)

@@ -28,6 +28,9 @@ ifeq ($(platform),)
   else ifneq ($(findstring Darwin,$(uname)),)
     platform := osx
     delete = rm -f $1
+  else ifneq ($(findstring BSD,$(uname)),)
+    platform := xbsd
+    delete = rm -f $1
   else
     platform := x
     delete = rm -f $1

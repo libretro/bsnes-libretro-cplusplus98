@@ -107,7 +107,7 @@ uint8 Cartridge::mmio_read(uint16 addr) {
     case System::Revision::SuperGameBoy: data = System::BootROM::sgb; break;
     case System::Revision::GameBoyColor: data = System::BootROM::cgb; break;
     }
-    if(addr >= 0x0000 && addr <= 0x00ff) return data[addr];
+    if(addr <= 0x00ff) return data[addr];
     if(addr >= 0x0200 && addr <= 0x08ff && system.cgb()) return data[addr - 256];
   }
 
