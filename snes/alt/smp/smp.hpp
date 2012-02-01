@@ -55,7 +55,7 @@ public:
     Flags p;
   } regs;
 
-  unsigned rd, wr, dp, sp, ya, bit;
+  uint16 rd, wr, dp, sp, ya, bit;
 
   struct Status {
     //$00f1
