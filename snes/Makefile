@@ -30,7 +30,7 @@ else ifeq ($(profile),performance)
   snesppu := $(snes)/alt/ppu-performance
 endif
 
-obj/libsnes.o: $(snes)/libsnes/libsnes.cpp $(snes)/libsnes/* 
+obj/libretro.o: $(snes)/libretro/libretro.cpp $(snes)/libretro/* 
 
 obj/libco.o         : libco/libco.c libco/*
 
@@ -69,40 +69,40 @@ obj/snes-sufamiturbo.o: $(snes)/chip/sufamiturbo/sufamiturbo.cpp $(snes)/chip/su
 
 snes_objects := $(patsubst %,obj/%.o,$(snes_objects))
 
-static-library: obj/libsnes.o $(snes_objects)
-	ar rcs out/libsnes.a obj/libsnes.o $(snes_objects)
+static-library: obj/libretro.o $(snes_objects)
+	ar rcs out/libretro.a obj/libretro.o $(snes_objects)
 
-library: obj/libsnes.o $(snes_objects)
+library: obj/libretro.o $(snes_objects)
 ifeq ($(platform),x)
-	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o
-	$(CXX) -o out/libsnes.so -fPIC -shared -Wl,-soname,libsnes.so.1 obj/libsnes.o $(snes_objects) -ldl -Wl,-version-script=link.T -Wl,-no-undefined
+	ar rcs out/libretro.a $(snes_objects) obj/libretro.o
+	$(CXX) -o out/libretro.so -fPIC -shared -Wl,-soname,libretro.so.1 obj/libretro.o $(snes_objects) -ldl -Wl,-version-script=link.T -Wl,-no-undefined
 else ifeq ($(platform),xbsd)
-	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o
-	$(CXX) -o out/libsnes.so -fPIC -shared -Wl,-soname,libsnes.so.1 obj/libsnes.o $(snes_objects) -lc -Wl,-version-script=link.T -Wl,-no-undefined
+	ar rcs out/libretro.a $(snes_objects) obj/libretro.o
+	$(CXX) -o out/libretro.so -fPIC -shared -Wl,-soname,libretro.so.1 obj/libretro.o $(snes_objects) -lc -Wl,-version-script=link.T -Wl,-no-undefined
 else ifeq ($(platform),osx)
-	ar rcs out/libsnes.a $(snes_objects) obj/libsnes.o
-	$(CXX) -o out/libsnes.dylib -install_name $(prefix)/lib/libsnes.dylib -dynamiclib obj/libsnes.o $(snes_objects) $(link)
+	ar rcs out/libretro.a $(snes_objects) obj/libretro.o
+	$(CXX) -o out/libretro.dylib -install_name $(prefix)/lib/libretro.dylib -dynamiclib obj/libretro.o $(snes_objects) $(link)
 else ifeq ($(platform),win)
-	$(CXX) -o out/snes.dll -static-libgcc -static-libstdc++ -shared -Wl,--out-implib,libsnes.a obj/libsnes.o $(snes_objects) $(link) -Wl,-version-script=link.T -Wl,-no-undefined
+	$(CXX) -o out/snes.dll -static-libgcc -static-libstdc++ -shared -Wl,--out-implib,libretro.a obj/libretro.o $(snes_objects) $(link) -Wl,-version-script=link.T -Wl,-no-undefined
 endif
 
 library-install:
 ifeq ($(platform),x)
-	install -D -m 755 out/libsnes.a $(DESTDIR)$(prefix)/lib/libsnes.a
-	install -D -m 755 out/libsnes.so $(DESTDIR)$(prefix)/lib/libsnes.so
-	install -D -m 644 snes/libsnes/libsnes.hpp $(DESTDIR)$(prefix)/include/libsnes.hpp
+	install -D -m 755 out/libretro.a $(DESTDIR)$(prefix)/lib/libretro.a
+	install -D -m 755 out/libretro.so $(DESTDIR)$(prefix)/lib/libretro.so
+	install -D -m 644 snes/libretro/libretro.hpp $(DESTDIR)$(prefix)/include/libretro.hpp
 	ldconfig -n $(DESTDIR)$(prefix)/lib
 else ifeq ($(platform),osx)
-	cp out/libsnes.dylib $(DESTDIR)$(prefix)/lib/libsnes.dylib
-	cp snes/libsnes/libsnes.hpp $(DESTDIR)$(prefix)/include/libsnes.hpp
+	cp out/libretro.dylib $(DESTDIR)$(prefix)/lib/libretro.dylib
+	cp snes/libretro/libretro.hpp $(DESTDIR)$(prefix)/include/libretro.hpp
 endif
 
 library-uninstall:
 ifeq ($(platform),x)
-	rm $(DESTDIR)$(prefix)/lib/libsnes.a
-	rm $(DESTDIR)$(prefix)/lib/libsnes.so
+	rm $(DESTDIR)$(prefix)/lib/libretro.a
+	rm $(DESTDIR)$(prefix)/lib/libretro.so
 else ifeq ($(platform),osx)
-	rm $(DESTDIR)$(prefix)/lib/libsnes.dylib
-	rm $(DESTDIR)$(prefix)/include/libsnes.hpp
+	rm $(DESTDIR)$(prefix)/lib/libretro.dylib
+	rm $(DESTDIR)$(prefix)/include/libretro.hpp
 endif
 

@@ -1,5 +1,4 @@
-#define LIBSNES_CORE
-#include "libsnes.hpp"
+#include "libretro.h"
 #include <snes/snes.hpp>
 
 #include <nall/snes/cartridge.hpp>
@@ -7,13 +6,42 @@
 using namespace nall;
 
 struct Interface : public SNES::Interface {
-  snes_video_refresh_t pvideo_refresh;
-  snes_audio_sample_t paudio_sample;
-  snes_input_poll_t pinput_poll;
-  snes_input_state_t pinput_state;
+  retro_video_refresh_t pvideo_refresh;
+  retro_audio_sample_t paudio_sample;
+  retro_input_poll_t pinput_poll;
+  retro_input_state_t pinput_state;
+  retro_environment_t penviron;
+  bool overscan;
+
   string basename;
   uint16_t *buffer;
   SNES::Video video;
+
+  static unsigned snes_to_retro(SNES::Input::Device::e device) {
+    switch (device) {
+       default:
+       case SNES::Input::None:       return RETRO_DEVICE_NONE;
+       case SNES::Input::Joypad:     return RETRO_DEVICE_JOYPAD;
+       case SNES::Input::Multitap:   return RETRO_DEVICE_JOYPAD_MULTITAP;
+       case SNES::Input::Mouse:      return RETRO_DEVICE_MOUSE;
+       case SNES::Input::SuperScope: return RETRO_DEVICE_LIGHTGUN_SUPER_SCOPE;
+       case SNES::Input::Justifier:  return RETRO_DEVICE_LIGHTGUN_JUSTIFIER;
+       case SNES::Input::Justifiers: return RETRO_DEVICE_LIGHTGUN_JUSTIFIERS;
+    }
+  }
+
+  static SNES::Input::Device::e retro_to_snes(unsigned device) {
+    switch (device) {
+       default:
+       case RETRO_DEVICE_NONE:                 return SNES::Input::None;
+       case RETRO_DEVICE_JOYPAD:               return SNES::Input::Joypad;
+       case RETRO_DEVICE_MULTITAP:             return SNES::Input::Multitap;
+       case RETRO_DEVICE_MOUSE:                return SNES::Input::Mouse;
+       case RETRO_DEVICE_LIGHTGUN_SUPER_SCOPE: return SNES::Input::SuperScope;
+       case RETRO_DEVICE_LIGHTGUN_JUSTIFIER:   return SNES::Input::Justifier;
+       case RETRO_DEVICE_LIGHTGUN_JUSTIFIERS:  return SNES::Input::Justifiers;
+    }
+  }
 
   void videoRefresh(const uint32_t *data, bool hires, bool interlace, bool overscan) {
     unsigned width = hires ? 512 : 256;
@@ -30,8 +58,8 @@ struct Interface : public SNES::Interface {
       }
     }
 
-    if(pvideo_refresh) pvideo_refresh(buffer, width, height);
-    if(pinput_poll) pinput_poll();
+    pvideo_refresh(buffer, width, height, pitch << 1);
+    pinput_poll();
   }
 
   void audioSample(int16_t left, int16_t right) {
@@ -40,8 +68,11 @@ struct Interface : public SNES::Interface {
 
   int16_t inputPoll(bool port, SNES::Input::Device::e device, unsigned index, unsigned id) {
     if(id > 11) return 0;
-    if(pinput_state) return pinput_state(port, (unsigned)device, index, id);
-    return 0;
+
+    if (device == SNES::Input::Multitap && port)
+      return pinput_state(index + 1, RETRO_DEVICE_JOYPAD, 0, id);
+    else
+      return pinput_state(port, snes_to_retro(device), index, id);
   }
 
   void message(const string &text) {
@@ -49,7 +80,7 @@ struct Interface : public SNES::Interface {
   }
 
   string path(SNES::Cartridge::Slot::e slot, const string &hint) {
-    return string( basename, hint );
+    return string(basename, hint);
   }
 
   Interface() : pvideo_refresh(0), paudio_sample(0), pinput_poll(0), pinput_state(0) {
@@ -96,77 +127,47 @@ struct Interface : public SNES::Interface {
 };
 
 static Interface interface;
-static snes_environment_t environment_cb;
 
-EXPORT const char* snes_library_id(void) {
-  static string version("bsnes v085 (", SNES::Info::Profile, ")");
-  return version;
+unsigned retro_api_version(void) {
+  return RETRO_API_VERSION;
 }
 
-EXPORT unsigned snes_library_revision_major(void) {
-  return 1;
+void retro_set_environment(snes_environment_t environ_cb)        { interface.penviron       = environ_cb; }
+void retro_set_video_refresh(snes_video_refresh_t video_refresh) { interface.pvideo_refresh = video_refresh }
+void retro_set_audio_sample(snes_audio_sample_t audio_sample)    { interface.paudio_sample  = audio_sample; }
+void retro_set_audio_sample_batch(snes_audio_sample_batch_t)     {}
+void retro_set_input_poll(snes_input_poll_t input_poll)          { interface.pinput_poll    = input_poll; }
+void retro_set_input_state(snes_input_state_t input_state)       { interface.pinput_state   = input_state; }
+
+void retro_set_controller_port_device(unsigned port, unsigned device) {
+  if (port < 2)
+    SNES::input.connect(port, Interface::retro_to_snes(device));
 }
 
-EXPORT unsigned snes_library_revision_minor(void) {
-  return 3;
-}
-
-EXPORT void snes_set_environment(snes_environment_t environ_cb) {
-  environment_cb = environ_cb;
-}
-
-EXPORT void snes_set_video_refresh(snes_video_refresh_t video_refresh) {
-  interface.pvideo_refresh = video_refresh;
-}
-
-EXPORT void snes_set_audio_sample(snes_audio_sample_t audio_sample) {
-  interface.paudio_sample = audio_sample;
-}
-
-EXPORT void snes_set_input_poll(snes_input_poll_t input_poll) {
-  interface.pinput_poll = input_poll;
-}
-
-EXPORT void snes_set_input_state(snes_input_state_t input_state) {
-  interface.pinput_state = input_state;
-}
-
-EXPORT void snes_set_controller_port_device(bool port, unsigned device) {
-  SNES::input.connect(port, (SNES::Input::Device::e)device);
-}
-
-EXPORT void snes_set_cartridge_basename(const char *basename) {
-  interface.basename = basename;
-}
-
-EXPORT void snes_init(void) {
+void retro_init(void) {
   SNES::interface = &interface;
   SNES::system.init();
   SNES::input.connect(SNES::Controller::Port1, SNES::Input::Device::Joypad);
   SNES::input.connect(SNES::Controller::Port2, SNES::Input::Device::Joypad);
 }
 
-EXPORT void snes_term(void) {
+void retro_deinit(void) {
   SNES::system.term();
 }
 
-EXPORT void snes_power(void) {
-  SNES::system.power();
-}
-
-EXPORT void snes_reset(void) {
+void retro_reset(void) {
   SNES::system.reset();
 }
 
-EXPORT void snes_run(void) {
+void retro_run(void) {
   SNES::system.run();
 }
 
-EXPORT unsigned snes_serialize_size(void) {
+size_t retro_serialize_size(void) {
   return SNES::system.serialize_size;
 }
 
-EXPORT bool snes_serialize(uint8_t *data, unsigned size) {
+bool snes_serialize(void *data, size_t size) {
   SNES::system.runtosave();
   serializer s = SNES::system.serialize();
   if(s.size() > size) return false;
@@ -174,7 +175,7 @@ EXPORT bool snes_serialize(uint8_t *data, unsigned size) {
   return true;
 }
 
-EXPORT bool snes_unserialize(const uint8_t *data, unsigned size) {
+bool snes_unserialize(const void *data, size_t size) {
   serializer s(data, size);
   return SNES::system.unserialize(s);
 }
@@ -187,12 +188,12 @@ struct CheatList {
 
 static linear_vector<CheatList> cheatList;
 
-EXPORT void snes_cheat_reset(void) {
+void retro_cheat_reset(void) {
   cheatList.reset();
   interface.setCheats();
 }
 
-EXPORT void snes_cheat_set(unsigned index, bool enable, const char *code) {
+void retro_cheat_set(unsigned index, bool enable, const char *code) {
   cheatList[index].enable = enable;
   cheatList[index].code = code;
   lstring list;
@@ -202,15 +203,28 @@ EXPORT void snes_cheat_set(unsigned index, bool enable, const char *code) {
   interface.setCheats(list);
 }
 
-static void set_timing() {
-  if (environment_cb) {
-    snes_system_timing timing = { 0.0, 32040.5 };
-    timing.fps = snes_get_region() == SNES_REGION_NTSC ? 21477272.0 / 357366.0 : 21281370.0 / 425568.0;
-    environment_cb(SNES_ENVIRONMENT_SET_TIMING, &timing);
-  }
+void retro_get_system_info(struct retro_system_info *info) {
+  static string version("v085 (", SNES::Info::Profile, ")");
+  info->library_name     = "bSNES";
+  info->library_version  = version;
+  info->valid_extensions = 0;
+  info->need_fullpath    = false;
 }
 
-EXPORT bool snes_load_cartridge_normal(
+void retro_get_system_av_info(struct retro_system_av_info *info) {
+  struct retro_system_timing timing = { 0.0, 32040.5 };
+  timing.fps = retro_get_region() == RETRO_REGION_NTSC ? 21477272.0 / 357366.0 : 21281370.0 / 425568.0;
+
+  if (!interface.penviron(RETRO_ENVIRONMENT_GET_OVERSCAN, &interface.overscan))
+     interface.overscan = false;
+
+  struct retro_game_geometry geom = { 256, interface.overscan ? 239 : 224, 512, interface.overscan ? 478 : 448 };
+
+  info->timing = timing;
+  info->geom   = geom;
+}
+
+static bool snes_load_cartridge_normal(
   const char *rom_xml, const uint8_t *rom_data, unsigned rom_size
 ) {
   snes_cheat_reset();
@@ -218,11 +232,10 @@ EXPORT bool snes_load_cartridge_normal(
   string xmlrom = (rom_xml && *rom_xml) ? string(rom_xml) : SnesCartridge(rom_data, rom_size).markup;
   SNES::cartridge.load(SNES::Cartridge::Mode::Normal, xmlrom);
   SNES::system.power();
-  set_timing();
   return true;
 }
 
-EXPORT bool snes_load_cartridge_bsx_slotted(
+static bool snes_load_cartridge_bsx_slotted(
   const char *rom_xml, const uint8_t *rom_data, unsigned rom_size,
   const char *bsx_xml, const uint8_t *bsx_data, unsigned bsx_size
 ) {
@@ -233,11 +246,10 @@ EXPORT bool snes_load_cartridge_bsx_slotted(
   string xmlbsx = (bsx_xml && *bsx_xml) ? string(bsx_xml) : SnesCartridge(bsx_data, bsx_size).markup;
   SNES::cartridge.load(SNES::Cartridge::Mode::BsxSlotted, xmlrom);
   SNES::system.power();
-  set_timing();
   return true;
 }
 
-EXPORT bool snes_load_cartridge_bsx(
+static bool snes_load_cartridge_bsx(
   const char *rom_xml, const uint8_t *rom_data, unsigned rom_size,
   const char *bsx_xml, const uint8_t *bsx_data, unsigned bsx_size
 ) {
@@ -248,11 +260,10 @@ EXPORT bool snes_load_cartridge_bsx(
   string xmlbsx = (bsx_xml && *bsx_xml) ? string(bsx_xml) : SnesCartridge(bsx_data, bsx_size).markup;
   SNES::cartridge.load(SNES::Cartridge::Mode::Bsx, xmlrom);
   SNES::system.power();
-  set_timing();
   return true;
 }
 
-EXPORT bool snes_load_cartridge_sufami_turbo(
+static bool snes_load_cartridge_sufami_turbo(
   const char *rom_xml, const uint8_t *rom_data, unsigned rom_size,
   const char *sta_xml, const uint8_t *sta_data, unsigned sta_size,
   const char *stb_xml, const uint8_t *stb_data, unsigned stb_size
@@ -266,11 +277,10 @@ EXPORT bool snes_load_cartridge_sufami_turbo(
   string xmlstb = (stb_xml && *stb_xml) ? string(stb_xml) : SnesCartridge(stb_data, stb_size).markup;
   SNES::cartridge.load(SNES::Cartridge::Mode::SufamiTurbo, xmlrom);
   SNES::system.power();
-  set_timing();
   return true;
 }
 
-EXPORT bool snes_load_cartridge_super_game_boy(
+static bool snes_load_cartridge_super_game_boy(
   const char *rom_xml, const uint8_t *rom_data, unsigned rom_size,
   const char *dmg_xml, const uint8_t *dmg_data, unsigned dmg_size
 ) {
@@ -287,115 +297,132 @@ EXPORT bool snes_load_cartridge_super_game_boy(
   }
   SNES::cartridge.load(SNES::Cartridge::Mode::SuperGameBoy, xmlrom);
   SNES::system.power();
-  set_timing();
   return true;
 }
 
-EXPORT void snes_unload_cartridge(void) {
+bool retro_load_game(const struct retro_game_info *info) {
+  if (info->path) {
+    interface.basename = info->path;
+    char *dot = strrchr(interface.basename, '.');
+    if (dot)
+       *dot = '\0';
+  }
+
+  return snes_load_cartridge_normal(info->meta, info->data, info->size);
+}
+
+bool retro_load_game_special(unsigned game_type,
+      const struct retro_game_info *info, size_t num_info) {
+
+  if (info[0].path) {
+    interface.basename = info[0].path;
+    char *dot = strrchr(interface.basename, '.');
+    if (dot)
+       *dot = '\0';
+  }
+
+  switch (game_type) {
+     case RETRO_GAME_TYPE_BSX:
+       return num_info == 2 && snes_load_cartridge_bsx(info[0].meta, info[0].data, info[0].size,
+             info[1].meta, info[1].data, info[1].size);
+       
+     case RETRO_GAME_TYPE_BSX_SLOTTED:
+       return num_info == 2 && snes_load_cartridge_bsx_slotted(info[0].meta, info[0].data, info[0].size,
+             info[1].meta, info[1].data, info[1].size);
+
+     case RETRO_GAME_TYPE_SUPER_GAME_BOY:
+       return num_info == 2 && snes_load_cartridge_super_game_boy(info[0].meta, info[0].data, info[0].size,
+             info[1].meta, info[1].data, info[1].size);
+
+     case RETRO_GAME_TYPE_SUFAMI_TURBO:
+       return num_info == 3 && snes_load_cartridge_sufami_turbo(info[0].meta, info[0].data, info[0].size,
+             info[1].meta, info[1].data, info[1].size,
+             info[2].meta, info[2].data, info[2].size);
+
+     default:
+       return false;
+  }
+}
+
+void retro_unload_game(void) {
   SNES::cartridge.unload();
 }
 
-EXPORT bool snes_get_region(void) {
+unsigned retro_get_region(void) {
   return SNES::system.region.i == SNES::System::Region::NTSC ? 0 : 1;
 }
 
-EXPORT uint8_t* snes_get_memory_data(unsigned id) {
+void* retro_get_memory_data(unsigned id) {
   if(SNES::cartridge.loaded() == false) return 0;
 
   switch(id) {
-    case SNES_MEMORY_CARTRIDGE_RAM:
+    case RETRO_MEMORY_SAVE_RAM:
       return SNES::cartridge.ram.data();
-    case SNES_MEMORY_CARTRIDGE_RTC:
+    case RETRO_MEMORY_RTC:
       if(SNES::cartridge.has_srtc()) return SNES::srtc.rtc;
       if(SNES::cartridge.has_spc7110rtc()) return SNES::spc7110.rtc;
       return 0;
-    case SNES_MEMORY_BSX_RAM:
+    case RETRO_MEMORY_SNES_BSX_RAM:
       if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::Bsx) break;
       return SNES::bsxcartridge.sram.data();
-    case SNES_MEMORY_BSX_PRAM:
+    case RETRO_MEMORY_SNES_BSX_PRAM:
       if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::Bsx) break;
       return SNES::bsxcartridge.psram.data();
-    case SNES_MEMORY_SUFAMI_TURBO_A_RAM:
+    case RETRO_MEMORY_SNES_SUFAMI_TURBO_A_RAM:
       if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SufamiTurbo) break;
       return SNES::sufamiturbo.slotA.ram.data();
-    case SNES_MEMORY_SUFAMI_TURBO_B_RAM:
+    case RETRO_MEMORY_SNES_SUFAMI_TURBO_B_RAM:
       if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SufamiTurbo) break;
       return SNES::sufamiturbo.slotB.ram.data();
-    case SNES_MEMORY_GAME_BOY_RAM:
+    case RETRO_MEMORY_SNES_GAME_BOY_RAM:
       if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SuperGameBoy) break;
       return GameBoy::cartridge.ramdata;
-  //case SNES_MEMORY_GAME_BOY_RTC:
-  //  if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SuperGameBoy) break;
-  //  return GameBoy::cartridge.rtcdata;
 
-    case SNES_MEMORY_WRAM:
+    case RETRO_MEMORY_SYSTEM_RAM:
       return SNES::cpu.wram;
-    case SNES_MEMORY_APURAM:
-      return SNES::smp.apuram;
-    case SNES_MEMORY_VRAM:
-      return SNES::ppu.vram;
-    case SNES_MEMORY_OAM:
-      return SNES::ppu.oam;
-    case SNES_MEMORY_CGRAM:
-      return SNES::ppu.cgram;
   }
 
   return 0;
 }
 
-EXPORT unsigned snes_get_memory_size(unsigned id) {
+size_t snes_get_memory_size(unsigned id) {
   if(SNES::cartridge.loaded() == false) return 0;
-  unsigned size = 0;
+  size_t size = 0;
 
   switch(id) {
-    case SNES_MEMORY_CARTRIDGE_RAM:
+    case RETRO_MEMORY_SAVE_RAM:
       size = SNES::cartridge.ram.size();
       break;
-    case SNES_MEMORY_CARTRIDGE_RTC:
+    case RETRO_MEMORY_RTC:
       if(SNES::cartridge.has_srtc() || SNES::cartridge.has_spc7110rtc()) size = 20;
       break;
-    case SNES_MEMORY_BSX_RAM:
+    case RETRO_MEMORY_SNES_BSX_RAM:
       if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::Bsx) break;
       size = SNES::bsxcartridge.sram.size();
       break;
-    case SNES_MEMORY_BSX_PRAM:
+    case RETRO_MEMORY_SNES_BSX_PRAM:
       if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::Bsx) break;
       size = SNES::bsxcartridge.psram.size();
       break;
-    case SNES_MEMORY_SUFAMI_TURBO_A_RAM:
+    case RETRO_MEMORY_SNES_SUFAMI_TURBO_A_RAM:
       if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SufamiTurbo) break;
       size = SNES::sufamiturbo.slotA.ram.size();
       break;
-    case SNES_MEMORY_SUFAMI_TURBO_B_RAM:
+    case RETRO_MEMORY_SNES_SUFAMI_TURBO_B_RAM:
       if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SufamiTurbo) break;
       size = SNES::sufamiturbo.slotB.ram.size();
       break;
-    case SNES_MEMORY_GAME_BOY_RAM:
+    case RETRO_MEMORY_SNES_GAME_BOY_RAM:
       if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SuperGameBoy) break;
       size = GameBoy::cartridge.ramsize;
       break;
-  //case SNES_MEMORY_GAME_BOY_RTC:
-  //  if(SNES::cartridge.mode.i != SNES::Cartridge::Mode::SuperGameBoy) break;
-  //  size = GameBoy::cartridge.rtcsize;
-  //  break;
 
-    case SNES_MEMORY_WRAM:
+    case RETRO_MEMORY_SYSTEM_RAM:
       size = 128 * 1024;
-      break;
-    case SNES_MEMORY_APURAM:
-      size = 64 * 1024;
-      break;
-    case SNES_MEMORY_VRAM:
-      size = 64 * 1024;
-      break;
-    case SNES_MEMORY_OAM:
-      size = 544;
-      break;
-    case SNES_MEMORY_CGRAM:
-      size = 512;
       break;
   }
 
   if(size == -1U) size = 0;
   return size;
 }
+
