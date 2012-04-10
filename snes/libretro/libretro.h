@@ -111,6 +111,7 @@ struct retro_system_info
    const char *library_version;
    const char *valid_extensions;
    bool        need_fullpath;
+   bool        block_extract;
 };
 
 struct retro_game_geometry
@@ -119,6 +120,10 @@ struct retro_game_geometry
    unsigned base_height;   // Nominal video height of game.
    unsigned max_width;     // Maximum possible width of game.
    unsigned max_height;    // Maximum possible height of game.
+
+   float    aspect_ratio;  // Nominal aspect ratio of game. If aspect_ratio is <= 0.0,
+                           // an aspect ratio of base_width / base_height is assumed.
+                           // A frontend could override this setting if desired.
 };
 
 struct retro_system_timing
