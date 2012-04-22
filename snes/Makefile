@@ -90,11 +90,11 @@ library-install:
 ifeq ($(platform),x)
 	install -D -m 755 out/libretro.a $(DESTDIR)$(prefix)/lib/libretro.a
 	install -D -m 755 out/libretro.so $(DESTDIR)$(prefix)/lib/libretro.so
-	install -D -m 644 snes/libretro/libretro.hpp $(DESTDIR)$(prefix)/include/libretro.hpp
+	install -D -m 644 snes/libretro/libretro.h $(DESTDIR)$(prefix)/include/libretro.h
 	ldconfig -n $(DESTDIR)$(prefix)/lib
 else ifeq ($(platform),osx)
 	cp out/libretro.dylib $(DESTDIR)$(prefix)/lib/libretro.dylib
-	cp snes/libretro/libretro.hpp $(DESTDIR)$(prefix)/include/libretro.hpp
+	cp snes/libretro/libretro.h $(DESTDIR)$(prefix)/include/libretro.h
 endif
 
 library-uninstall:
@@ -103,6 +103,6 @@ ifeq ($(platform),x)
 	rm $(DESTDIR)$(prefix)/lib/libretro.so
 else ifeq ($(platform),osx)
 	rm $(DESTDIR)$(prefix)/lib/libretro.dylib
-	rm $(DESTDIR)$(prefix)/include/libretro.hpp
+	rm $(DESTDIR)$(prefix)/include/libretro.h
 endif
 
