@@ -17,6 +17,11 @@
 #include <signal.h>
 #include <setjmp.h>
 
+#ifdef __LIBRETRO__ // Must NOT use SIGUSR1 on android, it is reserved to run JVM GC and segfaults here
+# undef SIGUSR1
+# define SIGUSR1 SIGUSR2
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -52,7 +57,8 @@ cothread_t co_create(unsigned int size, void (*coentry)(void)) {
     stack_t stack;
     stack_t old_stack;
 
-    thread->coentry = thread->stack = 0;
+    thread->coentry = 0;
+    thread->stack = 0;
 
     stack.ss_flags = 0;
     stack.ss_size = size;
