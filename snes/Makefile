@@ -82,6 +82,9 @@ else ifeq ($(platform),xbsd)
 else ifeq ($(platform),osx)
 	ar rcs out/libretro.a $(snes_objects) obj/libretro.o
 	$(CXX) -o out/libretro.dylib -install_name $(prefix)/lib/libretro.dylib -dynamiclib obj/libretro.o $(snes_objects) $(link)
+else ifeq ($(platform),ios)
+	ar rcs out/libretro.a $(snes_objects) obj/libretro.o
+	$(CXX) -o out/libretro.dylib -install_name $(prefix)/lib/libretro.dylib -dynamiclib obj/libretro.o $(snes_objects) $(link)
 else ifeq ($(platform),win)
 	$(CXX) -o out/retro.dll -static-libgcc -static-libstdc++ -shared -Wl,--out-implib,libretro.a obj/libretro.o $(snes_objects) $(link) -Wl,-version-script=link.T -Wl,-no-undefined
 endif
