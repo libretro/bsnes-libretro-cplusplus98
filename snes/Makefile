@@ -76,6 +76,9 @@ library: obj/libretro.o $(snes_objects)
 ifeq ($(platform),x)
 	ar rcs out/libretro.a $(snes_objects) obj/libretro.o
 	$(CXX) -o out/libretro.so -fPIC -shared -Wl,-soname,libretro.so.1 obj/libretro.o $(snes_objects) -ldl -Wl,-version-script=link.T -Wl,-no-undefined
+else ifeq ($(platform),unix)
+	ar rcs out/libretro.a $(snes_objects) obj/libretro.o
+	$(CXX) -o out/libretro.so -fPIC -shared -Wl,-soname,libretro.so.1 obj/libretro.o $(snes_objects) -ldl -Wl,-version-script=link.T -Wl,-no-undefined
 else ifeq ($(platform),xbsd)
 	ar rcs out/libretro.a $(snes_objects) obj/libretro.o
 	$(CXX) -o out/libretro.so -fPIC -shared -Wl,-soname,libretro.so.1 obj/libretro.o $(snes_objects) -lc -Wl,-version-script=link.T -Wl,-no-undefined
