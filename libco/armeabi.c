@@ -18,6 +18,15 @@ extern "C" {
 static thread_local uint32_t co_active_buffer[64];
 static thread_local cothread_t co_active_handle;
 
+asm (
+      ".arm\n"
+      ".align 4\n"
+      ".globl co_switch_arm\n"
+      "co_switch_arm:\n"
+      "  stmia r1!, {r4, r5, r6, r7, r8, r9, r10, r11, sp, lr}\n"
+      "  ldmia r0!, {r4, r5, r6, r7, r8, r9, r10, r11, sp, pc}\n"
+    );
+
 // ASM
 void co_switch_arm(cothread_t handle, cothread_t current);
 
@@ -27,9 +36,9 @@ static void crash(void) {
 
 cothread_t co_create(unsigned int size, void (*entrypoint)(void)) {
    size = (size + 1023) & ~1023;
-   cothread_t handle;
-   if (posix_memalign((void**)&handle, 1024, size + 256) < 0)
-      return 0;
+   cothread_t handle = memalign(1024, size + 256);
+   if (!handle)
+      return handle;
 
    uint32_t *ptr = (uint32_t*)handle;
    // Non-volatiles
@@ -43,7 +52,6 @@ cothread_t co_create(unsigned int size, void (*entrypoint)(void)) {
    ptr[7] = 0; // r11
    ptr[8] = (uintptr_t)ptr + size + 256 - 4; // r13, stack pointer
    ptr[9] = (uintptr_t)entrypoint; // r15, PC (link register r14 gets saved here).
-   memcpy(handle, &ptr, sizeof(ptr));
    return handle;
 }
 
