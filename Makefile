@@ -14,6 +14,9 @@ ifeq ($(platform),win)
 else ifeq ($(platform),ios)
    CC = clang -arch armv7 -isysroot $(IOSSDK) -miphoneos-version-min=5.0
    CXX =  clang++ -arch armv7 -isysroot $(IOSSDK) -miphoneos-version-min=5.0
+else ifeq ($(platform),qnx)
+	CC = qcc -Vgcc_ntoarmv7le
+	CXX = QCC -Vgcc_ntoarmv7le_cpp
 endif
 
 ifeq ($(DEBUG),1)
