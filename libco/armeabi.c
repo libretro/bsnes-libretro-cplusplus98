@@ -22,7 +22,9 @@ asm (
       ".arm\n"
       ".align 4\n"
       ".globl co_switch_arm\n"
+      ".globl _co_switch_arm\n"
       "co_switch_arm:\n"
+      "_co_switch_arm:\n"      
       "  stmia r1!, {r4, r5, r6, r7, r8, r9, r10, r11, sp, lr}\n"
       "  ldmia r0!, {r4, r5, r6, r7, r8, r9, r10, r11, sp, pc}\n"
     );
@@ -36,7 +38,14 @@ static void crash(void) {
 
 cothread_t co_create(unsigned int size, void (*entrypoint)(void)) {
    size = (size + 1023) & ~1023;
-   cothread_t handle = memalign(1024, size + 256);
+   cothread_t handle = 0;
+#if HAVE_POSIX_MEMALIGN >= 1
+   if (posix_memalign(&handle, 1024, size + 256) < 0)
+      return 0;
+#else
+   handle = memalign(1024, size + 256);
+#endif
+
    if (!handle)
       return handle;
 
