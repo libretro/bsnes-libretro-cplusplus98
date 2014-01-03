@@ -11,6 +11,10 @@ endif
 ifeq ($(platform),win)
    CC = gcc
    CXX = g++
+else ifeq ($(platform),osx)
+   fpic = -fPIC -mmacosx-version-min=10.6
+   CC = cc $(fpic)
+   CXX =  cc++ $(fpic)
 else ifeq ($(platform),ios)
    CC = clang -arch armv7 -isysroot $(IOSSDK) -miphoneos-version-min=5.0 -DHAVE_POSIX_MEMALIGN=1 -marm
    CXX =  clang++ -arch armv7 -isysroot $(IOSSDK) -miphoneos-version-min=5.0 -DHAVE_POSIX_MEMALIGN=1 -marm
