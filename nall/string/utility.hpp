@@ -31,7 +31,7 @@ inline string substr(const char *src, unsigned start, unsigned length) {
 
 inline string integer(intmax_t value) {
   bool negative = value < 0;
-  if(negative) value = abs(value);
+  if(negative) value = abs((int)value);
 
   char buffer[64];
   unsigned size = 0;
@@ -57,7 +57,7 @@ inline string integer(intmax_t value) {
 
 template<unsigned length_> inline string linteger(intmax_t value) {
   bool negative = value < 0;
-  if(negative) value = abs(value);
+  if(negative) value = abs((int)value);
 
   char buffer[64];
   unsigned size = 0;
@@ -84,7 +84,7 @@ template<unsigned length_> inline string linteger(intmax_t value) {
 
 template<unsigned length_> inline string rinteger(intmax_t value) {
   bool negative = value < 0;
-  if(negative) value = abs(value);
+  if(negative) value = abs((int)value);
 
   char buffer[64];
   unsigned size = 0;
