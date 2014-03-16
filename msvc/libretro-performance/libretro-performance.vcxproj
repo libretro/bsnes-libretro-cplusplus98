@@ -21,7 +21,8 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{DD87D448-CA73-4ED4-894D-DB6275BA5E44}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>libsnesperformance</RootNamespace>
+    <RootNamespace>libretro-performance</RootNamespace>
+    <ProjectName>libretro-performance</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -184,7 +185,7 @@
     <ClCompile Include="..\..\snes\controller\controller.cpp" />
     <ClCompile Include="..\..\snes\cpu\core\core.cpp" />
     <ClCompile Include="..\..\snes\interface\interface.cpp" />
-    <ClCompile Include="..\..\snes\libsnes\libsnes.cpp" />
+    <ClCompile Include="..\..\snes\libretro\libretro.cpp" />
     <ClCompile Include="..\..\snes\memory\memory.cpp" />
     <ClCompile Include="..\..\snes\smp\core\smp_core.cpp" />
     <ClCompile Include="..\..\snes\system\system.cpp" />

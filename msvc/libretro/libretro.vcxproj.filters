@@ -114,9 +114,6 @@
     <ClCompile Include="..\..\snes\interface\interface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\snes\libsnes\libsnes.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\snes\memory\memory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -130,6 +127,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\snes\system\system.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\snes\libretro\libretro.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

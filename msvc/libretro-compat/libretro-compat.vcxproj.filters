@@ -63,9 +63,6 @@
     <ClCompile Include="..\..\libco\libco.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\snes\libsnes\libsnes.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\snes\chip\link\link.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -130,6 +127,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\snes\cpu\cpu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\snes\libretro\libretro.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

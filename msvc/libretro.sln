@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C++ Express 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsnes-accuracy", "libsnes\libsnes.vcxproj", "{E7E2E52D-A3A4-4118-B74D-892315EB4719}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libretro-accuracy", "libretro\libretro.vcxproj", "{E7E2E52D-A3A4-4118-B74D-892315EB4719}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsnes-performance", "libsnes-performance\libsnes-performance.vcxproj", "{DD87D448-CA73-4ED4-894D-DB6275BA5E44}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libretro-performance", "libretro-performance\libretro-performance.vcxproj", "{DD87D448-CA73-4ED4-894D-DB6275BA5E44}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsnes-compat", "libsnes-compat\libsnes-compat.vcxproj", "{A5AC8D29-9F37-4F0A-93A7-C428400ED705}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libretro-compat", "libretro-compat\libretro-compat.vcxproj", "{A5AC8D29-9F37-4F0A-93A7-C428400ED705}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
