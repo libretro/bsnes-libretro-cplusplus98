@@ -3,6 +3,26 @@
 
 #include <nall/snes/cartridge.hpp>
 #include <nall/gameboy/cartridge.hpp>
+
+// Special memory types.
+#define RETRO_MEMORY_SNES_BSX_RAM             ((1 << 8) | RETRO_MEMORY_SAVE_RAM)
+#define RETRO_MEMORY_SNES_BSX_PRAM            ((2 << 8) | RETRO_MEMORY_SAVE_RAM)
+#define RETRO_MEMORY_SNES_SUFAMI_TURBO_A_RAM  ((3 << 8) | RETRO_MEMORY_SAVE_RAM)
+#define RETRO_MEMORY_SNES_SUFAMI_TURBO_B_RAM  ((4 << 8) | RETRO_MEMORY_SAVE_RAM)
+#define RETRO_MEMORY_SNES_GAME_BOY_RAM        ((5 << 8) | RETRO_MEMORY_SAVE_RAM)
+#define RETRO_MEMORY_SNES_GAME_BOY_RTC        ((6 << 8) | RETRO_MEMORY_RTC)
+
+// Special game types passed into retro_load_game_special().
+// Only used when multiple ROMs are required.
+#define RETRO_GAME_TYPE_BSX             0x101
+#define RETRO_GAME_TYPE_BSX_SLOTTED     0x102
+#define RETRO_GAME_TYPE_SUFAMI_TURBO    0x103
+#define RETRO_GAME_TYPE_SUPER_GAME_BOY  0x104
+
+#define RETRO_DEVICE_JOYPAD_MULTITAP       RETRO_DEVICE_SUBCLASS(RETRO_DEVICE_JOYPAD, 0)
+#define RETRO_DEVICE_LIGHTGUN_SUPER_SCOPE  RETRO_DEVICE_SUBCLASS(RETRO_DEVICE_LIGHTGUN, 0)
+#define RETRO_DEVICE_LIGHTGUN_JUSTIFIER    RETRO_DEVICE_SUBCLASS(RETRO_DEVICE_LIGHTGUN, 1)
+#define RETRO_DEVICE_LIGHTGUN_JUSTIFIERS   RETRO_DEVICE_SUBCLASS(RETRO_DEVICE_LIGHTGUN, 2)
 using namespace nall;
 
 struct Interface : public SNES::Interface {
@@ -132,7 +152,78 @@ unsigned retro_api_version(void) {
   return RETRO_API_VERSION;
 }
 
-void retro_set_environment(retro_environment_t environ_cb)        { interface.penviron       = environ_cb; }
+void retro_set_environment(retro_environment_t environ_cb)
+{
+   interface.penviron       = environ_cb;
+
+   static const struct retro_controller_description port_1[] = {
+      { "SNES Joypad", RETRO_DEVICE_JOYPAD },
+      { "SNES Mouse", RETRO_DEVICE_MOUSE },
+   };
+
+   static const struct retro_controller_description port_2[] = {
+      { "SNES Joypad", RETRO_DEVICE_JOYPAD },
+      { "SNES Mouse", RETRO_DEVICE_MOUSE },
+      { "Multitap", RETRO_DEVICE_JOYPAD_MULTITAP },
+      { "SuperScope", RETRO_DEVICE_LIGHTGUN_SUPER_SCOPE },
+      { "Justifier", RETRO_DEVICE_LIGHTGUN_JUSTIFIER },
+      { "Justifiers", RETRO_DEVICE_LIGHTGUN_JUSTIFIERS },
+   };
+
+   static const struct retro_controller_info ports[] = {
+      { port_1, 2 },
+      { port_2, 6 },
+      { 0 },
+   };
+
+   static const retro_subsystem_memory_info sgb_memory[] = {
+      { "srm", RETRO_MEMORY_SNES_GAME_BOY_RAM },
+      { "rtc", RETRO_MEMORY_SNES_GAME_BOY_RTC },
+   };
+
+   static const struct retro_subsystem_rom_info sgb_roms[] = {
+      { "GameBoy", "gb|gbc", false, false, true, sgb_memory, 2 },
+      { "Super GameBoy BIOS", "sfc|smc", false, false, true, NULL, 0 },
+   };
+
+   static const retro_subsystem_memory_info sufami_a_memory[] = {
+      { "srm", RETRO_MEMORY_SNES_SUFAMI_TURBO_A_RAM },
+   };
+
+   static const retro_subsystem_memory_info sufami_b_memory[] = {
+      { "srm", RETRO_MEMORY_SNES_SUFAMI_TURBO_B_RAM },
+   };
+
+   static const struct retro_subsystem_rom_info sufami_roms[] = {
+      { "Sufami A", "sfc|smc", false, false, false, sufami_a_memory, 1 },
+      { "Sufami B", "sfc|smc", false, false, false, sufami_b_memory, 1 },
+      { "Sufami BIOS", "sfc|smc", false, false, true, NULL, 0 },
+   };
+
+   static const retro_subsystem_memory_info bsx_memory[] = {
+      { "srm", RETRO_MEMORY_SNES_BSX_RAM },
+      { "psrm", RETRO_MEMORY_SNES_BSX_PRAM },
+   };
+
+   static const struct retro_subsystem_rom_info bsx_roms[] = {
+      { "BSX ROM", "bs", false, false, true, bsx_memory, 2 },
+      { "BSX BIOS", "sfc|smc", false, false, true, NULL, 0 },
+   };
+
+   // OR in 0x1000 on types to remain ABI compat with the older-style retro_load_game_special().
+   static const struct retro_subsystem_info subsystems[] = {
+      { "Super GameBoy", "sgb", sgb_roms, 2, RETRO_GAME_TYPE_SUPER_GAME_BOY | 0x1000 }, // Super Gameboy
+      { "Sufami Turbo", "sufami", sufami_roms, 3, RETRO_GAME_TYPE_SUFAMI_TURBO | 0x1000 }, // Sufami Turbo
+      { "BSX", "bsx", bsx_roms, 2, RETRO_GAME_TYPE_BSX | 0x1000 }, // BSX
+      { "BSX slotted", "bsxslot", bsx_roms, 2, RETRO_GAME_TYPE_BSX_SLOTTED | 0x1000 }, // BSX slotted
+      { NULL },
+   };
+
+   environ_cb(RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO, (void*)subsystems);
+
+   environ_cb(RETRO_ENVIRONMENT_SET_CONTROLLER_INFO, (void*)ports);
+}
+
 void retro_set_video_refresh(retro_video_refresh_t video_refresh) { interface.pvideo_refresh = video_refresh; }
 void retro_set_audio_sample(retro_audio_sample_t audio_sample)    { interface.paudio_sample  = audio_sample; }
 void retro_set_audio_sample_batch(retro_audio_sample_batch_t)     {}
