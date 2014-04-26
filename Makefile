@@ -12,12 +12,21 @@ ifeq ($(platform),win)
    CC = gcc
    CXX = g++
 else ifeq ($(platform),osx)
-   fpic = -fPIC -mmacosx-version-min=10.6
+   fpic = -fPIC
+   OSXVER = `sw_vers -productVersion | cut -c 4`
+ifneq ($(OSXVER),9)
+   fpic += -mmacosx-version-min=10.5
+endif
    CC = cc $(fpic)
    CXX =  cc++ $(fpic)
 else ifeq ($(platform),ios)
-   CC = clang -arch armv7 -isysroot $(IOSSDK) -miphoneos-version-min=5.0 -DHAVE_POSIX_MEMALIGN=1 -marm
-   CXX =  clang++ -arch armv7 -isysroot $(IOSSDK) -miphoneos-version-min=5.0 -DHAVE_POSIX_MEMALIGN=1 -marm
+   CC = clang -arch armv7 -isysroot $(IOSSDK) -DHAVE_POSIX_MEMALIGN=1 -marm
+   CXX =  clang++ -arch armv7 -isysroot $(IOSSDK) -DHAVE_POSIX_MEMALIGN=1 -marm
+OSXVER = `sw_vers -productVersion | cut -c 4`
+ifneq ($(OSXVER),9)
+   CC += -miphoneos-version-min=5.0
+   CXX += -miphoneos-version-min=5.0
+endif
 else ifeq ($(platform),qnx)
 	CC = qcc -Vgcc_ntoarmv7le
 	CXX = QCC -Vgcc_ntoarmv7le_cpp
