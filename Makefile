@@ -4,8 +4,21 @@ gameboy := gameboy
 profile := performance
 link :=
 
-ifneq ($(platform),win)
-   fpic = -fPIC
+ifeq ($(platform),)
+platform = unix
+ifeq ($(shell uname -a),)
+   platform = win
+else ifneq ($(findstring MINGW,$(shell uname -a)),)
+   platform = win
+else ifneq ($(findstring Darwin,$(shell uname -a)),)
+   platform = osx
+   arch = intel
+ifeq ($(shell uname -p),powerpc)
+   arch = ppc
+endif
+else ifneq ($(findstring win,$(shell uname -a)),)
+   platform = win
+endif
 endif
 
 ifeq ($(platform),win)
@@ -14,12 +27,13 @@ ifeq ($(platform),win)
 else ifeq ($(platform),osx)
    fpic = -fPIC
    OSXVER = `sw_vers -productVersion | cut -c 4`
-ifneq ($(OSXVER),9)
+ifneq ($(shell sw_vers | grep -c 10.9),1)
    fpic += -mmacosx-version-min=10.5
 endif
    CC = cc $(fpic)
    CXX =  cc++ $(fpic)
 else ifeq ($(platform),ios)
+   fpic = -fPIC
    CC = clang -arch armv7 -isysroot $(IOSSDK) -DHAVE_POSIX_MEMALIGN=1 -marm
    CXX =  clang++ -arch armv7 -isysroot $(IOSSDK) -DHAVE_POSIX_MEMALIGN=1 -marm
 OSXVER = `sw_vers -productVersion | cut -c 4`
@@ -28,8 +42,9 @@ ifneq ($(OSXVER),9)
    CXX += -miphoneos-version-min=5.0
 endif
 else ifeq ($(platform),qnx)
-	CC = qcc -Vgcc_ntoarmv7le
-	CXX = QCC -Vgcc_ntoarmv7le_cpp
+   fpic = -fPIC
+   CC = qcc -Vgcc_ntoarmv7le
+   CXX = QCC -Vgcc_ntoarmv7le_cpp
 endif
 
 ifeq ($(DEBUG),1)
