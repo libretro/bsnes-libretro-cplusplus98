@@ -5,7 +5,8 @@ profile := performance
 link :=
 
 ifeq ($(platform),)
-platform = unix
+# see nall/Makefile and nall/detect.hpp
+platform = x
 ifeq ($(shell uname -a),)
    platform = win
 else ifneq ($(findstring MINGW,$(shell uname -a)),)
@@ -21,7 +22,15 @@ else ifneq ($(findstring win,$(shell uname -a)),)
 endif
 endif
 
-ifeq ($(platform),win)
+ifeq ($(platform),unix)
+   platform = x
+endif
+
+ifeq ($(platform),x)
+   CC = gcc
+   CXX = g++
+   fpic = -fPIC
+else ifeq ($(platform),win)
    CC = gcc
    CXX = g++
 else ifeq ($(platform),osx)
