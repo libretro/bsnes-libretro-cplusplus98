@@ -92,7 +92,7 @@ else ifeq ($(platform),qnx)
 	ar rcs out/libretro.a $(snes_objects) obj/libretro.o
 	$(CXX) -o out/libretro.so -fPIC -shared -Wl,-soname,libretro.so.1 obj/libretro.o $(snes_objects) -lm -Wl,-version-script=link.T -Wl,-no-undefined
 else ifeq ($(platform),win)
-	$(CXX) -o out/retro.dll -static-libgcc -static-libstdc++ -shared -Wl,--out-implib,libretro.a obj/libretro.o $(snes_objects) $(link) -Wl,-version-script=link.T -Wl,-no-undefined
+	$(CXX) -o out/libretro.dll -static-libgcc -static-libstdc++ -shared -Wl,--out-implib,libretro.a obj/libretro.o $(snes_objects) $(link) -Wl,-version-script=link.T -Wl,-no-undefined
 endif
 
 library-install:
