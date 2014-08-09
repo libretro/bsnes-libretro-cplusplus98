@@ -24,6 +24,7 @@ endif
 
 ifeq ($(platform),unix)
    platform = x
+   fpic = -fPIC
 endif
 
 ifeq ($(platform),x)
