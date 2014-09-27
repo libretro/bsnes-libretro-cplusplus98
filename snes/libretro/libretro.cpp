@@ -27,7 +27,7 @@ using namespace nall;
 
 struct Interface : public SNES::Interface {
   retro_video_refresh_t pvideo_refresh;
-  retro_audio_sample_t paudio_sample;
+  retro_audio_sample_batch_t paudio_sample;
   retro_input_poll_t pinput_poll;
   retro_input_state_t pinput_state;
   retro_environment_t penviron;
@@ -82,8 +82,13 @@ struct Interface : public SNES::Interface {
     pinput_poll();
   }
 
-  void audioSample(int16_t left, int16_t right) {
-    if(paudio_sample) return paudio_sample(left, right);
+  void audioSample(int16_t left, int16_t right)
+  {
+    if(paudio_sample)
+    {
+       const int16_t samples[2] = {left, right};
+       paudio_sample(samples, 1);
+    }
   }
 
   int16_t inputPoll(bool port, SNES::Input::Device::e device, unsigned index, unsigned id) {
@@ -225,8 +230,8 @@ void retro_set_environment(retro_environment_t environ_cb)
 }
 
 void retro_set_video_refresh(retro_video_refresh_t video_refresh) { interface.pvideo_refresh = video_refresh; }
-void retro_set_audio_sample(retro_audio_sample_t audio_sample)    { interface.paudio_sample  = audio_sample; }
-void retro_set_audio_sample_batch(retro_audio_sample_batch_t)     {}
+void retro_set_audio_sample(retro_audio_sample_t)    {  }
+void retro_set_audio_sample_batch(retro_audio_sample_batch_t audio_sample)     { interface.paudio_sample  = audio_sample; }
 void retro_set_input_poll(retro_input_poll_t input_poll)          { interface.pinput_poll    = input_poll; }
 void retro_set_input_state(retro_input_state_t input_state)       { interface.pinput_state   = input_state; }
 
