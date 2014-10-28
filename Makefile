@@ -36,8 +36,9 @@ else ifeq ($(platform),win)
    CXX = g++
 else ifeq ($(platform),osx)
    fpic = -fPIC
-   OSXVER = `sw_vers -productVersion | cut -c 4`
-ifneq ($(shell sw_vers | grep -c 10.9),1)
+   OSXVER = `sw_vers -productVersion | cut -d. -f 2`
+   OSX_LT_MAVERICKS = `(( $(OSXVER) <= 9)) && echo "YES"`
+ifeq ($(OSX_LT_MAVERICKS),"YES")
    fpic += -mmacosx-version-min=10.5
 endif
    CC = cc $(fpic)
@@ -46,8 +47,9 @@ else ifeq ($(platform),ios)
    fpic = -fPIC
    CC = clang -arch armv7 -isysroot $(IOSSDK) -DHAVE_POSIX_MEMALIGN=1 -marm
    CXX =  clang++ -arch armv7 -isysroot $(IOSSDK) -DHAVE_POSIX_MEMALIGN=1 -marm
-OSXVER = `sw_vers -productVersion | cut -c 4`
-ifneq ($(OSXVER),9)
+   OSXVER = `sw_vers -productVersion | cut -d. -f 2`
+   OSX_LT_MAVERICKS = `(( $(OSXVER) <= 9)) && echo "YES"`
+ifeq ($(OSX_LT_MAVERICKS),"YES")
    CC += -miphoneos-version-min=5.0
    CXX += -miphoneos-version-min=5.0
 endif
