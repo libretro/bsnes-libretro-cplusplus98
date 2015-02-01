@@ -75,6 +75,13 @@ ifeq ($(PROFILING),use)
    link += -fprofile-use
 endif
 
+ifeq ($(platform),osx)
+   ifndef ($(NOUNIVERSAL))
+      extraflags += $(ARCHFLAGS)
+      link += $(ARCHFLAGS)
+   endif
+endif
+
 # implicit rules
 compile = \
   $(strip \
