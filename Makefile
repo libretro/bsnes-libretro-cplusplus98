@@ -45,8 +45,8 @@ endif
    CXX =  cc++ $(fpic)
 else ifeq ($(platform),ios)
    fpic = -fPIC
-   CC = clang -arch armv7 -isysroot $(IOSSDK) -DHAVE_POSIX_MEMALIGN=1 -marm
-   CXX =  clang++ -arch armv7 -isysroot $(IOSSDK) -DHAVE_POSIX_MEMALIGN=1 -marm
+   CC = clang -arch armv7 -isysroot $(IOSSDK)
+   CXX =  clang++ -arch armv7 -isysroot $(IOSSDK)
    OSXVER = `sw_vers -productVersion | cut -d. -f 2`
    OSX_LT_MAVERICKS = `(( $(OSXVER) <= 9)) && echo "YES"`
 ifeq ($(OSX_LT_MAVERICKS),"YES")
@@ -80,6 +80,10 @@ ifeq ($(platform),osx)
       extraflags += $(ARCHFLAGS)
       link += $(ARCHFLAGS)
    endif
+endif
+
+ifeq ($(platform),ios)
+   extraflags += -DHAVE_POSIX_MEMALIGN=1 -marm
 endif
 
 # implicit rules
