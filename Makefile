@@ -43,13 +43,14 @@ ifeq ($(OSX_LT_MAVERICKS),"YES")
 endif
    CC = cc $(fpic)
    CXX =  cc++ $(fpic)
-else ifeq ($(platform),ios)
+else ifneq (,$(findstring ios,$(platform)))
    fpic = -fPIC
    CC = clang -arch armv7 -isysroot $(IOSSDK)
    CXX =  clang++ -arch armv7 -isysroot $(IOSSDK)
-   OSXVER = `sw_vers -productVersion | cut -d. -f 2`
-   OSX_LT_MAVERICKS = `(( $(OSXVER) <= 9)) && echo "YES"`
-ifeq ($(OSX_LT_MAVERICKS),"YES")
+ifeq ($(platform),ios9)
+   CC += -miphoneos-version-min=8.0
+   CXX += -miphoneos-version-min=8.0
+else
    CC += -miphoneos-version-min=5.0
    CXX += -miphoneos-version-min=5.0
 endif
@@ -82,7 +83,7 @@ ifeq ($(platform),osx)
    endif
 endif
 
-ifeq ($(platform),ios)
+ifneq (,$(findstring ios,$(platform)))
    extraflags += -DHAVE_POSIX_MEMALIGN=1 -marm
 endif
 
