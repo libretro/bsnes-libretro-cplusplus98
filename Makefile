@@ -28,8 +28,6 @@ ifeq ($(platform),unix)
 endif
 
 ifeq ($(platform),x)
-   CC = gcc
-   CXX = g++
    fpic = -fPIC
 else ifeq ($(platform),win)
    CC = gcc
@@ -41,12 +39,10 @@ else ifeq ($(platform),osx)
 ifeq ($(OSX_LT_MAVERICKS),"YES")
    fpic += -mmacosx-version-min=10.5
 endif
-   CC = cc $(fpic)
-   CXX =  cc++ $(fpic)
 else ifneq (,$(findstring ios,$(platform)))
    fpic = -fPIC
-   CC = clang -arch armv7 -isysroot $(IOSSDK)
-   CXX =  clang++ -arch armv7 -isysroot $(IOSSDK)
+   CC = cc -arch armv7 -isysroot $(IOSSDK)
+   CXX =  cc++ -arch armv7 -isysroot $(IOSSDK)
 ifeq ($(platform),ios9)
    CC += -miphoneos-version-min=8.0
    CXX += -miphoneos-version-min=8.0
