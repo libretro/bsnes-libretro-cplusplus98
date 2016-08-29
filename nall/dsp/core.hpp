@@ -18,6 +18,7 @@ struct Resampler {
   virtual void setFrequency() = 0;
   virtual void clear() = 0;
   virtual void sample() = 0;
+  virtual ~Resampler(){};
   Resampler(DSP &dsp) : dsp(dsp) {}
 };
 
