@@ -42,7 +42,7 @@ endif
 else ifneq (,$(findstring ios,$(platform)))
    fpic = -fPIC
    CC = cc -arch armv7 -isysroot $(IOSSDK)
-   CXX =  cc++ -arch armv7 -isysroot $(IOSSDK)
+   CXX =  c++ -arch armv7 -isysroot $(IOSSDK)
 ifeq ($(platform),ios9)
    CC += -miphoneos-version-min=8.0
    CXX += -miphoneos-version-min=8.0
