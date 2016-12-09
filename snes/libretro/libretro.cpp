@@ -300,7 +300,10 @@ void retro_cheat_set(unsigned index, bool enable, const char *code) {
 }
 
 void retro_get_system_info(struct retro_system_info *info) {
-  static string version("v085 (", SNES::Info::Profile, ")");
+#ifndef GIT_VERSION
+#define GIT_VERSION ""
+#endif
+  static string version("v085 (", SNES::Info::Profile, ")", GIT_VERSION);
   info->library_name     = "bSNES";
   info->library_version  = version;
   info->valid_extensions = "sfc|smc";
