@@ -105,23 +105,6 @@ class SincResample
  SincResampleHR hr;
 };
 
-
-//
-// Code:
-//
-//#include "resample.hpp"
-
-#if 0
-namespace bit
-{
-    inline unsigned round(unsigned x) {
-      if((x & (x - 1)) == 0) return x;
-      while(x & (x - 1)) x &= x - 1;
-      return x << 1;
-    }
-}
-#endif
-
 void SincResampleHR::Init(unsigned ratio_arg, double desired_bandwidth, double beta, double d)
 {
  const unsigned align_boundary = 16;

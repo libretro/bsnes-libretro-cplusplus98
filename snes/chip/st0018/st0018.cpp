@@ -81,16 +81,6 @@ void ST0018::op_board_upload(uint8 data) {
   regs.counter++;
   if(regs.counter >= 97) {
     regs.mode = Waiting;
-    #if 0
-    for(unsigned y = 0; y < 9; y++) {
-      for(unsigned x = 0; x < 9; x++) {
-        fprintf(stdout, "%.2x ", board[y * 9 + x]);
-      }
-      fprintf(stdout, "\n");
-    }
-    for(unsigned n = 0; n < 16; n++) fprintf(stdout, "%.2x ", board[81 + n]);
-    fprintf(stdout, "\n\n");
-    #endif
   }
 }
 
