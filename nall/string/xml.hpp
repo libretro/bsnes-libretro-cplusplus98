@@ -33,12 +33,6 @@ struct Node {
   inline void copy(string &target, const char *source, unsigned length) {
     target.reserve(length + 1);
 
-    #if defined(NALL_XML_LITERAL)
-    memcpy(target(), source, length);
-    target[length] = 0;
-    return;
-    #endif
-
     char *output = target();
     while(length) {
       if(*source == '&') {

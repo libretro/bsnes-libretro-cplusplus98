@@ -128,10 +128,6 @@ namespace nall {
     char *data;
     unsigned size;
 
-  #if defined(QSTRING_H)
-  public:
-    inline operator QString() const;
-  #endif
   };
 
   template<typename T> inline string to_string(const T& t)
