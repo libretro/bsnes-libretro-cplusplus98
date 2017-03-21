@@ -469,9 +469,6 @@ static void init_descriptors(void)
 }
 
 bool retro_load_game(const struct retro_game_info *info) {
-   if (!info)
-      return false;
-
   retro_cheat_reset();
   init_descriptors();
 
