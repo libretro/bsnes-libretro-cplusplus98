@@ -111,10 +111,6 @@ endif
 
 static: set-static static-library;
 
-install: library-install;
-
-uninstall: library-uninstall;
-
 %.o: $<; $(call compile)
 include $(snes)/Makefile
 

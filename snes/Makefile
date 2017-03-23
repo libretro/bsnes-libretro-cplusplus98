@@ -99,24 +99,3 @@ else ifeq ($(platform),qnx)
 else ifeq ($(platform),win)
 	$(CXX) -o out/bsnes_cplusplus98_libretro.dll -static-libgcc -static-libstdc++ -shared -Wl,--out-implib,libretro.a obj/libretro.o $(snes_objects) $(link) -Wl,-version-script=link.T -Wl,-no-undefined
 endif
-
-library-install:
-ifeq ($(platform),x)
-	install -D -m 755 out/bsnes_cplusplus98_libretro.a $(DESTDIR)$(prefix)/lib/bsnes_cplusplus98_libretro.a
-	install -D -m 755 out/bsnes_cplusplus98_libretro.so $(DESTDIR)$(prefix)/lib/bsnes_cplusplus98_libretro.so
-	install -D -m 644 snes/libretro/libretro.h $(DESTDIR)$(prefix)/include/libretro.h
-	ldconfig -n $(DESTDIR)$(prefix)/lib
-else ifeq ($(platform),osx)
-	cp out/bsnes_cplusplus98_libretro.dylib $(DESTDIR)$(prefix)/lib/bsnes_cplusplus98_libretro.dylib
-	cp snes/libretro/libretro.h $(DESTDIR)$(prefix)/include/libretro.h
-endif
-
-library-uninstall:
-ifeq ($(platform),x)
-	rm $(DESTDIR)$(prefix)/lib/bsnes_cplusplus98_libretro.a
-	rm $(DESTDIR)$(prefix)/lib/bsnes_cplusplus98_libretro.so
-else ifeq ($(platform),osx)
-	rm $(DESTDIR)$(prefix)/lib/bsnes_cplusplus98_libretro.dylib
-	rm $(DESTDIR)$(prefix)/include/libretro.h
-endif
-
