@@ -20,7 +20,8 @@ void Input::connect(bool port, Input::Device::e id) {
   case Device::Serial: controller = new Serial(port); break;
   }
 
-  switch(port) {
+  unsigned port_type = port;
+  switch(port_type) {
   case Controller::Port1: config.controller_port1.i = id; break;
   case Controller::Port2: config.controller_port2.i = id; break;
   }
