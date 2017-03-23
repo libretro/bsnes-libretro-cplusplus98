@@ -62,6 +62,8 @@ else
    extraflags = -O3 -fomit-frame-pointer -I. -I$(snes) $(fpic)
 endif
 
+CXXFLAGS += -std=gnu++98
+
 ifeq ($(PROFILING),gen)
    extraflags += -fprofile-generate --coverage
    link += -fprofile-generate --coverage
