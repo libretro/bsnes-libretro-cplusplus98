@@ -18,7 +18,6 @@ namespace std {
   template <typename T, size_t n> struct remove_extent <T[n]> { typedef T type; };
   template <typename T>           struct remove_extent <T[ ]> { typedef T type; };
   template <typename T> struct add_const { typedef T const type; };
-  template <typename> struct remove_reference;
   template <typename, typename> struct is_same       : public false_type { };
   template <typename T>         struct is_same<T, T> : public true_type  { };
   template <typename T> class initializer_list{

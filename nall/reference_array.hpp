@@ -10,7 +10,6 @@
 namespace nall {
   template<typename T> struct reference_array {
   protected:
-    typedef typename std::remove_reference<T>::type *Tptr;
     Tptr *pool;
     unsigned poolsize, buffersize;
 
