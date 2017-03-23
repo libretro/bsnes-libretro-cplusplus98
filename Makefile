@@ -129,7 +129,4 @@ clean:
 	-@$(call delete,*.pdb)
 	-@$(call delete,*.manifest)
 
-archive-all:
-	tar -cjf libsnes.tar.bz2 libco nall obj out snes Makefile cc.bat clean.bat sync.sh
-
 help:;
