@@ -52,7 +52,7 @@ namespace nall {
     }
 
     template<typename T> void integer(T &value) {
-      enum { size = std::nall_is_same<bool, T>::value ? 1 : sizeof(T) };
+      enum { size = cplusplus98::nall_is_same<bool, T>::value ? 1 : sizeof(T) };
       if(imode == Save) {
         for(unsigned n = 0; n < size; n++) idata[isize++] = value >> (n << 3);
       } else if(imode == Load) {

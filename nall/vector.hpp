@@ -119,7 +119,7 @@ namespace nall {
     linear_vector() : pool(0), poolsize(0), objectsize(0) {
     }
 
-    linear_vector(std::initializer_list<T> list) : pool(0), poolsize(0), objectsize(0) {
+    linear_vector(cplusplus98::initializer_list<T> list) : pool(0), poolsize(0), objectsize(0) {
       for(const T *p = list.begin(); p != list.end(); ++p) append(*p);
     }
 
@@ -239,7 +239,7 @@ namespace nall {
     pointer_vector() : pool(0), poolsize(0), objectsize(0) {
     }
 
-    pointer_vector(std::initializer_list<T> list) : pool(0), poolsize(0), objectsize(0) {
+    pointer_vector(cplusplus98::initializer_list<T> list) : pool(0), poolsize(0), objectsize(0) {
       for(const T *p = list.begin(); p != list.end(); ++p) append(*p);
     }
 

@@ -84,7 +84,7 @@ namespace nall {
     array() : pool(0), poolsize(0), buffersize(0) {
     }
 
-    array(std::initializer_list<T> list) : pool(0), poolsize(0), buffersize(0) {
+    array(cplusplus98::initializer_list<T> list) : pool(0), poolsize(0), buffersize(0) {
       for(const T *p = list.begin(); p != list.end(); ++p) append(*p);
     }
 

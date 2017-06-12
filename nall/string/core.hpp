@@ -324,7 +324,7 @@ inline lstring::lstring(const string & v1, const string & v2, const string & v3,
   operator<<(v5); operator<<(v6); operator<<(v7); operator<<(v8);
 }
 
-inline lstring::lstring(std::initializer_list<string> list) {
+inline lstring::lstring(cplusplus98::initializer_list<string> list) {
   for(const string *s = list.begin(); s != list.end(); ++s) {
     operator<<(*s);
   }

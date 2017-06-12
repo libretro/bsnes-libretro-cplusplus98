@@ -157,7 +157,7 @@ namespace nall {
     inline bool operator!=(const lstring&) const;
 
     lstring(const lstring & str);
-    lstring(std::initializer_list<string>);
+    lstring(cplusplus98::initializer_list<string>);
   };
 
   //compare.hpp
