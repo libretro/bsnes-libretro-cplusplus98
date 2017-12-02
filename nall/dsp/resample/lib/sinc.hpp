@@ -6,7 +6,7 @@ typedef float resample_samp_t;
 
 
 // ...but don't comment this single RESAMPLE_SSEREGPARM define out when disabling SSE.
-#define RESAMPLE_SSEREGPARM	
+#define RESAMPLE_SSEREGPARM
 
 #if defined(__SSE__)
   #define SINCRESAMPLE_USE_SSE 1
@@ -168,7 +168,7 @@ resample_samp_t SincResampleHR::mac(const resample_samp_t *wave, const resample_
 {
 #if SINCRESAMPLE_USE_SSE
  __m128 accum_veca[2] = { _mm_set1_ps(0), _mm_set1_ps(0) };
- 
+
  resample_samp_t accum;
 
  for(unsigned c = 0; c < count; c += 8)
@@ -265,7 +265,7 @@ SincResample::SincResample(double input_rate, double output_rate, double desired
 
  if(ioratio_rd >= 8)
  {
-  hr.Init(ioratio_rd, desired_bandwidth, qtab[quality].beta, qtab[quality].d); //10.056, 6.4); 
+  hr.Init(ioratio_rd, desired_bandwidth, qtab[quality].beta, qtab[quality].d); //10.056, 6.4);
   hr_used = true;
 
   input_rate /= ioratio_rd;
@@ -511,19 +511,19 @@ void ResampleUtility::kaiser_window( double* io, int count, double beta)
 void ResampleUtility::gen_sinc(double* out, int size, double cutoff, double kaiser)
 {
         assert( size % 2 == 0 ); // size must be even
- 
+
         int const half_size = size / 2;
         double* const mid = &out [half_size];
- 
+
         // Generate right half of sinc
         for ( int i = 0; i < half_size; i++ )
         {
                 double angle = (i * 2 + 1) * (M_PI / 2);
                 mid [i] = sin( angle * cutoff ) / angle;
         }
- 
+
         kaiser_window( mid, half_size, kaiser );
- 
+
         // Mirror for left half
         for ( int i = 0; i < half_size; i++ )
                 out [i] = mid [half_size - 1 - i];
@@ -532,7 +532,7 @@ void ResampleUtility::gen_sinc(double* out, int size, double cutoff, double kais
 void ResampleUtility::gen_sinc_os(double* out, int size, double cutoff, double kaiser)
 {
         assert( size % 2 == 1); // size must be odd
- 
+
 	for(int i = 0; i < size; i++)
 	{
          if(i == (size / 2))

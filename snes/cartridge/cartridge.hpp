@@ -1,5 +1,5 @@
 struct Cartridge : property<Cartridge> {
-  struct Mode { 
+  struct Mode {
     enum e {
       Normal,
       BsxSlotted,
@@ -8,7 +8,7 @@ struct Cartridge : property<Cartridge> {
       SuperGameBoy,
     } i; };
 
-  struct Region { 
+  struct Region {
     enum e {
       NTSC,
       PAL,

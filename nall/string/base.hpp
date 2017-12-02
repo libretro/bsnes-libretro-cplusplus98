@@ -81,7 +81,7 @@ namespace nall {
 
     template<typename T1>
     inline string(T1 const &);
-    
+
     template<typename T1, typename T2>
     inline string(T1 const &, T2 const &);
 
@@ -143,7 +143,7 @@ namespace nall {
     inline void qsplit(const char*, const char*, unsigned = 0);
 
     lstring();
-    
+
     lstring(const string &);
     lstring(const string &, const string &);
     lstring(const string &, const string &, const string &);
@@ -152,7 +152,7 @@ namespace nall {
     lstring(const string &, const string &, const string &, const string &, const string &, const string &);
     lstring(const string &, const string &, const string &, const string &, const string &, const string &, const string &);
     lstring(const string &, const string &, const string &, const string &, const string &, const string &, const string &, const string &);
-    
+
     inline bool operator==(const lstring&) const;
     inline bool operator!=(const lstring&) const;
 

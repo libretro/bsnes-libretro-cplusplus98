@@ -103,7 +103,7 @@ bool Cheat::decode(const string &code, unsigned &addr, unsigned &data) {
 
 unsigned Cheat::mirror(unsigned addr) const {
   //$00-3f|80-bf:0000-1fff -> $7e:0000-1fff
-  if((addr & 0x40e000) == 0x000000) return (0x7e0000 + (addr & 0x1fff));  
+  if((addr & 0x40e000) == 0x000000) return (0x7e0000 + (addr & 0x1fff));
   return addr;
 }
 

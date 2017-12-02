@@ -35,7 +35,7 @@ ifneq ($(GIT_VERSION)," unknown")
 	extraflags += -DGIT_VERSION=\"$(GIT_VERSION)\"
 endif
 
-obj/libretro.o: $(snes)/libretro/libretro.cpp $(snes)/libretro/* 
+obj/libretro.o: $(snes)/libretro/libretro.cpp $(snes)/libretro/*
 
 obj/libco.o         : libco/libco.c libco/*
 
