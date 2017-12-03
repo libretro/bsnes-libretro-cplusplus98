@@ -498,7 +498,7 @@ bool retro_load_game_special(unsigned game_type,
      case RETRO_GAME_TYPE_BSX:
        return num_info == 2 && snes_load_cartridge_bsx(info[0].meta, (const uint8_t*)info[0].data, info[0].size,
              info[1].meta, (const uint8_t*)info[1].data, info[1].size);
-       
+
      case RETRO_GAME_TYPE_BSX_SLOTTED:
        return num_info == 2 && snes_load_cartridge_bsx_slotted(info[0].meta, (const uint8_t*)info[0].data, info[0].size,
              info[1].meta, (const uint8_t*)info[1].data, info[1].size);

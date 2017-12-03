@@ -103,7 +103,6 @@ all: library;
 
 include gameboy/Makefile
 
-
 set-static:
 ifneq ($(platform),win)
 	$(eval fpic := )
@@ -114,7 +113,7 @@ static: set-static static-library;
 %.o: $<; $(call compile)
 include $(snes)/Makefile
 
-clean: 
+clean:
 	rm -f obj/*.o
 	rm -f obj/*.a
 	rm -f obj/*.so

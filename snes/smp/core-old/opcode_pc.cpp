@@ -46,7 +46,7 @@ void SMPcore::op_cbne_dpx() {
   if(regs.a == sp) return;
   op_io();
   op_io();
-  regs.pc += (int8)rd;   
+  regs.pc += (int8)rd;
 }
 
 void SMPcore::op_dbnz_dp() {
