@@ -32,6 +32,12 @@ ifeq ($(platform),)
   endif
 endif
 
+ifeq ($(platform),win)
+  delete = del /F /Q $(subst /,\,$1)
+else
+  delete = rm -f $1
+endif
+
 ifeq ($(prefix),)
   prefix := /usr/local
 endif

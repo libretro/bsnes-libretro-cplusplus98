@@ -114,12 +114,11 @@ static: set-static static-library;
 include $(snes)/Makefile
 
 clean:
-	rm -f obj/*.o
-	rm -f obj/*.a
-	rm -f obj/*.so
-	rm -f obj/*.dylib
-	rm -f obj/*.dll
-	rm -f out/*.a
-	rm -f out/*.so
+	-$(call delete,obj/*.o)
+	-$(call delete,obj/*.a)
+	-$(call delete,out/*.dylib)
+	-$(call delete,out/*.dll)
+	-$(call delete,out/*.a)
+	-$(call delete,out/*.so)
 
 help:;
