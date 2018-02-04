@@ -27,6 +27,8 @@ ifeq ($(platform),)
     platform := osx
   else ifneq ($(findstring BSD,$(uname)),)
     platform := xbsd
+  else ifneq ($(findstring Haiku,$(shell uname -s)),)
+    platform := haiku
   else
     platform := x
   endif

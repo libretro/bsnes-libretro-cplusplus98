@@ -87,6 +87,9 @@ else ifeq ($(platform),unix)
 else ifeq ($(platform),xbsd)
 	ar rcs out/bsnes_cplusplus98_libretro.a $(snes_objects) obj/libretro.o
 	$(CXX) -o out/bsnes_cplusplus98_libretro.so -fPIC -shared -Wl,-soname,bsnes_cplusplus98_libretro.so.1 obj/libretro.o $(snes_objects) -lc -Wl,-version-script=link.T -Wl,-no-undefined
+else ifeq ($(platform),haiku)
+	ar rcs out/bsnes_cplusplus98_libretro.a $(snes_objects) obj/libretro.o
+	$(CXX) -o out/bsnes_cplusplus98_libretro.so -fPIC -shared -Wl,-soname,bsnes_cplusplus98_libretro.so.1 obj/libretro.o $(snes_objects) -lroot -Wl,-version-script=link.T -Wl,-no-undefined
 else ifeq ($(platform),osx)
 	ar rcs out/bsnes_cplusplus98_libretro.a $(snes_objects) obj/libretro.o
 	$(CXX) -o out/bsnes_cplusplus98_libretro.dylib -install_name $(prefix)/lib/bsnes_cplusplus98_libretro.dylib -dynamiclib obj/libretro.o $(snes_objects) $(link)

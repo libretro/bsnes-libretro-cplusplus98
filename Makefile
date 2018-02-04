@@ -17,6 +17,8 @@ else ifneq ($(findstring Darwin,$(shell uname -a)),)
 ifeq ($(shell uname -p),powerpc)
    arch = ppc
 endif
+else ifneq ($(findstring Haiku,$(shell uname -s)),)
+   platform = haiku
 else ifneq ($(findstring win,$(shell uname -a)),)
    platform = win
 endif
@@ -28,6 +30,8 @@ ifeq ($(platform),unix)
 endif
 
 ifeq ($(platform),x)
+   fpic = -fPIC
+else ifeq ($(platform),haiku)
    fpic = -fPIC
 else ifeq ($(platform),win)
    CC = gcc
