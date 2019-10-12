@@ -43,6 +43,12 @@ else ifeq ($(platform),osx)
 ifeq ($(OSX_LT_MAVERICKS),"YES")
    fpic += -mmacosx-version-min=10.5
 endif
+else ifeq ($(platform),ios-arm64)
+	fpic = -fPIC
+	CC = cc -arch arm64 -isysroot $(IOSSDK)
+	CXX =  c++ -arch arm64 -isysroot $(IOSSDK)
+	CFLAGS += -DIOS
+	CXXFLAGS += -DIOS
 else ifneq (,$(findstring ios,$(platform)))
    fpic = -fPIC
    CC = cc -arch armv7 -isysroot $(IOSSDK)
