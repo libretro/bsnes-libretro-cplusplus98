@@ -93,6 +93,9 @@ else ifeq ($(platform),haiku)
 else ifeq ($(platform),osx)
 	ar rcs out/bsnes_cplusplus98_libretro.a $(snes_objects) obj/libretro.o
 	$(CXX) -o out/bsnes_cplusplus98_libretro.dylib -install_name $(prefix)/lib/bsnes_cplusplus98_libretro.dylib -dynamiclib obj/libretro.o $(snes_objects) $(link)
+else ifeq ($(platform),ios-arm64)
+	ar rcs out/bsnes_cplusplus98_libretro.a $(snes_objects) obj/libretro.o
+	$(CXX) -o out/bsnes_cplusplus98_libretro_ios.dylib -install_name $(prefix)/lib/bsnes_cplusplus98_libretro_ios.dylib -dynamiclib obj/libretro.o $(snes_objects) $(link)
 else ifeq ($(platform),ios)
 	ar rcs out/bsnes_cplusplus98_libretro.a $(snes_objects) obj/libretro.o
 	$(CXX) -o out/bsnes_cplusplus98_libretro_ios.dylib -install_name $(prefix)/lib/bsnes_cplusplus98_libretro_ios.dylib -dynamiclib obj/libretro.o $(snes_objects) $(link)
