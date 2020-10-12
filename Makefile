@@ -74,7 +74,7 @@ ifeq ($(platform), unix)
    PTHREAD_FLAGS = -lpthread
    CXXFLAGS += -fpermissive
    endif
-   LDFLAGS += $(PTHREAD_FLAGS)
+   LDFLAGS += $(PTHREAD_FLAGS) -ldl
    FLAGS += $(PTHREAD_FLAGS)
 else ifeq ($(platform), osx)
    TARGET := $(TARGET_NAME)_libretro.dylib
