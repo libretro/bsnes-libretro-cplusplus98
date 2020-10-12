@@ -311,16 +311,29 @@ void retro_get_system_info(struct retro_system_info *info) {
 }
 
 void retro_get_system_av_info(struct retro_system_av_info *info) {
+   struct retro_game_geometry geom;
   struct retro_system_timing timing = { 0.0, 32040.5 };
   timing.fps = retro_get_region() == RETRO_REGION_NTSC ? 21477272.0 / 357366.0 : 21281370.0 / 425568.0;
 
   if (!interface.penviron(RETRO_ENVIRONMENT_GET_OVERSCAN, &interface.overscan))
      interface.overscan = false;
 
-  struct retro_game_geometry geom = { 256, interface.overscan ? 239 : 224, 512, interface.overscan ? 478 : 448 };
+  geom.base_width     = 256;
+  if (interface.overscan)
+  {
+     geom.base_height = 239;
+     geom.max_height  = 478;
+  }
+  else
+  {
+     geom.base_height = 224;
+     geom.max_height  = 448;
+  }
+  geom.max_width      = 512;
+  geom.aspect_ratio   = 0.0f;
 
-  info->timing   = timing;
-  info->geometry = geom;
+  info->timing    = timing;
+  info->geometry  = geom;
 }
 
 static bool snes_load_cartridge_normal(
