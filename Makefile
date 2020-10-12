@@ -40,22 +40,7 @@ else ifneq ($(findstring MINGW,$(shell uname -s)),)
 	system_platform = win
 endif
 
-# If you have a system with 1GB RAM or more - cache the whole 
-# CD for CD-based systems in order to prevent file access delays/hiccups
-CACHE_CD = 0
-
-core = pcfx
-NEED_BPP = 32
-ifneq ($(platform), osx)
-	PTHREAD_FLAGS = -pthread
-endif
-NEED_TREMOR = 1
-WANT_NEW_API = 1
-NEED_STEREO_SOUND = 1
-NEED_CD = 1
-NEED_SCSI_CD = 1
-NEED_THREADING = 1
-CORE_DEFINE := -DWANT_PCFX_EMU
+CORE_DEFINE :=
 
 TARGET_NAME := bsnes_cplusplus98
 GIT_VERSION := " $(shell git rev-parse --short HEAD || echo unknown)"
@@ -71,17 +56,13 @@ ifeq ($(platform), unix)
       IS_X86 = 1
    endif
    ifneq ($(findstring Haiku,$(shell uname -s)),)
-   PTHREAD_FLAGS = -lpthread
    CXXFLAGS += -fpermissive
    endif
-   LDFLAGS += $(PTHREAD_FLAGS) -ldl
-   FLAGS += $(PTHREAD_FLAGS)
+   LDFLAGS += -ldl
 else ifeq ($(platform), osx)
    TARGET := $(TARGET_NAME)_libretro.dylib
    fpic := -fPIC
    SHARED := -dynamiclib
-   LDFLAGS += $(PTHREAD_FLAGS)
-   FLAGS += $(PTHREAD_FLAGS)
 ifeq ($(arch),ppc)
    ENDIANNESS_DEFINES := -DMSB_FIRST
    OLD_GCC := 1
@@ -96,8 +77,6 @@ else ifneq (,$(findstring ios,$(platform)))
    TARGET := $(TARGET_NAME)_libretro_ios.dylib
    fpic := -fPIC
    SHARED := -dynamiclib
-   LDFLAGS += $(PTHREAD_FLAGS)
-   FLAGS += $(PTHREAD_FLAGS)
 
 ifeq ($(IOSSDK),)
    IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
@@ -193,7 +172,7 @@ else ifeq ($(platform), xenon)
    CXX = xenon-g++$(EXE_EXT)
    AR = xenon-ar$(EXE_EXT)
    ENDIANNESS_DEFINES += -D__LIBXENON__ -m32 -D__ppc__ -DMSB_FIRST
-   LIBS := $(PTHREAD_FLAGS)
+   LIBS :=
    STATIC_LINKING = 1
 
 # Nintendo Switch (libnx)
@@ -249,8 +228,6 @@ else ifneq (,$(findstring armv,$(platform)))
    fpic := -fPIC
    SHARED := -shared -Wl,--no-undefined -Wl,--version-script=link.T
    CC = gcc
-   LDFLAGS += $(PTHREAD_FLAGS)
-   FLAGS += $(PTHREAD_FLAGS)
    IS_X86 = 0
 ifneq (,$(findstring cortexa8,$(platform)))
    FLAGS += -marm -mcpu=cortex-a8
