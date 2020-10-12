@@ -3,6 +3,8 @@ FRONTEND_SUPPORTS_RGB565 = 1
 PROFILE = performance
 
 CORE_DIR := .
+CFLAGS :=
+CXXFLAGS :=
 
 SPACE :=
 SPACE := $(SPACE) $(SPACE)
@@ -38,6 +40,19 @@ else
 endif
 else ifneq ($(findstring MINGW,$(shell uname -s)),)
 	system_platform = win
+endif
+
+# profile-guided optimization mode
+# pgo := instrument
+# pgo := optimize
+
+ifeq ($(PGO),instrument)
+  CFLAGS  += -fprofile-generate
+  CXXFLAGS  += -fprofile-generate
+  LDFLAGS += -lgcov
+else ifeq ($(PGO),optimize)
+  CFLAGS += -fprofile-use
+  CXXFLAGS += -fprofile-use
 endif
 
 CORE_DEFINE :=
@@ -180,10 +195,10 @@ else ifeq ($(platform), libnx)
 include $(DEVKITPRO)/libnx/switch_rules
     TARGET := $(TARGET_NAME)_libretro_$(platform).a
     DEFINES := -DSWITCH=1 -U__linux__ -U__linux -DRARCH_INTERNAL
-    CFLAGS  :=  $(DEFINES) -g -O3 -fPIE -I$(LIBNX)/include/ -ffunction-sections -fdata-sections -ftls-model=local-exec -Wl,--allow-multiple-definition -specs=$(LIBNX)/switch.specs
-    CFLAGS += $(INCDIRS)
+    CFLAGS  +=  $(DEFINES) -fPIE -I$(LIBNX)/include/ -ffunction-sections -fdata-sections -ftls-model=local-exec -Wl,--allow-multiple-definition -specs=$(LIBNX)/switch.specs
+    CFLAGS  += $(INCDIRS)
     CFLAGS  += $(INCLUDE)  -D__SWITCH__ -DHAVE_LIBNX
-    CXXFLAGS := $(ASFLAGS) $(CFLAGS) -fexceptions -fno-rtti -std=gnu++11 
+    CXXFLAGS += $(ASFLAGS) $(CFLAGS) -fexceptions -fno-rtti -std=gnu++11 
     CFLAGS += -std=gnu11
     STATIC_LINKING = 1
 
@@ -253,7 +268,7 @@ endif
 else ifneq (,$(findstring windows_msvc2017,$(platform)))
 
     NO_GCC := 1
-    CFLAGS += -DNOMINMAX
+    CFLAGS   += -DNOMINMAX
     CXXFLAGS += -DNOMINMAX
     WINDOWS_VERSION = 1
 
@@ -436,7 +451,7 @@ OBJECTS := $(SOURCES_CXX:.cpp=.o) $(SOURCES_C:.c=.o)
 all: $(TARGET)
 
 ifeq ($(DEBUG),0)
-   FLAGS += -O2 $(EXTRA_GCC_FLAGS)
+   FLAGS += -O3 $(EXTRA_GCC_FLAGS)
 else
    FLAGS += -O0 -g
 endif
@@ -447,7 +462,7 @@ FLAGS += $(fpic) $(NEW_GCC_FLAGS) $(INCFLAGS)
 FLAGS += $(ENDIANNESS_DEFINES) $(WARNINGS) $(CORE_DEFINE) -DSTDC_HEADERS -D__STDC_LIMIT_MACROS -D__LIBRETRO__ $(EXTRA_INCLUDES) $(SOUND_DEFINE)
 
 CXXFLAGS += $(FLAGS)
-CFLAGS += $(FLAGS)
+CFLAGS   += $(FLAGS)
 
 OBJOUT   = -o 
 LINKOUT  = -o 
