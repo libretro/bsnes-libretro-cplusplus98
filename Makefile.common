@@ -1,0 +1,68 @@
+SOURCES_CXX :=
+SOURCES_C   :=
+
+SNES_DIR    := $(CORE_DIR)/snes
+
+INCFLAGS := \
+			   -I$(CORE_DIR) \
+				-I$(SNES_DIR)
+
+SOURCES_C   += $(CORE_DIR)/libco/libco.c
+
+SOURCES_CXX += \
+					$(SNES_DIR)/libretro/libretro.cpp \
+					$(SNES_DIR)/interface/interface.cpp \
+					$(SNES_DIR)/system/system.cpp \
+					$(SNES_DIR)/controller/controller.cpp \
+					$(SNES_DIR)/cartridge/cartridge.cpp \
+					$(SNES_DIR)/cheat/cheat.cpp \
+					$(SNES_DIR)/memory/memory.cpp \
+					$(SNES_DIR)/cpu/core/core.cpp \
+					$(SNES_DIR)/smp/core/smp_core.cpp \
+					$(SNES_DIR)/chip/nss/nss.cpp \
+					$(SNES_DIR)/chip/icd2/icd2.cpp \
+					$(SNES_DIR)/chip/superfx/superfx.cpp \
+					$(SNES_DIR)/chip/sa1/sa1.cpp \
+					$(SNES_DIR)/chip/necdsp/necdsp.cpp \
+					$(SNES_DIR)/chip/hitachidsp/hitachidsp.cpp \
+					$(SNES_DIR)/chip/bsx/bsx.cpp \
+					$(SNES_DIR)/chip/srtc/srtc.cpp \
+					$(SNES_DIR)/chip/sdd1/sdd1.cpp \
+					$(SNES_DIR)/chip/spc7110/spc7110.cpp \
+					$(SNES_DIR)/chip/sufamiturbo/sufamiturbo.cpp \
+					$(SNES_DIR)/chip/obc1/obc1.cpp \
+					$(SNES_DIR)/chip/st0018/st0018.cpp \
+					$(SNES_DIR)/chip/msu1/msu1.cpp \
+					$(SNES_DIR)/chip/link/link.cpp \
+					$(CORE_DIR)/gameboy/interface/interface_gb.cpp \
+					$(CORE_DIR)/gameboy/system/system_gb.cpp \
+					$(CORE_DIR)/gameboy/scheduler/scheduler_gb.cpp \
+					$(CORE_DIR)/gameboy/memory/memory_gb.cpp \
+					$(CORE_DIR)/gameboy/cartridge/cartridge_gb.cpp \
+					$(CORE_DIR)/gameboy/cpu/cpu_gb.cpp \
+					$(CORE_DIR)/gameboy/apu/apu_gb.cpp \
+					$(CORE_DIR)/gameboy/lcd/lcd_gb.cpp \
+					$(CORE_DIR)/gameboy/cheat/cheat_gb.cpp \
+					$(CORE_DIR)/gameboy/video/video_gb.cpp
+
+ifeq ($(PROFILE), performance)
+SOURCES_CXX += $(SNES_DIR)/alt/ppu-performance/ppu.cpp
+SOURCES_CXX += $(SNES_DIR)/alt/dsp/dsp.cpp
+SOURCES_CXX += $(SNES_DIR)/alt/cpu/cpu.cpp
+SOURCES_CXX += $(SNES_DIR)/alt/smp/smp.cpp
+else ifeq ($(PROFILE), compatibility)
+SOURCES_CXX += $(SNES_DIR)/alt/ppu-compatibility/ppu.cpp
+SOURCES_CXX += $(SNES_DIR)/alt/dsp/dsp.cpp
+SOURCES_CXX += $(SNES_DIR)/cpu/cpu.cpp
+SOURCES_CXX += $(SNES_DIR)/smp/smp.cpp
+else ifeq ($(PROFILE), accuracy)
+SOURCES_CXX += $(SNES_DIR)/ppu/ppu.cpp
+SOURCES_CXX += $(SNES_DIR)/dsp/dsp.cpp
+SOURCES_CXX += $(SNES_DIR)/cpu/cpu.cpp
+SOURCES_CXX += $(SNES_DIR)/smp/smp.cpp
+endif
+
+ifneq ($(STATIC_LINKING), 1)
+   SOURCES_CXX +=
+   SOURCES_C += 
+endif
