@@ -5,7 +5,7 @@
 #include <nall/static.hpp>
 
 namespace nall {
-  template<unsigned bits> class uint_t {
+  template<unsigned bits> class nuint_t {
   private:
     unsigned data;
 
@@ -27,8 +27,8 @@ namespace nall {
     inline unsigned operator /=(const unsigned i) { return data = uclip<bits>(data  / i); }
     inline unsigned operator %=(const unsigned i) { return data = uclip<bits>(data  % i); }
 
-    inline uint_t() : data(0) {}
-    inline uint_t(const unsigned i) : data(uclip<bits>(i)) {}
+    inline nuint_t() : data(0) {}
+    inline nuint_t(const unsigned i) : data(uclip<bits>(i)) {}
   };
 
   template<unsigned bits> class int_t {
@@ -57,7 +57,7 @@ namespace nall {
       inline int_t(const signed i) : data(sclip<bits>(i)) {}
   };
 
-  class varuint_t {
+  class varnuint_t {
     private:
       unsigned data;
       unsigned mask;
@@ -81,8 +81,8 @@ namespace nall {
       inline unsigned operator %=(const unsigned i) { return data = (data  % i) & mask; }
 
       inline void bits(unsigned bits) { mask = (1U << (bits - 1)) + ((1U << (bits - 1)) - 1); data &= mask; }
-      inline varuint_t() : data(0), mask(~0U) {}
-      inline varuint_t(const unsigned i) : data(i), mask(~0U) {}
+      inline varnuint_t() : data(0), mask(~0U) {}
+      inline varnuint_t(const unsigned i) : data(i), mask(~0U) {}
   };
 
   class varuintmax_t {
