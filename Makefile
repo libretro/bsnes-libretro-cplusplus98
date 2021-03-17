@@ -33,10 +33,12 @@ ifeq ($(shell uname -s),)
 	system_platform = win
 else ifneq ($(findstring Darwin,$(shell uname -s)),)
 	system_platform = osx
+	arch = intel
+ifeq ($(shell uname -p),powerpc)
+        arch = ppc
+endif
 ifeq ($(shell uname -p),powerpc)
 	arch = ppc
-else
-	arch = intel
 endif
 else ifneq ($(findstring MINGW,$(shell uname -s)),)
 	system_platform = win
@@ -67,6 +69,7 @@ ifeq ($(platform), unix)
    TARGET := $(TARGET_NAME)_libretro.so
    fpic := -fPIC
    SHARED := -shared -Wl,--no-undefined -Wl,--version-script=link.T
+   MINVERSION :=
    ifneq ($(shell uname -p | grep -E '((i.|x)86|amd64)'),)
       IS_X86 = 1
    endif
@@ -85,10 +88,24 @@ endif
    OSXVER = `sw_vers -productVersion | cut -d. -f 2`
    OSX_LT_MAVERICKS = `(( $(OSXVER) <= 9)) && echo "YES"`
    ifeq ($(OSX_LT_MAVERICKS),"YES")
-      fpic += -mmacosx-version-min=10.1
+      MINVERSION = -mmacosx-version-min=10.1
    else
       fpic += -stdlib=libc++
    endif
+   fpic        += $(MINVERSION)
+   CORE_DEFINE += -DHAVE_POSIX_MEMALIGN
+
+   ifeq ($(CROSS_COMPILE),1)
+		TARGET_RULE   = -target $(LIBRETRO_APPLE_PLATFORM) -isysroot $(LIBRETRO_APPLE_ISYSROOT)
+		CFLAGS   += $(TARGET_RULE)
+		CPPFLAGS += $(TARGET_RULE)
+		CXXFLAGS += $(TARGET_RULE)
+		LDFLAGS  += $(TARGET_RULE)
+   endif
+
+	CFLAGS  += $(ARCHFLAGS)
+	CXXFLAGS  += $(ARCHFLAGS)
+	LDFLAGS += $(ARCHFLAGS)
 
 # iOS
 else ifneq (,$(findstring ios,$(platform)))
