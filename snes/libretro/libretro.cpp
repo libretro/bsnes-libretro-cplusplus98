@@ -1,6 +1,7 @@
 #include "libretro.h"
 #include <snes/snes.hpp>
 
+#include <nall/vector.hpp>
 #include <nall/snes/cartridge.hpp>
 #include <nall/gameboy/cartridge.hpp>
 
@@ -23,15 +24,23 @@
 #define RETRO_DEVICE_LIGHTGUN_SUPER_SCOPE  RETRO_DEVICE_SUBCLASS(RETRO_DEVICE_LIGHTGUN, 0)
 #define RETRO_DEVICE_LIGHTGUN_JUSTIFIER    RETRO_DEVICE_SUBCLASS(RETRO_DEVICE_LIGHTGUN, 1)
 #define RETRO_DEVICE_LIGHTGUN_JUSTIFIERS   RETRO_DEVICE_SUBCLASS(RETRO_DEVICE_LIGHTGUN, 2)
+
+#define AUDIO_SAMPLE_RATE       32040.5
+#define VIDEO_REFRESH_RATE_PAL  (21281370.0 / 425568.0)
+#define VIDEO_REFRESH_RATE_NTSC (21477272.0 / 357366.0)
+
 using namespace nall;
 
 struct Interface : public SNES::Interface {
   retro_video_refresh_t pvideo_refresh;
-  retro_audio_sample_batch_t paudio_sample;
+  retro_audio_sample_batch_t paudio_batch;
   retro_input_poll_t pinput_poll;
   retro_input_state_t pinput_state;
   retro_environment_t penviron;
   bool overscan;
+
+  linear_vector<int16_t> audio_buffer;
+  size_t audio_buffer_pos;
 
   string basename;
   uint16_t *buffer;
@@ -84,11 +93,13 @@ struct Interface : public SNES::Interface {
 
   void audioSample(int16_t left, int16_t right)
   {
-    if(paudio_sample)
-    {
-       const int16_t samples[2] = {left, right};
-       paudio_sample(samples, 1);
+    unsigned buffer_capacity = audio_buffer.capacity();
+    if(buffer_capacity - audio_buffer_pos < 2) {
+      unsigned new_size = ((buffer_capacity + 2) << 1) - ((buffer_capacity + 2) >> 1);
+      audio_buffer.resize(new_size);
     }
+    audio_buffer[audio_buffer_pos++] = left;
+    audio_buffer[audio_buffer_pos++] = right;
   }
 
   int16_t inputPoll(bool port, SNES::Input::Device::e device, unsigned index, unsigned id) {
@@ -108,7 +119,7 @@ struct Interface : public SNES::Interface {
     return string(basename, hint);
   }
 
-  Interface() : pvideo_refresh(0), paudio_sample(0), pinput_poll(0), pinput_state(0) {
+  Interface() : pvideo_refresh(0), paudio_batch(0), pinput_poll(0), pinput_state(0) {
     buffer = new uint16_t[512 * 480];
     video.generate(SNES::Video::Format::RGB15);
   }
@@ -231,7 +242,7 @@ void retro_set_environment(retro_environment_t environ_cb)
 
 void retro_set_video_refresh(retro_video_refresh_t video_refresh) { interface.pvideo_refresh = video_refresh; }
 void retro_set_audio_sample(retro_audio_sample_t)    {  }
-void retro_set_audio_sample_batch(retro_audio_sample_batch_t audio_sample)     { interface.paudio_sample  = audio_sample; }
+void retro_set_audio_sample_batch(retro_audio_sample_batch_t audio_sample)     { interface.paudio_batch  = audio_sample; }
 void retro_set_input_poll(retro_input_poll_t input_poll)          { interface.pinput_poll    = input_poll; }
 void retro_set_input_state(retro_input_state_t input_state)       { interface.pinput_state   = input_state; }
 
@@ -245,10 +256,19 @@ void retro_init(void) {
   SNES::system.init();
   SNES::input.connect(SNES::Controller::Port1, SNES::Input::Device::Joypad);
   SNES::input.connect(SNES::Controller::Port2, SNES::Input::Device::Joypad);
+
+  // Allocate enough space in the audio sample
+  // buffer for one frame at PAL refresh rate
+  // (i.e. 'worst case' scenario)
+  interface.audio_buffer.resize(((unsigned)(AUDIO_SAMPLE_RATE / VIDEO_REFRESH_RATE_PAL) + 1) << 1);
+  interface.audio_buffer_pos = 0;
 }
 
 void retro_deinit(void) {
   SNES::system.term();
+
+  interface.audio_buffer.reset();
+  interface.audio_buffer_pos = 0;
 }
 
 void retro_reset(void) {
@@ -257,6 +277,11 @@ void retro_reset(void) {
 
 void retro_run(void) {
   SNES::system.run();
+
+  if(interface.paudio_batch && interface.audio_buffer_pos) {
+    interface.paudio_batch(interface.audio_buffer.begin(), interface.audio_buffer_pos >> 1);
+    interface.audio_buffer_pos = 0;
+  }
 }
 
 size_t retro_serialize_size(void) {
@@ -312,8 +337,8 @@ void retro_get_system_info(struct retro_system_info *info) {
 
 void retro_get_system_av_info(struct retro_system_av_info *info) {
    struct retro_game_geometry geom;
-  struct retro_system_timing timing = { 0.0, 32040.5 };
-  timing.fps = retro_get_region() == RETRO_REGION_NTSC ? 21477272.0 / 357366.0 : 21281370.0 / 425568.0;
+  struct retro_system_timing timing = { 0.0, AUDIO_SAMPLE_RATE };
+  timing.fps = retro_get_region() == RETRO_REGION_NTSC ? VIDEO_REFRESH_RATE_NTSC : VIDEO_REFRESH_RATE_PAL;
 
   if (!interface.penviron(RETRO_ENVIRONMENT_GET_OVERSCAN, &interface.overscan))
      interface.overscan = false;
