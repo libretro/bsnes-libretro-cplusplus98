@@ -4,8 +4,9 @@ SOURCES_C   :=
 SNES_DIR    := $(CORE_DIR)/snes
 
 INCFLAGS := \
-			   -I$(CORE_DIR) \
-				-I$(SNES_DIR)
+	    -I$(CORE_DIR) \
+	    -I$(CORE_DIR)/libco \
+	    -I$(SNES_DIR)
 
 SOURCES_C   += $(CORE_DIR)/libco/libco.c
 
