@@ -139,26 +139,6 @@ inline int eval(const char *&s, int depth = 0) {
   return value;
 }
 
-inline bool strint(const char *s, int &result) {
-  try {
-    result = eval_integer(s);
-    return true;
-  } catch(const char*) {
-    result = 0;
-    return false;
-  }
-}
-
-inline bool strmath(const char *s, int &result) {
-  try {
-    result = eval(s);
-    return true;
-  } catch(const char*) {
-    result = 0;
-    return false;
-  }
-}
-
 }
 
 #endif

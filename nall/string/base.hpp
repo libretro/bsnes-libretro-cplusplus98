@@ -139,7 +139,6 @@ namespace nall {
     template<typename T> inline lstring& operator<<(const T& value);
 
     inline void split (const char*, const char*, unsigned = 0);
-    inline void qsplit(const char*, const char*, unsigned = 0);
 
     lstring();
 
@@ -182,10 +181,6 @@ namespace nall {
 
   //match.hpp
   inline bool match(const char *pattern, const char *str);
-
-  //math.hpp
-  inline bool strint (const char *str, int &result);
-  inline bool strmath(const char *str, int &result);
 
   //strl.hpp
   inline unsigned strlcpy(char *dest, const char *src, unsigned length);
