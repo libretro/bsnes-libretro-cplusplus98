@@ -11,8 +11,10 @@
   typedef int64_t intmax_t;
   #if defined(_WIN64)
   typedef int64_t intptr_t;
+  typedef uint64_t uintptr_t;
   #else
   typedef int32_t intptr_t;
+  typedef uint32_t uintptr_t;
   #endif
 
   typedef unsigned char uint8_t;
@@ -20,11 +22,6 @@
   typedef unsigned int uint32_t;
   typedef unsigned long long uint64_t;
   typedef uint64_t uintmax_t;
-  #if defined(_WIN64)
-  typedef uint64_t uintptr_t;
-  #else
-  typedef uint32_t uintptr_t;
-  #endif
 #else
   #include <stdint.h>
 #endif
