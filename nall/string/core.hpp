@@ -281,13 +281,6 @@ bool string::readfile(const string &filename) {
   return true;
 }
 
-optional<unsigned> lstring::find(const char *key) {
-  for(unsigned i = 0; i < size(); i++) {
-    if(operator[](i) == key) return optional<unsigned>(true, i);
-  }
-  return optional<unsigned>(false, 0);
-}
-
 inline lstring::lstring() {
 }
 

@@ -16,14 +16,6 @@
 #include <nall/utility.hpp>
 
 namespace nall {
-  inline FILE* fopen_utf8(const char *utf8_filename, const char *mode) {
-    #if !defined(_WIN32)
-    return fopen(utf8_filename, mode);
-    #else
-    return _wfopen(utf16_t(utf8_filename), utf16_t(mode));
-    #endif
-  }
-
   class file {
   public:
     enum FileMode { mode_read, mode_write, mode_readwrite, mode_writeread };
@@ -158,11 +150,6 @@ namespace nall {
       print_intern(data);
     }
 
-    void flush() {
-      buffer_flush();
-      fflush(fp);
-    }
-
     void seek(int offset, SeekMode mode = seek_absolute) {
       if(!fp) return;  //file not open
       buffer_flush();
@@ -185,23 +172,9 @@ namespace nall {
       file_offset = req_offset;
     }
 
-    int offset() {
-      if(!fp) return -1;  //file not open
-      return file_offset;
-    }
-
     int size() {
       if(!fp) return -1;  //file not open
       return file_size;
-    }
-
-    bool truncate(unsigned size) {
-      if(!fp) return false;  //file not open
-      #if !defined(_WIN32)
-      return ftruncate(fileno(fp), size) == 0;
-      #else
-      return _chsize(fileno(fp), size) == 0;
-      #endif
     }
 
     bool end() {

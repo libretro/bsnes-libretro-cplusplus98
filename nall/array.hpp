@@ -72,11 +72,6 @@ namespace nall {
       else resize(buffersize - count);
     }
 
-    optional<unsigned> find(const T data) {
-      for(unsigned i = 0; i < size(); i++) if(pool[i] == data) return optional<unsigned>(true, i);
-      return optional<unsigned>(false, 0);
-    }
-
     void clear() {
       memset(pool, 0, buffersize * sizeof(T));
     }

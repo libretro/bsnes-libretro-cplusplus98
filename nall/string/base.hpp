@@ -138,7 +138,6 @@ namespace nall {
   struct lstring : public linear_vector<string> {
     template<typename T> inline lstring& operator<<(const T& value);
 
-    inline optional<unsigned> find(const char*);
     inline void split (const char*, const char*, unsigned = 0);
     inline void qsplit(const char*, const char*, unsigned = 0);
 
