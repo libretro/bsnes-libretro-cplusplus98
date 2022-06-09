@@ -25,8 +25,6 @@ public:
   void exec_jp(uint24 opcode);
   void exec_ld(uint24 opcode);
 
-  string disassemble(uint14 ip);
-
   uint8 sr_read(unsigned);
   void sr_write(unsigned, uint8 data);
 

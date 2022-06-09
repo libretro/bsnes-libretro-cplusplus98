@@ -138,8 +138,3 @@ void op_ret();
 template<unsigned x, bool y> void op_ret_f();
 void op_reti();
 template<unsigned n> void op_rst_n();
-
-//disassembler.cpp
-string disassemble(uint16 pc);
-string disassemble_opcode(uint16 pc);
-string disassemble_opcode_cb(uint16 pc);

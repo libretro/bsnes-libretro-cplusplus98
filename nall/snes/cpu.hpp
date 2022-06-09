@@ -39,9 +39,6 @@ struct SNESCPU {
   };
 
   static const OpcodeInfo opcodeInfo[256];
-
-  static unsigned getOpcodeLength(bool accum, bool index, uint8_t opcode);
-  static string disassemble(unsigned pc, bool accum, bool index, uint8_t opcode, uint8_t pl, uint8_t ph, uint8_t pb);
 };
 
 const SNESCPU::OpcodeInfo SNESCPU::opcodeInfo[256] = {
@@ -381,77 +378,6 @@ const SNESCPU::OpcodeInfo SNESCPU::opcodeInfo[256] = {
   { "inc", AddressX },
   { "sbc", LongX },
 };
-
-inline unsigned SNESCPU::getOpcodeLength(bool accum, bool index, uint8_t opcode) {
-  switch(opcodeInfo[opcode].mode) { default:
-    case Implied: return 1;
-    case Constant: return 2;
-    case AccumConstant: return 3 - accum;
-    case IndexConstant: return 3 - index;
-    case Direct: return 2;
-    case DirectX: return 2;
-    case DirectY: return 2;
-    case IDirect: return 2;
-    case IDirectX: return 2;
-    case IDirectY: return 2;
-    case ILDirect: return 2;
-    case ILDirectY: return 2;
-    case Address: return 3;
-    case AddressX: return 3;
-    case AddressY: return 3;
-    case IAddressX: return 3;
-    case ILAddress: return 3;
-    case PAddress: return 3;
-    case PIAddress: return 3;
-    case Long: return 4;
-    case LongX: return 4;
-    case Stack: return 2;
-    case IStackY: return 2;
-    case BlockMove: return 3;
-    case RelativeShort: return 2;
-    case RelativeLong: return 3;
-  }
-}
-
-inline string SNESCPU::disassemble(unsigned pc, bool accum, bool index, uint8_t opcode, uint8_t pl, uint8_t ph, uint8_t pb) {
-  string name = opcodeInfo[opcode].name;
-  unsigned mode = opcodeInfo[opcode].mode;
-
-  if(mode == Implied) return name;
-  if(mode == Constant) return { name, " #$", hex<2>(pl) };
-  if(mode == AccumConstant) return { name, " #$", accum ? "" : hex<2>(ph), hex<2>(pl) };
-  if(mode == IndexConstant) return { name, " #$", index ? "" : hex<2>(ph), hex<2>(pl) };
-  if(mode == Direct) return { name, " $", hex<2>(pl) };
-  if(mode == DirectX) return { name, " $", hex<2>(pl), ",x" };
-  if(mode == DirectY) return { name, " $", hex<2>(pl), ",y" };
-  if(mode == IDirect) return { name, " ($", hex<2>(pl), ")" };
-  if(mode == IDirectX) return { name, " ($", hex<2>(pl), ",x)" };
-  if(mode == IDirectY) return { name, " ($", hex<2>(pl), "),y" };
-  if(mode == ILDirect) return { name, " [$", hex<2>(pl), "]" };
-  if(mode == ILDirectY) return { name, " [$", hex<2>(pl), "],y" };
-  if(mode == Address) return { name, " $", hex<2>(ph), hex<2>(pl) };
-  if(mode == AddressX) return { name, " $", hex<2>(ph), hex<2>(pl), ",x" };
-  if(mode == AddressY) return { name, " $", hex<2>(ph), hex<2>(pl), ",y" };
-  if(mode == IAddressX) return { name, " ($", hex<2>(ph), hex<2>(pl), ",x)" };
-  if(mode == ILAddress) return { name, " [$", hex<2>(ph), hex<2>(pl), "]" };
-  if(mode == PAddress) return { name, " $", hex<2>(ph), hex<2>(pl) };
-  if(mode == PIAddress) return { name, " ($", hex<2>(ph), hex<2>(pl), ")" };
-  if(mode == Long) return { name, " $", hex<2>(pb), hex<2>(ph), hex<2>(pl) };
-  if(mode == LongX) return { name, " $", hex<2>(pb), hex<2>(ph), hex<2>(pl), ",x" };
-  if(mode == Stack) return { name, " $", hex<2>(pl), ",s" };
-  if(mode == IStackY) return { name, " ($", hex<2>(pl), ",s),y" };
-  if(mode == BlockMove) return { name, " $", hex<2>(ph), ",$", hex<2>(pl) };
-  if(mode == RelativeShort) {
-    unsigned addr = (pc + 2) + (int8_t)(pl << 0);
-    return { name, " $", hex<4>(addr) };
-  }
-  if(mode == RelativeLong) {
-    unsigned addr = (pc + 3) + (int16_t)((ph << 8) + (pl << 0));
-    return { name, " $", hex<4>(addr) };
-  }
-
-  return "";
-}
 
 }
 
