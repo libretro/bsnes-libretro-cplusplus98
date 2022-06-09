@@ -3,12 +3,7 @@
 #define DSP_CPP
 namespace SNES {
 
-#if defined(DEBUGGER)
-  #include "debugger/debugger.cpp"
-  DSPDebugger dsp;
-#else
-  DSP dsp;
-#endif
+DSP dsp;
 
 #include "serialization.cpp"
 
