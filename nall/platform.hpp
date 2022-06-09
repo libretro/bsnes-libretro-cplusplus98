@@ -45,19 +45,8 @@
 //POSIX compliance
 //================
 
-#if defined(_MSC_VER)
-  #define PATH_MAX  _MAX_PATH
-  #define va_copy(dest, src)  ((dest) = (src))
-#endif
-
 #if defined(_WIN32)
-  #define getcwd      _getcwd
   #define ftruncate   _chsize
-  #define putenv      _putenv
-  #define mkdir(n, m) _wmkdir(nall::utf16_t(n))
-  #define rmdir       _rmdir
-  #define vsnprintf   _vsnprintf
-  #define usleep(n)   Sleep(n / 1000)
 #endif
 
 //================

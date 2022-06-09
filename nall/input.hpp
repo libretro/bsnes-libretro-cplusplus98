@@ -53,13 +53,6 @@ struct Keyboard {
     Limit,
   };
 
-  static signed numberDecode(uint16_t scancode) {
-    for(unsigned i = 0; i < Count; i++) {
-      if(keyboard(i).belongsTo(scancode)) return i;
-    }
-    return -1;
-  }
-
   static signed keyDecode(uint16_t scancode) {
     for(unsigned i = 0; i < Count; i++) {
       if(keyboard(i).isKey(scancode)) return scancode - keyboard(i).key(Escape);
@@ -150,41 +143,6 @@ struct Mouse {
     Limit,
   };
 
-  static signed numberDecode(uint16_t scancode) {
-    for(unsigned i = 0; i < Count; i++) {
-      if(mouse(i).belongsTo(scancode)) return i;
-    }
-    return -1;
-  }
-
-  static signed axisDecode(uint16_t scancode) {
-    for(unsigned i = 0; i < Count; i++) {
-      if(mouse(i).isAxis(scancode)) return scancode - mouse(i).axis(0);
-    }
-    return -1;
-  }
-
-  static signed buttonDecode(uint16_t scancode) {
-    for(unsigned i = 0; i < Count; i++) {
-      if(mouse(i).isButton(scancode)) return scancode - mouse(i).button(0);
-    }
-    return -1;
-  }
-
-  static bool isAnyAxis(uint16_t scancode) {
-    for(unsigned i = 0; i < Count; i++) {
-      if(mouse(i).isAxis(scancode)) return true;
-    }
-    return false;
-  }
-
-  static bool isAnyButton(uint16_t scancode) {
-    for(unsigned i = 0; i < Count; i++) {
-      if(mouse(i).isButton(scancode)) return true;
-    }
-    return false;
-  }
-
   static uint16_t decode(const char *name) {
     string s(name);
     if(!strbegin(name, "MS")) return 0;
@@ -259,55 +217,6 @@ struct Joypad {
   };
 
   enum Hat { HatCenter = 0, HatUp = 1, HatRight = 2, HatDown = 4, HatLeft = 8 };
-
-  static signed numberDecode(uint16_t scancode) {
-    for(unsigned i = 0; i < Count; i++) {
-      if(joypad(i).belongsTo(scancode)) return i;
-    }
-    return -1;
-  }
-
-  static signed hatDecode(uint16_t scancode) {
-    for(unsigned i = 0; i < Count; i++) {
-      if(joypad(i).isHat(scancode)) return scancode - joypad(i).hat(0);
-    }
-    return -1;
-  }
-
-  static signed axisDecode(uint16_t scancode) {
-    for(unsigned i = 0; i < Count; i++) {
-      if(joypad(i).isAxis(scancode)) return scancode - joypad(i).axis(0);
-    }
-    return -1;
-  }
-
-  static signed buttonDecode(uint16_t scancode) {
-    for(unsigned i = 0; i < Count; i++) {
-      if(joypad(i).isButton(scancode)) return scancode - joypad(i).button(0);
-    }
-    return -1;
-  }
-
-  static bool isAnyHat(uint16_t scancode) {
-    for(unsigned i = 0; i < Count; i++) {
-      if(joypad(i).isHat(scancode)) return true;
-    }
-    return false;
-  }
-
-  static bool isAnyAxis(uint16_t scancode) {
-    for(unsigned i = 0; i < Count; i++) {
-      if(joypad(i).isAxis(scancode)) return true;
-    }
-    return false;
-  }
-
-  static bool isAnyButton(uint16_t scancode) {
-    for(unsigned i = 0; i < Count; i++) {
-      if(joypad(i).isButton(scancode)) return true;
-    }
-    return false;
-  }
 
   static uint16_t decode(const char *name) {
     string s(name);
