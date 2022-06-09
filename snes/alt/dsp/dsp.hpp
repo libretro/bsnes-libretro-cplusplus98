@@ -1,6 +1,6 @@
 #include "SPC_DSP.h"
 
-class DSP : public Processor, public ChipDebugger {
+class DSP : public Processor {
 public:
   enum{ Threaded = false };
   alwaysinline void step(unsigned clocks);
