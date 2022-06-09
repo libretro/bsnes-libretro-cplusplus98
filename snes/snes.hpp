@@ -21,7 +21,6 @@ namespace SNES {
 #include <nall/platform.hpp>
 #include <nall/algorithm.hpp>
 #include <nall/array.hpp>
-#include <nall/dl.hpp>
 #include <nall/dsp.hpp>
 #include <nall/endian.hpp>
 #include <nall/file.hpp>

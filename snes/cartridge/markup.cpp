@@ -27,7 +27,6 @@ void Cartridge::parse_markup(const char *markup) {
   parse_markup_obc1(cartridge["obc1"]);
   parse_markup_setarisc(cartridge["setarisc"]);
   parse_markup_msu1(cartridge["msu1"]);
-  parse_markup_link(cartridge["link"]);
 }
 
 //
@@ -519,21 +518,6 @@ void Cartridge::parse_markup_msu1(XML::Node &root) {
   foreach(node, root) {
     if(node.name != "map") continue;
     Mapping m(READER( &MSU1::mmio_read, &msu1 ), WRITER( &MSU1::mmio_write, &msu1 ));
-    parse_markup_map(m, node);
-    mapping.append(m);
-  }
-}
-
-void Cartridge::parse_markup_link(XML::Node &root) {
-  if(root.exists() == false) return;
-  has_link = true;
-
-  link.frequency = max(1, parse_markup_integer(root["frequency"].data));
-  link.program = root["program"].data;
-
-  foreach(node, root) {
-    if(node.name != "map") continue;
-    Mapping m(READER( &Link::read, &link ), WRITER( &Link::write, &link ));
     parse_markup_map(m, node);
     mapping.append(m);
   }

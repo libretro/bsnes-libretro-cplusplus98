@@ -79,7 +79,6 @@ void System::init() {
   obc1.init();
   st0018.init();
   msu1.init();
-  link.init();
 
   video.init();
   audio.init();
@@ -117,7 +116,6 @@ void System::load() {
   if(cartridge.has_obc1()) obc1.load();
   if(cartridge.has_st0018()) st0018.load();
   if(cartridge.has_msu1()) msu1.load();
-  if(cartridge.has_link()) link.load();
 
   serialize_init();
   cheat.init();
@@ -141,7 +139,6 @@ void System::unload() {
   if(cartridge.has_obc1()) obc1.unload();
   if(cartridge.has_st0018()) st0018.unload();
   if(cartridge.has_msu1()) msu1.unload();
-  if(cartridge.has_link()) link.unload();
 }
 
 void System::power() {
@@ -177,7 +174,6 @@ void System::power() {
   if(cartridge.has_obc1()) obc1.power();
   if(cartridge.has_st0018()) st0018.power();
   if(cartridge.has_msu1()) msu1.power();
-  if(cartridge.has_link()) link.power();
 
   reset();
 }
@@ -205,7 +201,6 @@ void System::reset() {
   if(cartridge.has_obc1()) obc1.reset();
   if(cartridge.has_st0018()) st0018.reset();
   if(cartridge.has_msu1()) msu1.reset();
-  if(cartridge.has_link()) link.reset();
 
   if(cartridge.mode.i == Cartridge::Mode::SuperGameBoy) cpu.coprocessors.append(&icd2);
   if(cartridge.has_superfx()) cpu.coprocessors.append(&superfx);
@@ -213,7 +208,6 @@ void System::reset() {
   if(cartridge.has_necdsp()) cpu.coprocessors.append(&necdsp);
   if(cartridge.has_hitachidsp()) cpu.coprocessors.append(&hitachidsp);
   if(cartridge.has_msu1()) cpu.coprocessors.append(&msu1);
-  if(cartridge.has_link()) cpu.coprocessors.append(&link);
 
   scheduler.init();
   input.connect(0, config.controller_port1.i);

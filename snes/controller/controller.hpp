@@ -33,4 +33,3 @@ struct Controller : Processor {
 #include "mouse/mouse.hpp"
 #include "superscope/superscope.hpp"
 #include "justifier/justifier.hpp"
-#include "serial/serial.hpp"

@@ -34,7 +34,6 @@ SOURCES_CXX += \
 					$(SNES_DIR)/chip/obc1/obc1.cpp \
 					$(SNES_DIR)/chip/st0018/st0018.cpp \
 					$(SNES_DIR)/chip/msu1/msu1.cpp \
-					$(SNES_DIR)/chip/link/link.cpp \
 					$(CORE_DIR)/gameboy/interface/interface_gb.cpp \
 					$(CORE_DIR)/gameboy/system/system_gb.cpp \
 					$(CORE_DIR)/gameboy/scheduler/scheduler_gb.cpp \

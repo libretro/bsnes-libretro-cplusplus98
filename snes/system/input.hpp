@@ -8,7 +8,6 @@ struct Input {
       SuperScope,
       Justifier,
       Justifiers,
-      Serial,
     } i;
   };
 
