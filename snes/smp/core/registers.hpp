@@ -12,9 +12,9 @@ struct flag_t {
     return data;
   }
 
-  inline unsigned operator|=(uint8 data) { return operator=(operator unsigned() | data); }
-  inline unsigned operator^=(uint8 data) { return operator=(operator unsigned() ^ data); }
-  inline unsigned operator&=(uint8 data) { return operator=(operator unsigned() & data); }
+  inline unsigned operator|=(uint8 data) { return (*this)=(operator unsigned() | data); }
+  inline unsigned operator^=(uint8 data) { return (*this)=(operator unsigned() ^ data); }
+  inline unsigned operator&=(uint8 data) { return (*this)=(operator unsigned() & data); }
 };
 
 struct word_t {
