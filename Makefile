@@ -149,6 +149,10 @@ ifeq ($(IOSSDK),)
    IOSSDK := $(shell xcodebuild -version -sdk appletvos Path)
 endif
 
+   MINVERSION = -mappletvos-version-min=11.0
+   LDFLAGS += $(MINVERSION)
+   FLAGS += $(MINVERSION)
+
 else ifeq ($(platform), qnx)
    TARGET := $(TARGET_NAME)_libretro_$(platform).so
    fpic := -fPIC
