@@ -89,14 +89,14 @@ namespace nall {
     priority_queue& operator=(const priority_queue& s){
       delete [] heap;
       callback = s.callback;
-      heap = new heap_t[s.size];
-      heapcapacity = s.size;
+      heap = new heap_t[s.heapsize];
+      heapcapacity = s.heapsize;
       reset();
     }
 
     priority_queue(const priority_queue& s) : callback(s.callback) {
-      heap = new heap_t[s.size];
-      heapcapacity = s.size;
+      heap = new heap_t[s.heapsize];
+      heapcapacity = s.heapsize;
       reset();
     }
 
